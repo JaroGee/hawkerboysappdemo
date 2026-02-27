@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hawker Boys App</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg:        #04080f;
+      --card:      #0d1525;
+      --panel:     #111d32;
+      --border:    #1e2d45;
+      --cyan:      #00f5ff;
+      --magenta:   #e040fb;
+      --gold:      #ffd600;
+      --green:     #00e676;
+      --red:       #ff4757;
+      --white:     #f0f4ff;
+      --grey:      #7a8699;
+      --grey-dim:  #1e2d45;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 32px 16px 48px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 20%, rgba(0,70,100,0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ─── OUTER LABEL ─── */
+    .outer-label {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      color: rgba(0,245,255,0.3);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* ─── PHONE WRAP (holds phone + side buttons) ─── */
+    .phone-wrap {
+      position: relative;
+      width: 400px;
+      flex-shrink: 0;
+    }
+
+    /* Side buttons */
+    .side-btn {
+      position: absolute;
+      background: linear-gradient(180deg, #1c2538 0%, #0e1825 100%);
+      border-radius: 3px;
+      z-index: 5;
+    }
+    .btn-silent  { left: -3.5px; top: 148px; width: 4px; height: 28px; }
+    .btn-vol-up  { left: -3.5px; top: 192px; width: 4px; height: 56px; }
+    .btn-vol-dn  { left: -3.5px; top: 260px; width: 4px; height: 56px; }
+    .btn-power   { right:-3.5px; top: 210px; width: 4px; height: 76px; }
+
+    /* ─── PHONE DEVICE ─── */
+    .phone-device {
+      width: 390px;
+      height: 844px;
+      margin: 0 auto;
+      background: linear-gradient(160deg, #1c2436 0%, #0e1825 40%, #060c16 100%);
+      border-radius: 52px;
+      border: 1.5px solid #253040;
+      box-shadow:
+        0 0 0 0.5px #050a12,
+        0 50px 120px rgba(0,0,0,0.95),
+        0 0 80px rgba(0,245,255,0.05),
+        inset 0 0 0 1px rgba(255,255,255,0.035);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Screen glass shine */
+    .phone-device::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 55%;
+      background: linear-gradient(160deg, rgba(255,255,255,0.025) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 100;
+      border-radius: 52px 52px 0 0;
+    }
+
+    /* Dynamic Island */
+    .dynamic-island {
+      position: absolute;
+      top: 13px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px; height: 34px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 14px;
+      gap: 5px;
+    }
+    .di-dot {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: #0d1825;
+      border: 1.5px solid #1a2535;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 54px;
+      padding: 14px 28px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 20;
+    }
+    .status-time { font-size: 15px; font-weight: 700; color: var(--white); }
+    .status-right { display: flex; align-items: center; gap: 5px; }
+    .status-right svg { fill: var(--white); }
+
+    /* Screen Container */
+    .screen-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .screen {
+      position: absolute; inset: 0;
+      overflow-y: auto; overflow-x: hidden;
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+      pointer-events: none;
+    }
+    .screen.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+    }
+    .screen::-webkit-scrollbar { width: 2px; }
+    .screen::-webkit-scrollbar-track { background: transparent; }
+    .screen::-webkit-scrollbar-thumb { background: var(--grey-dim); border-radius: 2px; }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      height: 74px;
+      background: rgba(6,10,20,0.96);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 4px 12px;
+      flex-shrink: 0;
+      z-index: 30;
+    }
+    .nav-btn {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 4px;
+      padding: 8px 18px;
+      cursor: pointer;
+      border: none; background: none;
+      border-radius: 12px;
+      transition: all 0.2s;
+    }
+    .nav-btn:active { transform: scale(0.9); }
+    .nav-icon { font-size: 21px; line-height: 1; transition: filter 0.2s; }
+    .nav-label { font-size: 9px; font-weight: 600; color: var(--grey); letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-btn.active .nav-label { color: var(--cyan); }
+    .nav-btn.active .nav-icon { filter: drop-shadow(0 0 5px var(--cyan)); }
+
+    /* Home Indicator */
+    .home-indicator {
+      width: 130px; height: 4px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 2px;
+      margin: 3px auto 5px;
+      flex-shrink: 0;
+    }
+
+    /* ─── COMMON COMPONENTS ─── */
+    .screen-hdr {
+      padding: 14px 20px 4px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .screen-ttl {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px; color: var(--white); line-height: 1.6;
+    }
+
+    .card {
+      margin: 10px 16px 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .card-lbl {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--grey); margin-bottom: 10px;
+    }
+
+    .pbar-track { height: 5px; background: var(--grey-dim); border-radius: 5px; overflow: hidden; }
+    .pbar-fill  { height: 100%; border-radius: 5px; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); }
+
+    /* ─── HOME SCREEN ─── */
+    .user-row {
+      padding: 10px 20px 0;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, #0a4060, #003040);
+      border: 2px solid var(--cyan);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 14px rgba(0,245,255,0.2);
+      flex-shrink: 0;
+    }
+    .user-name   { font-size: 16px; font-weight: 700; color: var(--white); }
+    .user-sub    { font-size: 11px; color: var(--grey); }
+    .lvl-badge {
+      margin-left: auto;
+      padding: 4px 10px;
+      background: rgba(0,245,255,0.1);
+      border: 1px solid rgba(0,245,255,0.25);
+      border-radius: 20px;
+      font-size: 9px; font-weight: 700; color: var(--cyan);
+      white-space: nowrap;
+    }
+
+    .xp-card {
+      margin: 10px 16px 0;
+      background: linear-gradient(135deg, rgba(0,245,255,0.06), rgba(0,80,120,0.04));
+      border: 1px solid rgba(0,245,255,0.14);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .xp-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+    .xp-lbl  { font-size: 10px; color: var(--grey); text-transform: uppercase; letter-spacing: 0.1em; }
+    .xp-val  { font-size: 11px; font-weight: 700; color: var(--cyan); }
+
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 7px; margin: 10px 16px 0;
+    }
+    .stat-chip {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 11px 6px; text-align: center;
+    }
+    .sc-ico { font-size: 18px; margin-bottom: 3px; }
+    .sc-val { font-size: 16px; font-weight: 800; color: var(--white); }
+    .sc-lbl { font-size: 8px; color: var(--grey); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 2px; }
+
+    .journey-card {
+      margin: 10px 16px 0;
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px;
+    }
+    .jc-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .jc-name { font-size: 15px; font-weight: 700; color: var(--white); }
+    .jc-sub  { font-size: 10px; color: var(--grey); margin-top: 2px; }
+    .jc-meta { display: flex; justify-content: space-between; margin-top: 6px; }
+    .jc-pct  { font-size: 10px; color: var(--grey); }
+    .jc-status { font-size: 10px; font-weight: 700; color: var(--green); }
+    .stage-pills { display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap; }
+    .pill {
+      padding: 3px 9px; border-radius: 20px;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
+      text-transform: uppercase; border: 1px solid;
+    }
+
+    .challenge-card {
+      margin: 10px 16px 0;
+      background: linear-gradient(135deg, rgba(224,64,251,0.08), rgba(40,0,60,0.04));
+      border: 1px solid rgba(224,64,251,0.22);
+      border-radius: 14px; padding: 14px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .challenge-card:active { transform: scale(0.98); }
+    .cc-head { display: flex; justify-content: space-between; margin-bottom: 7px; }
+    .cc-tag  { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--magenta); }
+    .cc-xp   { font-size: 10px; font-weight: 700; color: var(--gold); background: rgba(255,214,0,0.1); padding: 2px 8px; border-radius: 10px; }
+    .cc-text { font-size: 13px; color: var(--white); font-weight: 500; line-height: 1.4; }
+    .cc-cta  { font-size: 11px; color: var(--magenta); font-weight: 600; margin-top: 8px; }
+
+    .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin: 10px 16px 0; }
+    .quick-btn {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 10px;
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .quick-btn:active { transform: scale(0.97); }
+    .qb-ico  { font-size: 20px; }
+    .qb-ttl  { font-size: 12px; font-weight: 600; color: var(--white); }
+    .qb-sub  { font-size: 9px; color: var(--grey); margin-top: 1px; }
+
+    /* ─── PATHWAY SCREEN ─── */
+    .pathway-wrap {
+      padding: 6px 16px 0;
+      position: relative;
+    }
+    .pathway-wrap::before {
+      content: '';
+      position: absolute;
+      left: 36px; top: 30px; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--cyan), rgba(0,230,118,0.2));
+      opacity: 0.2;
+    }
+    .pt-item { display: flex; gap: 12px; margin-bottom: 10px; }
+    .pt-node {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; border: 2px solid;
+      flex-shrink: 0; position: relative; z-index: 1;
+      transition: all 0.2s;
+    }
+    .pt-node.lit { box-shadow: 0 0 0 4px rgba(0,245,255,0.12), 0 0 14px rgba(0,245,255,0.25); }
+    .pt-body {
+      flex: 1; background: var(--card);
+      border: 1px solid var(--border); border-radius: 14px; padding: 14px;
+      transition: all 0.2s; cursor: pointer;
+    }
+    .pt-body.current { border-color: var(--cyan); background: rgba(0,245,255,0.04); }
+    .pt-stage-lbl  { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+    .pt-stage-ttl  { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 5px; }
+    .pt-stage-desc { font-size: 11px; color: var(--grey); line-height: 1.6; margin-bottom: 9px; }
+    .pt-milestones { display: flex; flex-direction: column; gap: 4px; }
+    .pt-ms {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 11px; color: var(--white);
+    }
+    .pt-ms-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .pt-lock { font-size: 11px; color: var(--grey); opacity: 0.5; }
+
+    /* ─── GAMES SCREEN ─── */
+    .game-main-card {
+      margin: 10px 16px 0;
+      background: linear-gradient(135deg, rgba(0,245,255,0.09), rgba(0,60,90,0.05));
+      border: 1px solid rgba(0,245,255,0.22);
+      border-radius: 16px; padding: 18px 16px;
+      cursor: pointer; transition: all 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .game-main-card:active { transform: scale(0.98); }
+    .game-main-card::after {
+      content: '🎯';
+      position: absolute; right: 16px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 40px; opacity: 0.15;
+    }
+    .gmc-tag  { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .gmc-ttl  { font-size: 19px; font-weight: 800; color: var(--white); margin-bottom: 5px; }
+    .gmc-desc { font-size: 12px; color: var(--grey); line-height: 1.5; margin-bottom: 13px; }
+    .gmc-foot { display: flex; align-items: center; justify-content: space-between; }
+    .xp-badge { padding: 4px 10px; background: rgba(255,214,0,0.1); border: 1px solid rgba(255,214,0,0.2); border-radius: 20px; font-size: 10px; font-weight: 700; color: var(--gold); }
+    .play-btn {
+      padding: 9px 20px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      border: none; cursor: pointer; transition: all 0.2s;
+    }
+    .play-btn:active { transform: scale(0.95); }
+    .play-primary { background: var(--cyan); color: #04080f; }
+    .play-gold    { background: var(--gold); color: #04080f; }
+
+    .game-sec-card {
+      margin: 8px 16px 0;
+      background: linear-gradient(135deg, rgba(255,214,0,0.07), rgba(60,50,0,0.04));
+      border: 1px solid rgba(255,214,0,0.18);
+      border-radius: 16px; padding: 16px;
+    }
+
+    .lb-card { margin: 10px 16px 0; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+    .lb-row {
+      display: flex; align-items: center; gap: 9px;
+      padding: 7px 0; border-bottom: 1px solid var(--grey-dim);
+    }
+    .lb-row:last-child { border-bottom: none; }
+    .lb-num  { font-size: 12px; font-weight: 800; width: 18px; }
+    .lb-emo  { font-size: 18px; }
+    .lb-who  { flex: 1; font-size: 12px; font-weight: 600; color: var(--white); }
+    .lb-xp   { font-size: 12px; font-weight: 700; color: var(--cyan); }
+
+    /* ─── QUIZ VIEW ─── */
+    #quizView { display: none; }
+    #quizView.on { display: block; }
+    #gamesHub.off { display: none; }
+
+    .quiz-topbar {
+      padding: 12px 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .quiz-back {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 13px; color: var(--white);
+      flex-shrink: 0; transition: all 0.2s;
+    }
+    .quiz-back:active { transform: scale(0.9); }
+    .qprog-wrap { flex: 1; }
+    .qprog-lbl  { font-size: 9px; color: var(--grey); text-align: right; margin-bottom: 4px; }
+    .q-score-badge {
+      padding: 4px 11px;
+      background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.2);
+      border-radius: 20px; font-size: 11px; font-weight: 700; color: var(--green);
+    }
+
+    .q-card {
+      margin: 6px 16px 0;
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 16px;
+    }
+    .q-num  { font-size: 9px; font-weight: 700; color: var(--cyan); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; }
+    .q-text { font-size: 15px; font-weight: 600; color: var(--white); line-height: 1.5; }
+
+    .opts-list { padding: 8px 16px 0; display: flex; flex-direction: column; gap: 7px; }
+    .opt-btn {
+      width: 100%; padding: 12px 14px;
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 12px;
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; transition: all 0.18s; text-align: left;
+    }
+    .opt-btn:not([disabled]):hover { border-color: #3a4a60; }
+    .opt-btn:active { transform: scale(0.98); }
+    .opt-ltr {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--grey-dim); display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: var(--white); flex-shrink: 0;
+    }
+    .opt-txt { font-size: 13px; color: var(--white); flex: 1; line-height: 1.4; }
+    .opt-btn.correct  { border-color: var(--green); background: rgba(0,230,118,0.08); }
+    .opt-btn.correct .opt-ltr { background: var(--green); color: #04080f; }
+    .opt-btn.wrong    { border-color: var(--red); background: rgba(255,71,87,0.08); }
+    .opt-btn.wrong .opt-ltr   { background: var(--red); color: #fff; }
+
+    .fact-pill {
+      margin: 8px 16px 0;
+      background: rgba(0,245,255,0.06); border: 1px solid rgba(0,245,255,0.14);
+      border-radius: 12px; padding: 11px 13px;
+      font-size: 11px; color: var(--grey); line-height: 1.6;
+      display: none;
+    }
+    .fact-pill strong { color: var(--cyan); }
+
+    .next-q-btn {
+      margin: 10px 16px 0; width: calc(100% - 32px);
+      padding: 13px; background: var(--cyan); color: #04080f;
+      border: none; border-radius: 12px;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.2s; display: none;
+    }
+    .next-q-btn:active { transform: scale(0.98); }
+
+    /* Quiz Results */
+    .quiz-results {
+      padding: 20px 20px 10px;
+      text-align: center; display: none;
+    }
+    .res-emoji { font-size: 52px; margin-bottom: 10px; }
+    .res-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px; color: var(--white); line-height: 1.9; margin-bottom: 16px;
+    }
+    .res-score { font-size: 52px; font-weight: 800; color: var(--cyan); line-height: 1; }
+    .res-sub   { font-size: 13px; color: var(--grey); margin-bottom: 16px; }
+    .res-xp {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 10px 22px; border-radius: 24px;
+      background: rgba(255,214,0,0.1); border: 1px solid rgba(255,214,0,0.25);
+      font-size: 17px; font-weight: 800; color: var(--gold); margin-bottom: 22px;
+    }
+    .res-again {
+      width: 100%; padding: 13px; background: var(--cyan); color: #04080f;
+      border: none; border-radius: 12px;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer; margin-bottom: 8px; transition: all 0.2s;
+    }
+    .res-back {
+      width: 100%; padding: 12px; background: transparent;
+      color: var(--grey); border: 1px solid var(--border);
+      border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .res-again:active, .res-back:active { transform: scale(0.98); }
+
+    /* ─── PROFILE SCREEN ─── */
+    .prof-hero { padding: 14px 20px; display: flex; align-items: center; gap: 14px; }
+    .prof-av {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: linear-gradient(135deg, #0a4060, #003040);
+      border: 3px solid var(--cyan);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; box-shadow: 0 0 22px rgba(0,245,255,0.22);
+    }
+    .prof-name   { font-size: 17px; font-weight: 700; color: var(--white); margin-bottom: 2px; }
+    .prof-cohort { font-size: 11px; color: var(--grey); margin-bottom: 7px; }
+    .prof-lv     { font-size: 11px; font-weight: 700; color: var(--cyan); }
+
+    .badges-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
+    .bdg {
+      aspect-ratio: 1; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+      border: 1.5px solid; transition: all 0.2s;
+    }
+    .bdg.earned { background: var(--card); border-color: var(--border); }
+    .bdg.locked { background: rgba(15,22,38,0.5); border-color: rgba(30,45,69,0.5); opacity: 0.45; }
+    .bdg-e  { font-size: 20px; }
+    .bdg-nm { font-size: 7px; font-weight: 600; color: var(--grey); text-transform: uppercase; letter-spacing: 0.04em; text-align: center; line-height: 1.2; }
+    .bdg.earned .bdg-nm { color: var(--white); }
+
+    .prof-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .ps-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 13px; }
+    .ps-val  { font-size: 20px; font-weight: 800; color: var(--white); }
+    .ps-lbl  { font-size: 9px; color: var(--grey); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+  </style>
+</head>
+<body>
+
+  <div class="outer-label">Hawker Boys · App Preview</div>
+
+  <div class="phone-wrap">
+    <!-- Side buttons -->
+    <div class="side-btn btn-silent"></div>
+    <div class="side-btn btn-vol-up"></div>
+    <div class="side-btn btn-vol-dn"></div>
+    <div class="side-btn btn-power"></div>
+
+    <div class="phone-device">
+
+      <!-- Dynamic Island -->
+      <div class="dynamic-island"><div class="di-dot"></div></div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <span class="status-time" id="sTime">9:41</span>
+        <div class="status-right">
+          <svg width="16" height="11" viewBox="0 0 16 11"><rect x="0" y="5" width="2.5" height="6" rx="1" opacity="1"/><rect x="4" y="3.5" width="2.5" height="7.5" rx="1" opacity="0.8"/><rect x="8" y="1.5" width="2.5" height="9.5" rx="1" opacity="0.6"/><rect x="12" y="0" width="2.5" height="11" rx="1" opacity="0.3"/></svg>
+          <svg width="14" height="11" viewBox="0 0 14 11"><path d="M7 1.5C4.2 1.5 1.8 3 0.5 5.3 2 7.8 4.4 9.5 7 9.5s5-1.7 6.5-4.2C12.2 3 9.8 1.5 7 1.5z" opacity="0.35"/><path d="M7 3.5C5.2 3.5 3.6 4.6 2.5 6c1.1 1.4 2.7 2.5 4.5 2.5S10.4 7.4 11.5 6C10.4 4.6 8.8 3.5 7 3.5z" opacity="0.65"/><circle cx="7" cy="6" r="2"/></svg>
+          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="white" stroke-width="1" fill="none"/><rect x="21" y="3" width="2.5" height="5" rx="1.5" fill="white" opacity="0.5"/><rect x="2" y="2" width="16" height="7" rx="1.5" fill="white"/></svg>
+        </div>
+      </div>
+
+      <!-- Screen Container -->
+      <div class="screen-container">
+
+        <!-- ══ HOME ══ -->
+        <div id="scr-home" class="screen active">
+          <div class="screen-hdr">
+            <div class="screen-ttl">DASHBOARD</div>
+            <span style="font-size:20px;cursor:pointer;">🔔</span>
+          </div>
+
+          <div class="user-row">
+            <div class="avatar">👨‍🍳</div>
+            <div>
+              <div class="user-name">Ahmad R.</div>
+              <div class="user-sub">Cohort 6 · Stage 1</div>
+            </div>
+            <div class="lvl-badge">LVL 2</div>
+          </div>
+
+          <div class="xp-card">
+            <div class="xp-row">
+              <span class="xp-lbl">Progress to Level 3</span>
+              <span class="xp-val" id="xpDisplay">340 / 500 XP</span>
+            </div>
+            <div class="pbar-track">
+              <div class="pbar-fill" id="xpBar" style="width:68%;background:linear-gradient(90deg,#00f5ff,#00c8d4);box-shadow:0 0 8px rgba(0,245,255,0.35);"></div>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-chip"><div class="sc-ico">🔥</div><div class="sc-val">7</div><div class="sc-lbl">Streak</div></div>
+            <div class="stat-chip"><div class="sc-ico">📅</div><div class="sc-val">23</div><div class="sc-lbl">Days In</div></div>
+            <div class="stat-chip"><div class="sc-ico">⭐</div><div class="sc-val" id="dashXP">340</div><div class="sc-lbl">Total XP</div></div>
+          </div>
+
+          <div class="journey-card">
+            <div class="card-lbl">Your Journey</div>
+            <div class="jc-head">
+              <div>
+                <div class="jc-name">🍳 Training</div>
+                <div class="jc-sub">Stage 1 of 4 · Week 3</div>
+              </div>
+              <div style="font-size:11px;color:var(--green);font-weight:700;align-self:flex-end;">On Track ✓</div>
+            </div>
+            <div class="pbar-track">
+              <div class="pbar-fill" style="width:35%;background:var(--cyan);box-shadow:0 0 8px rgba(0,245,255,0.35);"></div>
+            </div>
+            <div class="jc-meta"><span class="jc-pct">35% complete</span></div>
+            <div class="stage-pills">
+              <div class="pill" style="color:var(--cyan);border-color:rgba(0,245,255,0.3);background:rgba(0,245,255,0.08);">Training</div>
+              <div class="pill" style="color:var(--grey);border-color:var(--grey-dim)">Placement</div>
+              <div class="pill" style="color:var(--grey);border-color:var(--grey-dim)">Aftercare</div>
+              <div class="pill" style="color:var(--grey);border-color:var(--grey-dim)">Ownership</div>
+            </div>
+          </div>
+
+          <div class="challenge-card" onclick="navTo('games')">
+            <div class="cc-head">
+              <span class="cc-tag">⚡ Today's Challenge</span>
+              <span class="cc-xp">+50 XP</span>
+            </div>
+            <div class="cc-text">Hawker Culture Quiz — test your knowledge of Singapore's food heritage.</div>
+            <div class="cc-cta">Tap to play →</div>
+          </div>
+
+          <div class="quick-grid">
+            <div class="quick-btn" onclick="navTo('pathway')">
+              <div class="qb-ico">🗺️</div>
+              <div><div class="qb-ttl">Pathway</div><div class="qb-sub">View all stages</div></div>
+            </div>
+            <div class="quick-btn" onclick="navTo('games')">
+              <div class="qb-ico">🎮</div>
+              <div><div class="qb-ttl">Play</div><div class="qb-sub">Earn XP</div></div>
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+        </div><!-- /home -->
+
+        <!-- ══ PATHWAY ══ -->
+        <div id="scr-pathway" class="screen">
+          <div class="screen-hdr">
+            <div class="screen-ttl">YOUR JOURNEY</div>
+            <span style="font-size:11px;color:var(--grey);font-weight:600;">1 / 4</span>
+          </div>
+          <div style="padding:4px 20px 10px;font-size:12px;color:var(--grey);line-height:1.6;">From zero experience to owning your own hawker stall.</div>
+
+          <div class="pathway-wrap">
+
+            <!-- Stage 1: Training -->
+            <div class="pt-item">
+              <div class="pt-node lit" style="border-color:var(--cyan);background:rgba(0,245,255,0.1);color:var(--cyan);">🍳</div>
+              <div class="pt-body current">
+                <div class="pt-stage-lbl" style="color:var(--cyan);">Stage 01 — Active</div>
+                <div class="pt-stage-ttl">Training</div>
+                <div class="pt-stage-desc">Culinary skills, food safety and kitchen operations under experienced mentors.</div>
+                <div style="margin-bottom:9px;">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                    <span style="font-size:10px;color:var(--grey);">Your progress</span>
+                    <span style="font-size:10px;color:var(--cyan);font-weight:700;">35%</span>
+                  </div>
+                  <div class="pbar-track"><div class="pbar-fill" style="width:35%;background:var(--cyan);box-shadow:0 0 6px rgba(0,245,255,0.35);"></div></div>
+                </div>
+                <div class="pt-milestones">
+                  <div class="pt-ms"><div class="pt-ms-dot" style="background:var(--green)"></div>Food Hygiene Cert — Done</div>
+                  <div class="pt-ms"><div class="pt-ms-dot" style="background:var(--green)"></div>Basic Cooking Assessment — Done</div>
+                  <div class="pt-ms"><div class="pt-ms-dot" style="background:var(--cyan)"></div>Advanced Techniques — In Progress</div>
+                  <div class="pt-ms"><div class="pt-ms-dot" style="background:var(--grey-dim)"></div>Final Practical Exam — Pending</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stage 2: Placement -->
+            <div class="pt-item">
+              <div class="pt-node" style="border-color:var(--grey-dim);background:var(--grey-dim);color:var(--grey);opacity:.6;">🏪</div>
+              <div class="pt-body">
+                <div class="pt-stage-lbl" style="color:var(--magenta);">Stage 02 — Upcoming</div>
+                <div class="pt-stage-ttl">Placement</div>
+                <div class="pt-stage-desc">Live stall under supervision. Real customers, real targets, real accountability.</div>
+                <div class="pt-milestones"><div class="pt-lock">🔒 Complete Training first</div></div>
+              </div>
+            </div>
+
+            <!-- Stage 3: Aftercare -->
+            <div class="pt-item">
+              <div class="pt-node" style="border-color:var(--grey-dim);background:var(--grey-dim);color:var(--grey);opacity:.6;">🤝</div>
+              <div class="pt-body">
+                <div class="pt-stage-lbl" style="color:var(--gold);">Stage 03 — Locked</div>
+                <div class="pt-stage-ttl">Aftercare</div>
+                <div class="pt-stage-desc">Business support, financial counselling, and peer mentorship to stabilise your stall.</div>
+                <div class="pt-milestones"><div class="pt-lock">🔒 Complete Placement first</div></div>
+              </div>
+            </div>
+
+            <!-- Stage 4: Ownership -->
+            <div class="pt-item">
+              <div class="pt-node" style="border-color:var(--grey-dim);background:var(--grey-dim);color:var(--grey);opacity:.6;">🏆</div>
+              <div class="pt-body">
+                <div class="pt-stage-lbl" style="color:var(--green);">Stage 04 — Goal</div>
+                <div class="pt-stage-ttl">Ownership</div>
+                <div class="pt-stage-desc">Your stall, your brand, your income. Join 40+ alumni running their own businesses.</div>
+                <div style="margin-top:8px;padding:9px 11px;background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.14);border-radius:9px;font-size:11px;color:var(--green);font-weight:600;">🏆 Alumni avg revenue: $12,000/month</div>
+              </div>
+            </div>
+
+          </div>
+          <div style="height:14px;"></div>
+        </div><!-- /pathway -->
+
+        <!-- ══ GAMES ══ -->
+        <div id="scr-games" class="screen">
+
+          <!-- Games Hub -->
+          <div id="gamesHub">
+            <div class="screen-hdr">
+              <div class="screen-ttl">GAMES</div>
+              <span style="font-size:11px;color:var(--grey);font-weight:600;" id="totalXPLbl">340 XP</span>
+            </div>
+
+            <div class="game-main-card" onclick="startQuiz()">
+              <div class="gmc-tag">🎯 Featured Game</div>
+              <div class="gmc-ttl">Hawker Quiz</div>
+              <div class="gmc-desc">10 questions on Singapore hawker culture, food history & industry knowledge.</div>
+              <div class="gmc-foot">
+                <div class="xp-badge">Up to +150 XP</div>
+                <button class="play-btn play-primary" onclick="event.stopPropagation();startQuiz()">Play Now</button>
+              </div>
+            </div>
+
+            <div class="game-sec-card">
+              <div class="gmc-tag" style="color:var(--gold);">📅 Daily Challenge</div>
+              <div class="gmc-ttl" style="font-size:17px;">Stall Ops Q&amp;A</div>
+              <div class="gmc-desc">One operational question per day. Build real stall management knowledge.</div>
+              <div class="gmc-foot">
+                <div class="xp-badge">+25 XP</div>
+                <button class="play-btn play-gold">Today's Q</button>
+              </div>
+            </div>
+
+            <div class="lb-card">
+              <div class="card-lbl">🏆 Cohort Leaderboard</div>
+              <div class="lb-row"><span class="lb-num" style="color:var(--gold)">1</span><span class="lb-emo">🧑‍🍳</span><span class="lb-who">Farah M.</span><span class="lb-xp">820 XP</span></div>
+              <div class="lb-row"><span class="lb-num" style="color:#c0c8d0">2</span><span class="lb-emo">👩‍🍳</span><span class="lb-who">Wei Lin</span><span class="lb-xp">610 XP</span></div>
+              <div class="lb-row"><span class="lb-num" style="color:#cd7f32">3</span><span class="lb-emo">👨‍🍳</span><span class="lb-who">Ahmad R. <span style="color:var(--cyan);font-size:9px;">(You)</span></span><span class="lb-xp" id="lbYou">340 XP</span></div>
+              <div class="lb-row"><span class="lb-num" style="color:var(--grey)">4</span><span class="lb-emo">🧑‍🍳</span><span class="lb-who">Ravi S.</span><span class="lb-xp">280 XP</span></div>
+              <div class="lb-row"><span class="lb-num" style="color:var(--grey)">5</span><span class="lb-emo">👩‍🍳</span><span class="lb-who">Mei Ling</span><span class="lb-xp">195 XP</span></div>
+            </div>
+
+            <div style="height:14px;"></div>
+          </div><!-- /gamesHub -->
+
+          <!-- Quiz View -->
+          <div id="quizView">
+            <div class="quiz-topbar">
+              <div class="quiz-back" onclick="exitQuiz()">←</div>
+              <div class="qprog-wrap">
+                <div class="qprog-lbl" id="qProgLbl">Question 1 of 10</div>
+                <div class="pbar-track">
+                  <div class="pbar-fill" id="qProgBar" style="width:10%;background:var(--cyan);box-shadow:0 0 8px rgba(0,245,255,0.35);"></div>
+                </div>
+              </div>
+              <div class="q-score-badge" id="qScoreBadge">0 / 0</div>
+            </div>
+
+            <div id="qCard" class="q-card">
+              <div class="q-num" id="qNum">QUESTION 01</div>
+              <div class="q-text" id="qText">Loading…</div>
+            </div>
+
+            <div class="opts-list" id="optsList"></div>
+            <div class="fact-pill" id="factPill"></div>
+            <button class="next-q-btn" id="nextQBtn" onclick="nextQ()">Next Question →</button>
+
+            <div class="quiz-results" id="quizResults">
+              <div class="res-emoji" id="resEmoji">🎉</div>
+              <div class="res-title" id="resTitle">QUIZ COMPLETE!</div>
+              <div class="res-score" id="resScore">8/10</div>
+              <div class="res-sub">Correct answers</div>
+              <div class="res-xp" id="resXP">+130 XP Earned</div>
+              <button class="res-again" onclick="restartQuiz()">Play Again</button>
+              <button class="res-back" onclick="exitQuiz()">Back to Games</button>
+            </div>
+          </div><!-- /quizView -->
+
+        </div><!-- /games -->
+
+        <!-- ══ PROFILE ══ -->
+        <div id="scr-profile" class="screen">
+          <div class="screen-hdr">
+            <div class="screen-ttl">PROFILE</div>
+            <span style="font-size:18px;cursor:pointer;">⚙️</span>
+          </div>
+
+          <div class="prof-hero">
+            <div class="prof-av">👨‍🍳</div>
+            <div>
+              <div class="prof-name">Ahmad R.</div>
+              <div class="prof-cohort">Cohort 6 · Batch B · Training</div>
+              <div class="prof-lv">Level 2 — Trainee</div>
+            </div>
+          </div>
+
+          <div class="xp-card">
+            <div class="xp-row">
+              <span class="xp-lbl">Level Progress</span>
+              <span class="xp-val" id="profXP">340 / 500 XP</span>
+            </div>
+            <div class="pbar-track">
+              <div class="pbar-fill" id="profXPBar" style="width:68%;background:linear-gradient(90deg,#00f5ff,#00c8d4);box-shadow:0 0 8px rgba(0,245,255,0.35);"></div>
+            </div>
+            <div style="margin-top:7px;font-size:10px;color:var(--grey);">160 XP to Level 3 — Operator</div>
+          </div>
+
+          <div class="card">
+            <div class="card-lbl">Achievements</div>
+            <div class="badges-grid">
+              <div class="bdg earned"><div class="bdg-e">🎯</div><div class="bdg-nm">First Day</div></div>
+              <div class="bdg earned"><div class="bdg-e">🔥</div><div class="bdg-nm">7 Streak</div></div>
+              <div class="bdg earned"><div class="bdg-e">📜</div><div class="bdg-nm">Certified</div></div>
+              <div class="bdg earned"><div class="bdg-e">⭐</div><div class="bdg-nm">300 XP</div></div>
+              <div class="bdg locked"><div class="bdg-e">🏪</div><div class="bdg-nm">Placed</div></div>
+              <div class="bdg locked"><div class="bdg-e">💰</div><div class="bdg-nm">First $1K</div></div>
+              <div class="bdg locked"><div class="bdg-e">🏆</div><div class="bdg-nm">Owner</div></div>
+              <div class="bdg locked"><div class="bdg-e">🌟</div><div class="bdg-nm">Mentor</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-lbl">Your Stats</div>
+            <div class="prof-stats">
+              <div class="ps-item"><div class="ps-val" style="color:var(--cyan)" id="profXPStat">340</div><div class="ps-lbl">Total XP</div></div>
+              <div class="ps-item"><div class="ps-val" style="color:var(--gold)">23</div><div class="ps-lbl">Days Active</div></div>
+              <div class="ps-item"><div class="ps-val" style="color:var(--magenta)">7</div><div class="ps-lbl">Day Streak</div></div>
+              <div class="ps-item"><div class="ps-val" style="color:var(--green)">35%</div><div class="ps-lbl">Stage Done</div></div>
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+        </div><!-- /profile -->
+
+      </div><!-- /screen-container -->
+
+      <!-- Bottom Nav -->
+      <div class="bottom-nav">
+        <button class="nav-btn active" id="nav-home"    onclick="navTo('home')">   <span class="nav-icon">🏠</span><span class="nav-label">Home</span>   </button>
+        <button class="nav-btn"        id="nav-pathway" onclick="navTo('pathway')"><span class="nav-icon">🗺️</span><span class="nav-label">Pathway</span></button>
+        <button class="nav-btn"        id="nav-games"   onclick="navTo('games')">  <span class="nav-icon">🎮</span><span class="nav-label">Games</span>  </button>
+        <button class="nav-btn"        id="nav-profile" onclick="navTo('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profile</span></button>
+      </div>
+
+      <div class="home-indicator"></div>
+
+    </div><!-- /phone-device -->
+  </div><!-- /phone-wrap -->
+
+  <script>
+  // ── STATE ──────────────────────────────────────────────────────────
+  const S = { xp: 340, xpMax: 500 };
+
+  // ── QUIZ DATA ──────────────────────────────────────────────────────
+  const QUIZ = [
+    { q: "What is considered Singapore's unofficial national dish?",
+      opts:["Char Kway Teow","Hainanese Chicken Rice","Laksa"], ans:1,
+      fact:"Hainanese Chicken Rice is served across 5,000+ stalls — the most iconic dish in Singapore." },
+    { q: "What does 'wok hei' (镬气) literally translate to?",
+      opts:["Wok smoke","Breath of the wok","Wok fire"], ans:1,
+      fact:"Wok hei is the charred, smoky flavour only achievable at extreme heat — the mark of a skilled hawker." },
+    { q: "Which year was Singapore hawker culture inscribed on UNESCO's Intangible Heritage list?",
+      opts:["2019","2020","2022"], ans:1,
+      fact:"Singapore became the first country to have hawker culture recognised by UNESCO." },
+    { q: "What does 'teh tarik' literally mean in Malay?",
+      opts:["Sweet milk tea","Pulled tea","Frothy tea"], ans:1,
+      fact:"The 'pulling' pours tea between containers to aerate it — creating that thick creamy froth." },
+    { q: "In hawker context, what does 'tapao' mean?",
+      opts:["Share a dish","Extra spicy","Take away"], ans:2,
+      fact:"Tapao (打包) comes from Cantonese and is used across all races in Singapore — a true cultural blend." },
+    { q: "Which fat gives authentic char kway teow its signature flavour?",
+      opts:["Vegetable oil","Sesame oil","Lard"], ans:2,
+      fact:"Authentic char kway teow uses lard for its distinctive rich depth. Many modern stalls now substitute this." },
+    { q: "Laksa is a fusion of which two food traditions?",
+      opts:["Indian & Malay","Chinese & Malay","Indian & Chinese"], ans:1,
+      fact:"Laksa reflects Peranakan heritage — a beautiful blend of Chinese and Malay cooking cultures." },
+    { q: "What does 'cai png' (菜饭) literally mean?",
+      opts:["Fried rice","Mixed rice","Egg rice"], ans:1,
+      fact:"Cai png — rice with a selection of dishes — is one of Singapore's most affordable and popular meals." },
+    { q: "Approximately how many hawker stalls operate in Singapore?",
+      opts:["~6,000","~14,000","~3,000"], ans:1,
+      fact:"Singapore has over 14,000 stalls across 114 NEA-managed centres — one of the world's great street food cultures." },
+    { q: "Wok hei is best achieved by cooking at...",
+      opts:["Medium heat for longer","Extremely high heat quickly","Low heat with a lid"], ans:1,
+      fact:"Blazing heat and speed are the keys to wok hei. Hawker cooking is both an art and a sport." }
+  ];
+
+  const LTRS = ['A','B','C'];
+  let QS = { idx:0, score:0, answered:null, xpEarned:0 };
+
+  // ── NAVIGATION ─────────────────────────────────────────────────────
+  function navTo(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('scr-' + id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('nav-' + id).classList.add('active');
+    document.getElementById('scr-' + id).scrollTop = 0;
+  }
+
+  // ── QUIZ ───────────────────────────────────────────────────────────
+  function startQuiz() {
+    QS = { idx:0, score:0, answered:null, xpEarned:0 };
+    document.getElementById('gamesHub').classList.add('off');
+    document.getElementById('quizView').classList.add('on');
+    document.getElementById('qCard').style.display = 'block';
+    document.getElementById('optsList').style.display = 'flex';
+    document.getElementById('quizResults').style.display = 'none';
+    renderQ();
+  }
+
+  function renderQ() {
+    const q = QUIZ[QS.idx];
+    document.getElementById('qProgLbl').textContent = `Question ${QS.idx+1} of ${QUIZ.length}`;
+    document.getElementById('qProgBar').style.width = ((QS.idx+1)/QUIZ.length*100)+'%';
+    document.getElementById('qScoreBadge').textContent = `${QS.score} / ${QS.idx}`;
+    document.getElementById('qNum').textContent = `QUESTION ${String(QS.idx+1).padStart(2,'0')}`;
+    document.getElementById('qText').textContent = q.q;
+
+    const list = document.getElementById('optsList');
+    list.innerHTML = '';
+    q.opts.forEach((opt,i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.innerHTML = `<div class="opt-ltr">${LTRS[i]}</div><span class="opt-txt">${opt}</span>`;
+      btn.onclick = () => pickAns(i);
+      list.appendChild(btn);
+    });
+
+    document.getElementById('factPill').style.display = 'none';
+    document.getElementById('nextQBtn').style.display = 'none';
+    QS.answered = null;
+    document.getElementById('scr-games').scrollTop = 0;
+  }
+
+  function pickAns(chosen) {
+    if (QS.answered !== null) return;
+    QS.answered = chosen;
+    const q = QUIZ[QS.idx];
+    const correct = chosen === q.ans;
+    document.querySelectorAll('.opt-btn').forEach((b,i) => {
+      b.disabled = true;
+      if (i === q.ans)          b.classList.add('correct');
+      if (i === chosen && !correct) b.classList.add('wrong');
+    });
+    if (correct) { QS.score++; QS.xpEarned += 15; }
+    const fp = document.getElementById('factPill');
+    fp.innerHTML = `<strong>💡 Did you know?</strong> ${q.fact}`;
+    fp.style.display = 'block';
+    const nb = document.getElementById('nextQBtn');
+    nb.style.display = 'block';
+    nb.textContent = QS.idx >= QUIZ.length-1 ? 'See Results →' : 'Next Question →';
+    document.getElementById('scr-games').scrollTop = 999;
+  }
+
+  function nextQ() {
+    if (QS.idx >= QUIZ.length-1) { showResults(); return; }
+    QS.idx++;
+    renderQ();
+  }
+
+  function showResults() {
+    QS.xpEarned += 50; // completion bonus
+    S.xp += QS.xpEarned;
+    updateXP();
+
+    document.getElementById('qCard').style.display = 'none';
+    document.getElementById('optsList').style.display = 'none';
+    document.getElementById('factPill').style.display = 'none';
+    document.getElementById('nextQBtn').style.display = 'none';
+
+    const s = QS.score, t = QUIZ.length;
+    const [emoji, title] = s >= 9 ? ['🏆','HAWKER MASTER!'] :
+                           s >= 7 ? ['🎉','EXCELLENT WORK!'] :
+                           s >= 5 ? ['💪','GOOD EFFORT!']    :
+                                    ['📚','KEEP LEARNING!'];
+
+    document.getElementById('resEmoji').textContent   = emoji;
+    document.getElementById('resTitle').textContent   = title;
+    document.getElementById('resScore').textContent   = `${s}/${t}`;
+    document.getElementById('resXP').textContent      = `+${QS.xpEarned} XP Earned`;
+    document.getElementById('quizResults').style.display = 'block';
+    document.getElementById('scr-games').scrollTop = 0;
+  }
+
+  function restartQuiz() { startQuiz(); }
+
+  function exitQuiz() {
+    document.getElementById('gamesHub').classList.remove('off');
+    document.getElementById('quizView').classList.remove('on');
+    document.getElementById('qCard').style.display = 'block';
+    document.getElementById('optsList').style.display = 'flex';
+    document.getElementById('quizResults').style.display = 'none';
+    document.getElementById('factPill').style.display = 'none';
+    document.getElementById('nextQBtn').style.display = 'none';
+    document.getElementById('scr-games').scrollTop = 0;
+  }
+
+  // ── XP UPDATE ──────────────────────────────────────────────────────
+  function updateXP() {
+    const pct = Math.min(S.xp / S.xpMax * 100, 100);
+    document.getElementById('xpDisplay').textContent  = `${S.xp} / ${S.xpMax} XP`;
+    document.getElementById('xpBar').style.width      = pct+'%';
+    document.getElementById('dashXP').textContent     = S.xp;
+    document.getElementById('totalXPLbl').textContent = `${S.xp} XP`;
+    document.getElementById('lbYou').textContent      = `${S.xp} XP`;
+    document.getElementById('profXP').textContent     = `${S.xp} / ${S.xpMax} XP`;
+    document.getElementById('profXPBar').style.width  = pct+'%';
+    document.getElementById('profXPStat').textContent = S.xp;
+  }
+
+  // ── CLOCK ──────────────────────────────────────────────────────────
+  function tick() {
+    const n = new Date();
+    document.getElementById('sTime').textContent =
+      String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 15000);
+
+  updateXP();
+  </script>
+</body>
+</html>
