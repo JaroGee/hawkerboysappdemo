@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAWKR.AI — Singapore Hawker Intelligence Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ember: { DEFAULT: '#E8521A', 50: '#fef3ee', 600: '#c4431a' },
+            ink: '#0F0F0F',
+            fog: '#F2F2F0',
+            teal: { DEFAULT: '#0E7C7B', 50: '#e6f4f4', 600: '#0b6665' },
+            gold: { DEFAULT: '#C9993A', 50: '#fdf6e9', 600: '#a8802f' },
+          },
+          fontFamily: {
+            sans: ['DM Sans', 'sans-serif'],
+            mono: ['DM Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/recharts@2.12.0/umd/Recharts.js"></script>
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    .font-mono { font-family: 'DM Mono', monospace; }
+    .sidebar-scrollbar::-webkit-scrollbar { width: 4px; }
+    .sidebar-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
+    .card-flip { perspective: 1000px; }
+    .card-flip-inner { transition: transform 0.6s; transform-style: preserve-3d; position: relative; }
+    .card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+    .card-front, .card-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .card-back { transform: rotateY(180deg); position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .animate-spin { animation: spin 1s linear infinite; }
+    .prose-hawkr { white-space: pre-wrap; line-height: 1.7; }
+    .prose-hawkr strong { font-weight: 600; color: #0F0F0F; }
+  </style>
+</head>
+<body class="bg-fog text-ink">
+  <div id="root"></div>
+  <script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } = Recharts;
+
+// ─── Icon System ───────────────────────────────────────────────────────────────
+const Icon = ({d, size=18, className=''}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d={d}/>
+  </svg>
+);
+const Target = ({size=18,className=''}) => <Icon d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" size={size} className={className}/>;
+const Calculator = ({size=18,className=''}) => <Icon d="M4 2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM8 6v4M16 6v4M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" size={size} className={className}/>;
+const MapIcon = ({size=18,className=''}) => <Icon d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" size={size} className={className}/>;
+const Book = ({size=18,className=''}) => <Icon d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z" size={size} className={className}/>;
+const Settings = ({size=18,className=''}) => <Icon d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" size={size} className={className}/>;
+const BarChart2 = ({size=18,className=''}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+  </svg>
+);
+const Lightbulb = ({size=18,className=''}) => <Icon d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" size={size} className={className}/>;
+const MessageCircle = ({size=18,className=''}) => <Icon d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" size={size} className={className}/>;
+const ChevronLeft = ({size=18,className=''}) => <Icon d="M15 18l-6-6 6-6" size={size} className={className}/>;
+const ChevronRight = ({size=18,className=''}) => <Icon d="M9 18l6-6-6-6" size={size} className={className}/>;
+const Send = ({size=18,className=''}) => <Icon d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" size={size} className={className}/>;
+const X = ({size=18,className=''}) => <Icon d="M18 6L6 18M6 6l12 12" size={size} className={className}/>;
+const Plus = ({size=18,className=''}) => <Icon d="M12 5v14M5 12h14" size={size} className={className}/>;
+const Minus = ({size=18,className=''}) => <Icon d="M5 12h14" size={size} className={className}/>;
+const Download = ({size=18,className=''}) => <Icon d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" size={size} className={className}/>;
+const RefreshCw = ({size=18,className=''}) => <Icon d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" size={size} className={className}/>;
+const Loader = ({size=18,className=''}) => <Icon d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" size={size} className={`animate-spin ${className}`}/>;
+const Search = ({size=18,className=''}) => <Icon d="M11 17a6 6 0 1 0 0-12 6 6 0 0 0 0 12zM21 21l-4.35-4.35" size={size} className={className}/>;
+const TrendingUp = ({size=18,className=''}) => <Icon d="M23 6l-9.5 9.5-5-5L1 18M17 6h6v6" size={size} className={className}/>;
+const Star = ({size=18,className=''}) => <Icon d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" size={size} className={className}/>;
+const ExternalLink = ({size=18,className=''}) => <Icon d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" size={size} className={className}/>;
+const CheckCircle = ({size=18,className=''}) => <Icon d="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3" size={size} className={className}/>;
+const AlertCircle = ({size=18,className=''}) => <Icon d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4M12 16h.01" size={size} className={className}/>;
+const InfoIcon = ({size=18,className=''}) => <Icon d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 16v-4M12 8h.01" size={size} className={className}/>;
+
+// ─── AI Call ───────────────────────────────────────────────────────────────────
+async function callHawkrAI(userMessages, contextNote = '') {
+  const sys = `You are HAWKR.AI — Singapore's most knowledgeable hawker advisor. You have deep expertise in NEA tender mechanics, stall operations, Singapore F&B supply chains, local culinary tradition, and hawker business economics. Respond practically, with Singapore-specific context. Use local terminology naturally (AMR, SFA, CPF, MOM, kopitiams, NEA, S&CC). Be direct and specific with numbers.${contextNote ? '\n\n' + contextNote : ''}`;
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': window.HAWKR_API_KEY || '' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: sys, messages: userMessages })
+  });
+  if (!res.ok) throw new Error('API error ' + res.status);
+  const d = await res.json();
+  return d.content[0].text;
+}
+
+// ─── Constants ─────────────────────────────────────────────────────────────────
+const MODULES = [
+  { id: 'tender', label: 'Tender Intelligence', emoji: '🎯', external: true, href: 'index.html' },
+  { id: 'cost', label: 'Cost Engine', emoji: '💰' },
+  { id: 'stalls', label: 'Stall Finder', emoji: '🗺️' },
+  { id: 'culinary', label: 'Culinary Knowledge', emoji: '🍜' },
+  { id: 'operations', label: 'Operations', emoji: '⚙️' },
+  { id: 'business', label: 'Business Builder', emoji: '📊' },
+  { id: 'insider', label: 'Insider Tips', emoji: '💡' },
+  { id: 'chat', label: 'Ask HAWKR', emoji: '❓' },
+];
+
+const VENUES = [
+  { id: 1, name: 'NEA Hawker Centres', type: 'NEA', badge: 'NEA', rental: '$500–$6,000', model: 'Competitive Tender', footfall: 'High', pros: ['Subsidised infrastructure', 'High foot traffic', 'NEA support programmes'], cons: ['Competitive bidding', '3+3 year tenure', 'Strict hygiene rules'], link: 'https://go.gov.sg/tendernotice' },
+  { id: 2, name: 'Social Enterprise Hawker Centres (SEHC)', type: 'SEHC', badge: 'SEHC', rental: '$1,200–$3,500', model: 'Fixed (No Bidding)', footfall: 'High', pros: ['Predictable rent', 'No bidding war', 'Managed operator support'], cons: ['Less flexibility', 'Operator rules apply', 'Limited stall types'] },
+  { id: 3, name: 'Town Council Centres', type: 'TC', badge: 'Town Council', rental: '$800–$2,500', model: 'Application-based', footfall: 'Medium', pros: ['Lower rent', 'Community footfall', 'More flexible hours'], cons: ['Smaller crowd', 'Varies by town', 'Basic facilities'] },
+  { id: 4, name: 'Kopitiam (Foodfare/Kopitiam Group)', type: 'Private', badge: 'Private', rental: '$2,000–$5,000', model: 'Fixed Lease', footfall: 'High', pros: ['Air-conditioned', 'Heavy branding support', 'Multiple locations'], cons: ['High rent', 'Strict menu approval', 'Revenue sharing possible'] },
+  { id: 5, name: 'Food Junction / Koufu', type: 'Private', badge: 'Private', rental: '$2,500–$6,000', model: 'Fixed Lease', footfall: 'Very High', pros: ['Mall locations', 'High lunch crowds', 'Professional management'], cons: ['Very high competition', 'Mall operating hours', 'High cost base'] },
+  { id: 6, name: 'HDB Shophouse (F&B Ground Floor)', type: 'HDB', badge: 'HDB', rental: '$3,000–$8,000', model: 'Commercial Lease', footfall: 'Variable', pros: ['Full autonomy', 'Brand-building potential', 'No platform fees'], cons: ['High fitout costs', 'Self-managed marketing', 'Longer lease commitment'] },
+  { id: 7, name: 'Food Courts (Independent)', type: 'Private', badge: 'Food Court', rental: '$1,500–$4,000', model: 'Revenue Share / Fixed', footfall: 'Medium-High', pros: ['Lower startup cost', 'Shared infrastructure', 'Ready customer base'], cons: ['Revenue share cuts margin', 'Limited brand identity', 'Operator-dependent'] },
+];
+
+const RECIPES = [
+  { name: 'Hainanese Chicken Rice', cuisine: 'Chinese', costPerPortion: 1.80, sellPrice: 4.50, yield: '10 portions per 1.5kg chicken', ingredients: ['Whole chicken 1.5kg', 'Jasmine rice 500g', 'Ginger 50g', 'Garlic 30g', 'Pandan leaves', 'Sesame oil', 'Soy sauce', 'Chilli sauce'], method: 'Poach chicken 45 min at 90°C. Reserve stock. Fry rice in chicken fat with garlic, cook in stock. Rest chicken 20 min, slice. Serve with ginger-garlic chilli.', notes: 'Source whole chickens from Lim Ah Boy or Pasir Panjang wholesale. 1.5kg bird yields ~600g cooked meat at 40% yield.' },
+  { name: 'Char Kway Teow', cuisine: 'Chinese', costPerPortion: 1.40, sellPrice: 4.00, yield: '1 portion per wok toss', ingredients: ['Flat rice noodles 200g', 'Bean sprouts 50g', 'Eggs x2', 'Lup cheong 2 slices', 'Prawns 3–4 pcs', 'Cockles 6–8', 'Dark soy sauce', 'Fish sauce', 'Lard', 'Chilli paste'], method: 'High heat wok. Fry lard until crispy, add garlic, add noodles and toss. Add sauces, egg, bean sprouts, seafood. One-minute toss for wok hei.', notes: 'Lard is non-negotiable for authentic wok hei. Source from pork supplier. Cockles from wet market dawn run.' },
+  { name: 'Laksa', cuisine: 'Peranakan', costPerPortion: 2.20, sellPrice: 6.00, yield: '20 portions per batch rempah', ingredients: ['Laksa rempah 100g', 'Coconut milk 400ml', 'Chicken stock 500ml', 'Rice vermicelli 100g', 'Tau pok 2 pcs', 'Fish cake 50g', 'Prawns 3 pcs', 'Bean sprouts', 'Laksa leaf', 'Sambal'], method: 'Fry rempah in oil 15 min until fragrant. Add coconut milk and stock, simmer. Blanch noodles. Assemble with toppings.', notes: 'Rempah grinding is the key skill. Blend dried chillies, candlenuts, shallots, galangal, lemongrass, turmeric. Freeze in portions.' },
+  { name: 'Nasi Lemak', cuisine: 'Malay', costPerPortion: 1.60, sellPrice: 4.00, yield: '20 portions per 2kg rice', ingredients: ['Jasmine rice 2kg', 'Coconut milk 600ml', 'Pandan leaves 4', 'Lemongrass 1 stalk', 'Ikan bilis 200g', 'Peanuts 150g', 'Cucumber', 'Egg', 'Sambal'], method: 'Cook rice in coconut milk with pandan and lemongrass. Fry ikan bilis and peanuts separately. Prepare sambal in advance (keeps 5 days). Assemble per order.', notes: 'Sambal is your differentiator. Standard recipe: dried chillies, onions, belacan, tamarind. Cook low and slow 45 min.' },
+  { name: 'Hokkien Mee', cuisine: 'Chinese', costPerPortion: 1.80, sellPrice: 5.00, yield: '1 portion per wok', ingredients: ['Yellow noodles 150g', 'Thin vermicelli 50g', 'Prawns 3–4', 'Sotong rings', 'Pork belly slices', 'Eggs x2', 'Beansprouts', 'Prawn stock 200ml', 'Lard', 'Sambal', 'Lime'], method: 'High heat wok, fry lard. Add noodles, toss. Add stock, cover to braise 3 min until stock absorbs. Fold in egg, seafood, sprouts. Serve with sambal and lime.', notes: 'Prawn stock quality is everything. Roast prawn heads and shells before boiling. Freeze stock in daily batches.' },
+  { name: 'Roti Prata', cuisine: 'Indian', costPerPortion: 0.40, sellPrice: 1.20, yield: '1 prata per dough ball 80g', ingredients: ['Plain flour 1kg', 'Ghee 100g', 'Salt', 'Water 500ml', 'Eggs (optional)'], method: 'Mix dough, rest 4h. Oil ball, stretch thin on oiled surface. Fold into square. Cook on tawa with ghee until golden and crispy. Serve with dhal.', notes: 'Lamination technique takes 2–3 weeks to master. Stretching without tearing is the key skill. Dhal curry is your margin booster.' },
+  { name: 'Bak Chor Mee', cuisine: 'Chinese', costPerPortion: 1.50, sellPrice: 4.50, yield: '1 portion per order', ingredients: ['Mee pok 100g', 'Minced pork 80g', 'Pork liver 30g', 'Fish cake 2 slices', 'Mushrooms 2', 'Vinegar', 'Chilli', 'Lard', 'Dark soy', 'Sesame oil'], method: 'Blanch noodles 45 sec. Drain. Season bowl with vinegar, sauces, chilli. Top with braised mince and liver. Garnish with fried lard and crispy shallots.', notes: 'Dry version preferred by most. Vinegar ratio is your secret weapon. Pork liver must be fresh — order daily from wet market.' },
+  { name: 'Wonton Noodles', cuisine: 'Chinese', costPerPortion: 1.20, sellPrice: 4.00, yield: '20 wontons per 250g filling', ingredients: ['Wonton wrappers 20pcs', 'Prawn 150g', 'Pork mince 100g', 'Sesame oil', 'Oyster sauce', 'Egg white', 'Egg noodles', 'Char siew'], method: 'Make filling: mix prawn and pork with seasonings. Wrap wontons. Blanch noodles 30 sec, wontons 4 min. Assemble with soup or tossed with sauce.', notes: 'Pre-make and freeze wontons in batches of 200. Thaw overnight. Reduces morning prep from 2h to 20 min.' },
+  { name: 'Chicken Biryani', cuisine: 'Indian', costPerPortion: 2.80, sellPrice: 7.00, yield: '10 portions per 2kg chicken', ingredients: ['Basmati rice 1kg', 'Chicken 2kg', 'Yogurt 200g', 'Biryani masala', 'Ghee', 'Fried onions', 'Saffron', 'Mint', 'Coriander'], method: 'Marinate chicken overnight. Par-cook rice 70%. Layer in pot: rice, chicken, fried onions, herbs, saffron milk. Dum cook 45 min sealed. Rest 20 min.', notes: 'Serve with raita and kurma. High prep time but excellent margin. Popular for office lunch crowd. Prep evening before.' },
+  { name: 'Carrot Cake (Chai Tow Kway)', cuisine: 'Chinese', costPerPortion: 0.80, sellPrice: 3.50, yield: '20 portions per 1kg radish cake', ingredients: ['White radish 1kg', 'Rice flour 500g', 'Eggs x4', 'Bean sprouts', 'Spring onion', 'Dark soy sauce', 'Fish sauce', 'Lard'], method: 'Steam radish cake 45 min. Cool, cube. Fry on griddle with lard until crispy. Add egg, toss, add sauce and sprouts. Black version uses dark soy.', notes: 'Radish cake made in large batches, refrigerated up to 5 days. Black version is more profitable (higher perceived value).' },
+];
+
+const PROTEIN_GUIDES = [
+  { title: 'Whole Chicken Breakdown', content: 'A standard 1.5kg kampong chicken yields: 2 drumsticks (~200g), 2 thighs (~250g), 2 wings (~150g), breast meat (~350g), carcass for stock. Total yield ~65% after butchering. Source whole birds at $5–7/kg from NTUC suppliers or Pasir Panjang cold storage. Pre-portioning saves 30 min daily service.' },
+  { title: 'Fish Filleting (Seabass, Pomfret, Batang)', content: 'Seabass (600–800g): 40% fillet yield. Pomfret: best steamed whole — 55% edible. Batang/Spanish Mackerel: slice to 150g steaks, 70% usable. Buy from Jurong Fishery Port early morning for best price. Batang excellent for fish head curry or otah base.' },
+  { title: 'Prawn Preparation', content: 'Tiger prawns: 80% yield after deveining, 60% after peeling. Medium prawns (21/25 count) optimal for most hawker dishes. Source from Prima Seafood or Jurong. Pre-peel in batches, store in colander over ice. Never soak in water — dilutes flavour.' },
+];
+
+const SUPPLIERS = [
+  { id: 1, name: 'Pasir Panjang Wholesale Market', category: 'Wet Market', location: 'Pasir Panjang', products: 'Vegetables, fruits, tofu', moq: 'No minimum', payment: 'Cash / Nets', notes: 'Best prices dawn 4–6am. Bring trolley.' },
+  { id: 2, name: 'Jurong Fishery Port', category: 'Seafood', location: 'Jurong', products: 'All fresh seafood, prawns, fish', moq: 'Box lots', payment: 'Cash', notes: 'Open 12am–8am. Auction prices. Bring cool box.' },
+  { id: 3, name: 'Kim San Leng Food Industries', category: 'Dry Goods', location: 'Geylang', products: 'Noodles, dried goods, sauces', moq: 'Box of 10kg+', payment: 'Credit 30 days', notes: 'Wholesale pricing. Delivery available min $200 order.' },
+  { id: 4, name: 'Sin Bee Hong / Prima Flour', category: 'Dry Goods', location: 'Tuas/Delivered', products: 'Flour, rice, cooking oil', moq: '25kg bags', payment: 'Credit 30 days', notes: 'Account setup required. Best for high-volume ops.' },
+  { id: 5, name: 'Tong Lee Co', category: 'Specialty', location: 'Jalan Besar', products: 'Spices, rempah bases, curry powders', moq: '500g', payment: 'Cash / Nets', notes: 'Family-run since 1938. Best spice blends for Indian/Peranakan.' },
+  { id: 6, name: 'Sin Chew Foodstuff', category: 'Frozen/Chilled', location: 'Jurong West', products: 'Frozen seafood, meat portions, dim sum', moq: 'Carton', payment: 'Nets/Credit', notes: 'Good for backup stock. Not as fresh as Jurong Fishery.' },
+  { id: 7, name: 'Packaging Supplier - PackServ', category: 'Packaging', location: 'Ubi', products: 'Containers, bags, cutlery, printed boxes', moq: '500 units', payment: 'Transfer', notes: 'Custom printing min 1000 units. Lead time 2 weeks.' },
+  { id: 8, name: 'Foodco (Lian Huat)', category: 'Dry Goods', location: 'Joo Chiat', products: 'Sambal, chilli sauce, curry pastes (wholesale)', moq: 'Case of 12', payment: 'Nets', notes: 'Ready-made sauces for high volume. Compare vs. homemade costs.' },
+];
+
+const EQUIPMENT = [
+  { id: 1, name: 'Commercial Wok Range', category: 'Cooking', purpose: 'Stir-frying, boiling, steaming', spec: '2-burner, 120,000+ BTU', priceNew: '$800–$2,500', priceUsed: '$300–$800', where: 'Sing Lian or Thian Seng Hardware, Geylang', maintenance: 'Clean burner ports weekly, check gas connections monthly', cuisines: ['Chinese', 'Malay', 'Mixed'] },
+  { id: 2, name: 'Flat Top Griddle (Tawa)', category: 'Cooking', purpose: 'Roti prata, pancakes, carrot cake', spec: '90cm diameter, cast iron preferred', priceNew: '$400–$1,200', priceUsed: '$150–$400', where: 'Indian hardware suppliers in Little India', maintenance: 'Season with oil after each wash. Never use soap on cast iron.', cuisines: ['Indian', 'Chinese'] },
+  { id: 3, name: 'Commercial Deep Fryer', category: 'Cooking', purpose: 'Fried chicken, spring rolls, ikan bilis', spec: '15–20L capacity, dual basket', priceNew: '$600–$1,800', priceUsed: '$200–$600', where: 'Sing Lian, Geylang or Liang Court Kitchen', maintenance: 'Filter oil daily, full oil change every 3–5 days at high volume', cuisines: ['Chinese', 'Malay', 'Western'] },
+  { id: 4, name: 'Commercial Steamer', category: 'Cooking', purpose: 'Dim sum, fish, vegetables, chicken rice', spec: '3-deck, electric 3-phase', priceNew: '$1,500–$4,000', priceUsed: '$500–$1,200', where: 'Thian Seng or Koon Seng Hardware', maintenance: 'Descale monthly. Check pressure valve quarterly.', cuisines: ['Chinese', 'Mixed'] },
+  { id: 5, name: 'Upright Chiller (2-door)', category: 'Storage', purpose: 'Ingredient storage, mise en place', spec: '600L capacity, 0–4°C', priceNew: '$2,000–$4,500', priceUsed: '$800–$1,800', where: 'Harvey Norman Commercial, or Liang Court', maintenance: 'Clean condenser coils monthly. Check temperature log daily.', cuisines: ['All'] },
+  { id: 6, name: 'Commercial Rice Cooker', category: 'Cooking', purpose: 'High-volume rice production', spec: '10L / 55-cup capacity', priceNew: '$300–$800', priceUsed: '$100–$250', where: 'NTUC Finest Commercial, or supplier direct', maintenance: 'Clean inner pot daily. Check seal gasket monthly.', cuisines: ['Chinese', 'Malay', 'Indian'] },
+  { id: 7, name: 'POS System (Tablet-based)', category: 'POS', purpose: 'Order management, sales tracking, cashless', spec: 'NETS + PayNow + QR integrated', priceNew: '$500–$2,000/yr (SaaS)', priceUsed: 'N/A (subscription)', where: 'Grab Merchant, Softinnov, RevelPOS, Square', maintenance: 'Software updates automatic. Printer paper check daily.', cuisines: ['All'] },
+  { id: 8, name: 'Display Warmer / Bain Marie', category: 'Service', purpose: 'Keeping cooked food at safe temp for display', spec: '3-pan capacity, 60–80°C', priceNew: '$300–$800', priceUsed: '$100–$300', where: 'Sing Lian, Geylang', maintenance: 'Clean water tray daily. Check temperature sensor monthly.', cuisines: ['Chinese', 'Indian', 'Malay'] },
+];
+
+const COMPETITIONS = [
+  { name: 'Michelin Bib Gourmand Recommendation', type: 'Michelin', deadline: 'Rolling (inspectors visit anytime)', prize: 'Bib Gourmand listing', requirements: 'Consistent quality, value < $45/head, minimum 2 years operation', tip: 'Focus on signature dish consistency. Inspectors visit anonymously 3–5 times.' },
+  { name: 'Hawker Culture Snack (HCS) Competition', type: 'NEA', deadline: 'Annual — typically April', prize: 'Trophy + media coverage + NEA grant', requirements: 'NEA registered hawker, original recipe, Singapore-themed dish', tip: 'Cultural story is judged heavily. Rehearse your 3-minute verbal presentation.' },
+  { name: 'World Street Food Congress', type: 'International', deadline: 'Annual — check worldstreetfood.com', prize: 'International recognition, media', requirements: 'Application + recipe submission', tip: 'Focus on authenticity narrative and visual appeal of dish.' },
+  { name: 'SFA Food Safety Excellence Award', type: 'SFA', deadline: 'Annual — Q3', prize: 'Award certificate + marketing rights', requirements: 'Grade A for minimum 2 years, SFA food handler certs', tip: 'Document your FSMS procedures. Judges look for systematic approach.' },
+  { name: 'FairPrice Finest Local Hawker Showcase', type: 'Private', deadline: 'Rolling partnership', prize: 'Retail product listing + $5k seed', requirements: 'Unique sauce/product with mass appeal', tip: 'Bottle your signature sauce. Apply via FairPrice supplier portal.' },
+];
+
+const INSIDER_TIPS = [
+  { id: 1, category: 'Tender Tricks', title: 'Reading Vacancy Signals', content: 'NEA publishes tender notices 4–6 weeks before closing. Track go.gov.sg/tendernotice weekly. Stalls vacant >3 months signal low AMR — potentially bid-able at 10–15% above AMR. Equipment photos in the notice tell you fitout condition: "existing hood & tiling" = good. "Vacant shell" = high A&A costs.', tags: ['tender', 'AMR', 'NEA'] },
+  { id: 2, category: 'Tender Tricks', title: 'The Overbid Cost Calculator', content: 'Every $100 you bid over AMR costs $100/month for 3 years = $3,600 excess. In Year 4-6 rent steps down 50% toward AMR — so the bleed reduces. Over a 6-year tenancy, $500 overbid = $500×12×3 + $250×12×3 = $27,000 excess total. Use this to anchor your maximum bid.', tags: ['tender', 'bidding', 'AMR'] },
+  { id: 3, category: 'Tender Tricks', title: 'Equipment Red Flags in Tender Notices', content: 'Look for: "Stall with existing hood/exhaust" (good — saves $3–8k). "SFA approved drainage" (confirms fitout ready). "Vacant unit" or "shell condition" (budget $10–25k for A&A). Check if there is existing 3-phase power — essential for steamers and commercial chillers. Ask NEA site officer directly before bidding.', tags: ['tender', 'equipment', 'A&A'] },
+  { id: 4, category: 'Tender Tricks', title: 'Tanglin Halt Rebate Exclusion', content: "When Tanglin Halt Hawker Centre reopened, NEA granted rebates to incoming stallholders — but NOT to all. Exclusive deals for specific units were based on cuisine diversity targets. If you're a second Chinese stall applicant, rebate eligibility is lower. Always ask the hawker centre manager about current incentive schemes before bidding.", tags: ['tender', 'rebate', 'Tanglin Halt'] },
+  { id: 5, category: 'Ops Survival', title: 'First 3 Months Cash Buffer', content: 'Rule of thumb: cash reserve = 3 × monthly operating cost before you open. Month 1 revenue is typically 40–60% of steady state. Month 2: 65–80%. Month 3: 80–90%. Plan for a 90-day burn. If your monthly costs are $8k, hold $24k in reserve. Do not use this buffer for fitout — keep it sacred.', tags: ['cash flow', 'startup', 'survival'] },
+  { id: 6, category: 'Ops Survival', title: 'R&R Closure Risk', content: 'NEA conducts Repairs & Redecoration (R&R) closures every 5–7 years per hawker centre. Typical closure: 3–6 months. You receive notice 6–12 months ahead. During R&R: no income but you may still have loan repayments and supplier obligations. Build an R&R fund of $5–10k by Year 2. Check when the centre last had R&R before bidding.', tags: ['R&R', 'closure', 'risk'] },
+  { id: 7, category: 'Ops Survival', title: 'S&CC Negotiation in Private Venues', content: 'In kopitiams and private food courts, S&CC (Service and Conservancy Charges) is negotiable — unlike NEA centres. Request itemised breakdown: cleaning, pest control, aircon, security. Counter-offer by removing services you will self-manage. Operators rarely reject this. Savings: $100–300/month possible at a mid-range food court.', tags: ['S&CC', 'negotiation', 'private'] },
+  { id: 8, category: 'Ops Survival', title: 'Opening Week Stock Calibration', content: 'Prepare 60% of your estimated steady-state volume for Week 1. Sell out is better than waste. Track sell-out time daily: if you sell out by 12pm, increase by 20%. If you have leftovers >20% at close, reduce by 15%. Reach 90% stock accuracy by Day 10. Wet market runs must match this daily — do not over-buy proteins.', tags: ['stock', 'opening', 'calibration'] },
+  { id: 9, category: 'Cost Traps', title: 'A&A Exhaust Hood Costs', content: 'An NEA-compliant exhaust hood for a cooking stall costs $3,000–$8,000 installed. If the tender notice says "shell" or you want to add cooking equipment post-fitout, you need SFA approval AND NEA structural approval. Timeline: 6–12 weeks. Budget this before bidding, not after. Check the Notice of Award for existing fittings.', tags: ['A&A', 'exhaust', 'fitout', 'cost'] },
+  { id: 10, category: 'Cost Traps', title: 'SFA Licence Timeline', content: 'NEA Food Stall Licence takes 4–6 weeks after submission. You CANNOT operate without it. Start the application immediately after getting your Notice of Award. Checklist: food handler certs for all staff, approved fire safety equipment, SFA pre-inspection passed, ACRA bizfile registered. Missing any one item resets the clock.', tags: ['SFA', 'licence', 'timeline'] },
+  { id: 11, category: 'Cost Traps', title: 'Crockery Float at Productive Hawker Centres', content: 'Productive Hawker Centres (managed by NEA with centralised dishwashing) require you to purchase a crockery float — typically $500–$2,000 worth of approved plates and bowls on Day 1. This is a capital cost not in most startup budgets. Check if your target centre is Productive — list available from NEA upon request.', tags: ['crockery', 'PHC', 'startup cost'] },
+  { id: 12, category: 'Scaling Up', title: 'When to Consider Central Kitchen', content: 'Signs you are ready for central kitchen: (1) You operate 2+ stalls. (2) Your prep time exceeds 3 hours/day consistently. (3) You spend >$3,000/month on prep labour. (4) Quality inconsistency is costing you customers. Entry-level shared central kitchen rentals start at $1,500/month (Pasir Panjang / Sungei Kadut area). NEA has a list of licensed central kitchens.', tags: ['central kitchen', 'scaling', 'expansion'] },
+  { id: 13, category: 'Scaling Up', title: 'NEA Rules on Subletting', content: 'You CANNOT sublet your NEA stall — period. Violation leads to immediate termination and blacklisting from future NEA tenders. If you cannot operate temporarily (medical, personal), you must notify NEA and may be granted a temporary closure up to 14 days. Repeated closures attract warnings. Succession to a family member requires formal application.', tags: ['subletting', 'NEA rules', 'compliance'] },
+];
+
+// ─── Shared Components ─────────────────────────────────────────────────────────
+function ModuleHeader({ emoji, title, description }) {
+  return (
+    <div className="bg-white border-b border-gray-100 px-8 py-6">
+      <div className="flex items-center gap-3">
+        <span className="text-3xl">{emoji}</span>
+        <div>
+          <h1 className="text-2xl font-bold text-ink">{title}</h1>
+          <p className="text-gray-500 text-sm mt-0.5">{description}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Card({ children, className = '' }) {
+  return <div className={`bg-white rounded-2xl shadow-sm p-6 ${className}`}>{children}</div>;
+}
+
+function Input({ label, ...props }) {
+  return (
+    <div>
+      {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
+      <input className="border border-gray-200 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-ember focus:border-transparent outline-none text-sm" {...props} />
+    </div>
+  );
+}
+
+function Select({ label, children, ...props }) {
+  return (
+    <div>
+      {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
+      <select className="border border-gray-200 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-ember focus:border-transparent outline-none text-sm bg-white" {...props}>{children}</select>
+    </div>
+  );
+}
+
+function PrimaryButton({ children, loading, onClick, className = '', disabled }) {
+  return (
+    <button onClick={onClick} disabled={loading || disabled} className={`bg-ember text-white px-4 py-2 rounded-lg hover:bg-ember-600 transition-colors flex items-center gap-2 text-sm font-medium disabled:opacity-60 ${className}`}>
+      {loading && <Loader size={14} />}
+      {children}
+    </button>
+  );
+}
+
+function AIResponseBox({ response, loading, error }) {
+  if (loading) return <div className="flex items-center gap-2 text-gray-500 py-4"><Loader size={16} /><span className="text-sm">HAWKR.AI is thinking...</span></div>;
+  if (error) return <div className="flex items-center gap-2 text-red-500 py-4 text-sm"><AlertCircle size={16} />{error}</div>;
+  if (!response) return null;
+  const formatted = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  return (
+    <div className="mt-4 p-4 bg-ember-50 rounded-xl border border-orange-100">
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-xs font-semibold text-ember uppercase tracking-wide">HAWKR.AI Response</span>
+      </div>
+      <div className="prose-hawkr text-sm text-gray-800" dangerouslySetInnerHTML={{ __html: formatted }} />
+    </div>
+  );
+}
+
+function TabBar({ tabs, active, setActive }) {
+  return (
+    <div className="flex border-b border-gray-200 mb-6 overflow-x-auto">
+      {tabs.map(t => (
+        <button key={t.id} onClick={() => setActive(t.id)}
+          className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${active === t.id ? 'border-ember text-ember' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+          {t.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ─── Cost Engine ───────────────────────────────────────────────────────────────
+function calcCosts(inputs) {
+  const { rent, staff, hoursPerDay, daysPerWeek, foodCostPct, covers, avgSpend } = inputs;
+  const monthlyRevenue = covers * avgSpend * daysPerWeek * 4.33;
+  const labour = staff === 0 ? 0 : staff * 1800 * 1.17;
+  const scc = rent * 0.15;
+  const tableCleaning = 150;
+  const utilities = 400 + (hoursPerDay * daysPerWeek * 4.33 * 8);
+  const ingredients = monthlyRevenue * (foodCostPct / 100);
+  const packaging = covers * daysPerWeek * 4.33 * 0.30;
+  const total = rent + scc + tableCleaning + utilities + labour + ingredients + packaging;
+  const breakEvenCovers4 = total / (4 * daysPerWeek * 4.33);
+  const breakEvenCovers55 = total / (5.5 * daysPerWeek * 4.33);
+  const breakEvenCovers7 = total / (7 * daysPerWeek * 4.33);
+  return { monthlyRevenue, labour, scc, tableCleaning, utilities, ingredients, packaging, total, breakEvenCovers4, breakEvenCovers55, breakEvenCovers7 };
+}
+
+function buildProjection(rent, covers, avgSpend, daysPerWeek, foodCostPct, staff) {
+  const amr = rent * 0.7;
+  const rows = [];
+  for (let y = 1; y <= 7; y++) {
+    let r;
+    if (y <= 3) r = rent;
+    else if (y <= 6) r = rent - (rent - amr) * 0.5;
+    else r = amr;
+    const inputs = { rent: r, staff, hoursPerDay: 12, daysPerWeek, foodCostPct, covers, avgSpend };
+    const c = calcCosts(inputs);
+    const rev70 = c.monthlyRevenue * 0.7;
+    const rev100 = c.monthlyRevenue;
+    const rev130 = c.monthlyRevenue * 1.3;
+    rows.push({
+      year: `Yr ${y}`,
+      rent: r,
+      revenue: rev100,
+      costs: c.total - c.ingredients,
+      profit100: rev100 - c.total,
+      profit70: rev70 - (c.total - c.ingredients + rev70 * (foodCostPct / 100)),
+      profit130: rev130 - (c.total - c.ingredients + rev130 * (foodCostPct / 100)),
+    });
+  }
+  return rows;
+}
+
+function CostEngine() {
+  const [form, setForm] = useState({ centreName: '', cuisine: 'Chinese', rent: 2000, hoursPerDay: 12, daysPerWeek: 6, staff: 1, foodCostPct: 30, covers: 80, avgSpend: 5.5 });
+  const [results, setResults] = useState(null);
+  const [projection, setProjection] = useState(null);
+
+  const update = (k, v) => setForm(p => ({ ...p, [k]: v }));
+
+  const calculate = () => {
+    const r = calcCosts({ ...form, rent: Number(form.rent), hoursPerDay: Number(form.hoursPerDay), daysPerWeek: Number(form.daysPerWeek), staff: Number(form.staff), foodCostPct: Number(form.foodCostPct), covers: Number(form.covers), avgSpend: Number(form.avgSpend) });
+    setResults(r);
+    const proj = buildProjection(Number(form.rent), Number(form.covers), Number(form.avgSpend), Number(form.daysPerWeek), Number(form.foodCostPct), Number(form.staff));
+    setProjection(proj);
+  };
+
+  const fmt = v => `$${Math.round(v).toLocaleString()}`;
+  const fmtD = v => v.toFixed(1);
+
+  return (
+    <div>
+      <ModuleHeader emoji="💰" title="Cost Engine" description="Full monthly cost breakdown, projections, and break-even analysis for your hawker stall" />
+      <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Form */}
+        <div className="space-y-4">
+          <Card>
+            <h2 className="font-bold text-lg mb-4">Stall Configuration</h2>
+            <div className="space-y-3">
+              <Input label="Hawker Centre Name" value={form.centreName} onChange={e => update('centreName', e.target.value)} placeholder="e.g. Tiong Bahru Market" />
+              <Select label="Cuisine Type" value={form.cuisine} onChange={e => update('cuisine', e.target.value)}>
+                {['Chinese','Malay','Indian','Western','Mixed'].map(c => <option key={c}>{c}</option>)}
+              </Select>
+              <Input label="Tendered Rent (SGD/month)" type="number" value={form.rent} onChange={e => update('rent', e.target.value)} />
+              <div className="grid grid-cols-2 gap-3">
+                <Select label="Operating Hours/Day" value={form.hoursPerDay} onChange={e => update('hoursPerDay', e.target.value)}>
+                  {[8,10,12,14,16].map(h => <option key={h} value={h}>{h} hrs</option>)}
+                </Select>
+                <Select label="Days/Week" value={form.daysPerWeek} onChange={e => update('daysPerWeek', e.target.value)}>
+                  {[5,6,7].map(d => <option key={d} value={d}>{d} days</option>)}
+                </Select>
+              </div>
+              <Select label="Number of Staff" value={form.staff} onChange={e => update('staff', e.target.value)}>
+                <option value={0}>Solo (0 hired staff)</option>
+                <option value={1}>1 Helper</option>
+                <option value={2}>2 Helpers</option>
+                <option value={3}>3+ Helpers</option>
+              </Select>
+              <div className="grid grid-cols-2 gap-3">
+                <Select label="Target Food Cost %" value={form.foodCostPct} onChange={e => update('foodCostPct', e.target.value)}>
+                  {[25,30,35,40].map(p => <option key={p} value={p}>{p}%</option>)}
+                </Select>
+                <Select label="Avg Spend/Cover" value={form.avgSpend} onChange={e => update('avgSpend', e.target.value)}>
+                  {[4, 5.5, 7, 8.5].map(s => <option key={s} value={s}>${s}</option>)}
+                </Select>
+              </div>
+              <Input label="Target Daily Covers" type="number" value={form.covers} onChange={e => update('covers', e.target.value)} />
+              <PrimaryButton onClick={calculate} className="w-full justify-center">Calculate Full Breakdown</PrimaryButton>
+            </div>
+          </Card>
+        </div>
+
+        {/* Results */}
+        <div className="space-y-4">
+          {results ? (
+            <>
+              <Card>
+                <h2 className="font-bold text-lg mb-4">Monthly Cost Breakdown</h2>
+                <div className="space-y-2">
+                  {[
+                    { label: 'Tendered Rent', val: form.rent },
+                    { label: 'S&CC (~15% of rent)', val: results.scc },
+                    { label: 'Table Cleaning', val: results.tableCleaning },
+                    { label: 'Utilities', val: results.utilities },
+                    { label: 'Labour (incl. CPF)', val: results.labour },
+                    { label: 'Ingredients / COGS', val: results.ingredients },
+                    { label: 'Packaging', val: results.packaging },
+                  ].map(item => (
+                    <div key={item.label} className="flex justify-between items-center py-1.5 border-b border-gray-50">
+                      <span className="text-sm text-gray-600">{item.label}</span>
+                      <span className="font-mono text-sm text-ember font-medium">{fmt(item.val)}</span>
+                    </div>
+                  ))}
+                  <div className="flex justify-between items-center pt-2">
+                    <span className="font-bold">Total Monthly Costs</span>
+                    <span className="font-mono font-bold text-lg text-ink">{fmt(results.total)}</span>
+                  </div>
+                </div>
+              </Card>
+
+              <Card>
+                <h2 className="font-bold text-lg mb-4">Profit / Loss Summary</h2>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { label: '70% Revenue', rev: results.monthlyRevenue * 0.7, color: 'bg-red-50 border-red-100' },
+                    { label: '100% Revenue', rev: results.monthlyRevenue, color: 'bg-teal-50 border-teal-100' },
+                    { label: '130% Revenue', rev: results.monthlyRevenue * 1.3, color: 'bg-green-50 border-green-100' },
+                  ].map(s => {
+                    const adjCogs = s.rev * (Number(form.foodCostPct) / 100);
+                    const fixedCosts = results.total - results.ingredients;
+                    const profit = s.rev - fixedCosts - adjCogs;
+                    return (
+                      <div key={s.label} className={`rounded-xl p-3 border ${s.color} text-center`}>
+                        <div className="text-xs text-gray-500 mb-1">{s.label}</div>
+                        <div className="font-mono text-sm font-bold">{fmt(s.rev)}</div>
+                        <div className={`font-mono text-xs mt-1 font-medium ${profit >= 0 ? 'text-teal' : 'text-red-500'}`}>{profit >= 0 ? '+' : ''}{fmt(profit)}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Card>
+
+              <Card>
+                <h2 className="font-bold text-lg mb-4">Break-Even Daily Covers</h2>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { label: '@$4.00/cover', val: results.breakEvenCovers4 },
+                    { label: '@$5.50/cover', val: results.breakEvenCovers55 },
+                    { label: '@$7.00/cover', val: results.breakEvenCovers7 },
+                  ].map(b => (
+                    <div key={b.label} className="text-center p-3 bg-fog rounded-xl">
+                      <div className="text-xs text-gray-500 mb-1">{b.label}</div>
+                      <div className="font-mono text-2xl font-bold text-ember">{Math.ceil(b.val)}</div>
+                      <div className="text-xs text-gray-400">covers/day</div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </>
+          ) : (
+            <Card className="flex items-center justify-center h-48 text-gray-400">
+              <div className="text-center">
+                <Calculator size={32} className="mx-auto mb-2 opacity-30" />
+                <p className="text-sm">Fill in the form and click Calculate</p>
+              </div>
+            </Card>
+          )}
+        </div>
+
+        {/* 6-Year Projection */}
+        {projection && (
+          <div className="lg:col-span-2">
+            <Card>
+              <h2 className="font-bold text-lg mb-4">6-Year Tenancy Projection</h2>
+              <div className="h-64 mb-6">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={projection}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="year" tick={{ fontSize: 12 }} />
+                    <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `$${(v/1000).toFixed(0)}k`} />
+                    <Tooltip formatter={(v, n) => [`$${Math.round(v).toLocaleString()}`, n]} />
+                    <Legend />
+                    <Line type="monotone" dataKey="profit70" stroke="#EF4444" name="Profit (70% Rev)" strokeWidth={2} dot={false} />
+                    <Line type="monotone" dataKey="profit100" stroke="#0E7C7B" name="Profit (100% Rev)" strokeWidth={2.5} dot={false} />
+                    <Line type="monotone" dataKey="profit130" stroke="#C9993A" name="Profit (130% Rev)" strokeWidth={2} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-100">
+                      <th className="text-left py-2 font-semibold text-gray-600">Year</th>
+                      <th className="text-right py-2 font-semibold text-gray-600">Rent</th>
+                      <th className="text-right py-2 font-semibold text-gray-600">Revenue</th>
+                      <th className="text-right py-2 font-semibold text-red-400">Profit @70%</th>
+                      <th className="text-right py-2 font-semibold text-teal">Profit @100%</th>
+                      <th className="text-right py-2 font-semibold text-gold">Profit @130%</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {projection.map(r => (
+                      <tr key={r.year} className="border-b border-gray-50 hover:bg-fog">
+                        <td className="py-2 font-medium">{r.year}</td>
+                        <td className="py-2 text-right font-mono text-sm">{fmt(r.rent)}</td>
+                        <td className="py-2 text-right font-mono text-sm">{fmt(r.revenue)}</td>
+                        <td className={`py-2 text-right font-mono text-sm ${r.profit70 >= 0 ? 'text-teal' : 'text-red-500'}`}>{fmt(r.profit70)}</td>
+                        <td className={`py-2 text-right font-mono text-sm font-bold ${r.profit100 >= 0 ? 'text-teal' : 'text-red-500'}`}>{fmt(r.profit100)}</td>
+                        <td className={`py-2 text-right font-mono text-sm ${r.profit130 >= 0 ? 'text-gold' : 'text-red-500'}`}>{fmt(r.profit130)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-gray-400 mt-3">* Yr 4–6 rent = 50% step toward AMR (est. {Math.round(Number(form.rent)*0.7).toLocaleString()}). Yr 7 = full AMR.</p>
+            </Card>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<CostEngine />);
+  </script>
+</body>
+</html>
