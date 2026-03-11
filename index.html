@@ -511,7 +511,7 @@ Ask me anything about your stall — costing, supplier messages, SOPs, pricing, 
 
         <!-- PROFILE -->
         <div id="scr-profile" class="screen">
-          <div class="screen-hdr"><div class="screen-ttl">PROFILE</div><span style="font-size:18px;cursor:pointer;">⚙️</span></div>
+          <div class="screen-hdr"><div class="screen-ttl">PROFILE</div><span style="font-size:18px;cursor:pointer;" onclick="document.getElementById('apiKeyCard').scrollIntoView({behavior:'smooth'});document.getElementById('apiKeyInput').focus();">⚙️</span></div>
           <div class="prof-hero">
             <div class="prof-av">👨‍🍳</div>
             <div><div class="prof-name">Ahmad R.</div><div class="prof-cohort">Cohort 6 · Batch B · Training</div><div class="prof-lv">Level 2 — Trainee</div></div>
@@ -542,6 +542,14 @@ Ask me anything about your stall — costing, supplier messages, SOPs, pricing, 
               <div class="ps-item"><div class="ps-val" style="color:var(--magenta)">7</div><div class="ps-lbl">Day Streak</div></div>
               <div class="ps-item"><div class="ps-val" style="color:var(--green)">35%</div><div class="ps-lbl">Stage Done</div></div>
             </div>
+          </div>
+          <div class="card" id="apiKeyCard">
+            <div class="card-lbl">AI Settings</div>
+            <div style="font-size:12px;color:var(--grey);margin-bottom:10px;">Enter your Anthropic API key to power the AI chat with real responses. Stored locally on your device only.</div>
+            <input id="apiKeyInput" type="password" placeholder="sk-ant-..." autocomplete="off"
+              style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--white);font-size:13px;font-family:'DM Mono',monospace,sans-serif;outline:none;"
+              oninput="saveApiKey(this.value)" />
+            <div id="apiKeyStatus" style="margin-top:8px;font-size:11px;color:var(--grey);"></div>
           </div>
           <div style="height:14px;"></div>
         </div>
@@ -700,14 +708,66 @@ Tap a chip above or just type your question.`
   }
   function removeTyping() { const el=document.getElementById('typingDots'); if(el)el.remove(); }
 
-  function sendPrompt(topic) {
-    addUserMsg(topic);
-    setTimeout(()=>{ showTyping(); setTimeout(()=>{ removeTyping(); addAIMsg(findAIResponse(topic)); },1100); },80);
+  function saveApiKey(val) {
+    localStorage.setItem('hawkrboys_api_key', val);
+    const status = document.getElementById('apiKeyStatus');
+    if (val.startsWith('sk-ant-') && val.length > 20) {
+      status.textContent = '✓ Key saved';
+      status.style.color = 'var(--green)';
+    } else if (val.length > 0) {
+      status.textContent = 'Key looks incomplete (should start with sk-ant-)';
+      status.style.color = 'var(--gold)';
+    } else {
+      status.textContent = '';
+    }
   }
-  function sendMsg() {
-    const inp=document.getElementById('chatInput'); const text=inp.value.trim(); if(!text)return;
-    inp.value=''; addUserMsg(text);
-    setTimeout(()=>{ showTyping(); setTimeout(()=>{ removeTyping(); addAIMsg(findAIResponse(text)); },1100); },80);
+
+  function getApiKey() { return localStorage.getItem('hawkrboys_api_key') || ''; }
+
+  async function callClaude(userText) {
+    const key = getApiKey();
+    if (!key) return null;
+    const sys = `You are HAWKR.AI — the AI advisor for the Hawker Boys programme in Singapore. You help aspiring hawker stall owners with practical, specific advice on: costing dishes, writing supplier messages, creating SOPs, pricing menus, handling customer issues, tracking revenue, NEA regulations, and hawker business operations. Keep responses concise and practical. Use Singapore context naturally.`;
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': key },
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, system: sys, messages: [{ role: 'user', content: userText }] })
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+    const d = await res.json();
+    return d.content[0].text;
+  }
+
+  async function sendPrompt(topic) {
+    addUserMsg(topic);
+    showTyping();
+    const key = getApiKey();
+    if (!key) {
+      setTimeout(() => { removeTyping(); addAIMsg(findAIResponse(topic)); }, 900);
+      return;
+    }
+    try {
+      const reply = await callClaude(topic);
+      removeTyping(); addAIMsg(reply);
+    } catch(e) {
+      removeTyping(); addAIMsg('Sorry, couldn\'t reach the AI right now. ' + (e.message.includes('401') ? 'Check your API key in Profile.' : 'Please try again.'));
+    }
+  }
+
+  async function sendMsg() {
+    const inp = document.getElementById('chatInput'); const text = inp.value.trim(); if (!text) return;
+    inp.value=''; addUserMsg(text); showTyping();
+    const key = getApiKey();
+    if (!key) {
+      setTimeout(() => { removeTyping(); addAIMsg(findAIResponse(text)); }, 900);
+      return;
+    }
+    try {
+      const reply = await callClaude(text);
+      removeTyping(); addAIMsg(reply);
+    } catch(e) {
+      removeTyping(); addAIMsg('Sorry, couldn\'t reach the AI right now. ' + (e.message.includes('401') ? 'Check your API key in Profile.' : 'Please try again.'));
+    }
   }
 
   function navTo(id) {
@@ -793,6 +853,14 @@ Tap a chip above or just type your question.`
   function tick(){const n=new Date();document.getElementById('sTime').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
   tick();setInterval(tick,15000);
   updateXP();
+
+  // Load saved API key
+  const _savedKey = localStorage.getItem('hawkrboys_api_key');
+  if (_savedKey) {
+    document.getElementById('apiKeyInput').value = _savedKey;
+    const st = document.getElementById('apiKeyStatus');
+    st.textContent = '✓ Key saved'; st.style.color = 'var(--green)';
+  }
   </script>
 </body>
 </html>
