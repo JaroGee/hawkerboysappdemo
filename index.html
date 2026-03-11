@@ -730,7 +730,7 @@ Tap a chip above or just type your question.`
     const sys = `You are HAWKR.AI — the AI advisor for the Hawker Boys programme in Singapore. You help aspiring hawker stall owners with practical, specific advice on: costing dishes, writing supplier messages, creating SOPs, pricing menus, handling customer issues, tracking revenue, NEA regulations, and hawker business operations. Keep responses concise and practical. Use Singapore context naturally.`;
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': key },
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': key, 'anthropic-dangerous-direct-browser-access': 'true' },
       body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, system: sys, messages: [{ role: 'user', content: userText }] })
     });
     if (!res.ok) throw new Error('API error ' + res.status);
