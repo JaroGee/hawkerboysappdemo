@@ -725,15 +725,16 @@ Tap a chip above or just type your question.`
   function getApiKey() { return localStorage.getItem('hawkrboys_api_key') || ''; }
 
   async function callClaude(userText) {
-    const key = getApiKey();
-    if (!key) return null;
     const sys = `You are HAWKR.AI — the AI advisor for the Hawker Boys programme in Singapore. You help aspiring hawker stall owners with practical, specific advice on: costing dishes, writing supplier messages, creating SOPs, pricing menus, handling customer issues, tracking revenue, NEA regulations, and hawker business operations. Keep responses concise and practical. Use Singapore context naturally.`;
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://hawkr-proxy.jaromelgee.workers.dev', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'x-api-key': key, 'anthropic-dangerous-direct-browser-access': 'true' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, system: sys, messages: [{ role: 'user', content: userText }] })
     });
-    if (!res.ok) throw new Error('API error ' + res.status);
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error('API error ' + res.status + ': ' + (errBody?.error?.message || ''));
+    }
     const d = await res.json();
     return d.content[0].text;
   }
@@ -750,7 +751,7 @@ Tap a chip above or just type your question.`
       const reply = await callClaude(topic);
       removeTyping(); addAIMsg(reply);
     } catch(e) {
-      removeTyping(); addAIMsg('Sorry, couldn\'t reach the AI right now. ' + (e.message.includes('401') ? 'Check your API key in Profile.' : 'Please try again.'));
+      removeTyping(); addAIMsg('Error: ' + e.message);
     }
   }
 
@@ -766,7 +767,7 @@ Tap a chip above or just type your question.`
       const reply = await callClaude(text);
       removeTyping(); addAIMsg(reply);
     } catch(e) {
-      removeTyping(); addAIMsg('Sorry, couldn\'t reach the AI right now. ' + (e.message.includes('401') ? 'Check your API key in Profile.' : 'Please try again.'));
+      removeTyping(); addAIMsg('Error: ' + e.message);
     }
   }
 
