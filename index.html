@@ -347,6 +347,310 @@ async function callClaude(userText, apiKey, stage) {
   return d.content[0].text;
 }
 
+// ─── SVG Icon Components ─────────────────────────────────────────────────────
+const sw = 1.5; // default strokeWidth — Lucide style
+const sc = 'round'; // strokeLinecap / strokeLinejoin
+
+function IconHome({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+      <polyline points="9,22 9,12 15,12 15,22"/>
+    </svg>
+  );
+}
+
+function IconMap({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <polygon points="3,6 9,3 15,6 21,3 21,18 15,21 9,18 3,21"/>
+      <line x1="9" y1="3" x2="9" y2="18"/>
+      <line x1="15" y1="6" x2="15" y2="21"/>
+    </svg>
+  );
+}
+
+function IconSparkle({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+    </svg>
+  );
+}
+
+function IconWrench({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+    </svg>
+  );
+}
+
+function IconPerson({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </svg>
+  );
+}
+
+function IconCoins({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <circle cx="8" cy="8" r="6"/>
+      <path d="M18.09 10.37A6 6 0 1110.34 18"/>
+      <path d="M7 6h1v4"/>
+      <path d="M16.71 13.88L17.5 14l.29.71"/>
+    </svg>
+  );
+}
+
+function IconChefHat({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M6 13.87A4 4 0 017.41 6a5.11 5.11 0 0114.4 3.87 3.5 3.5 0 01-1.72 6.55H6z"/>
+      <line x1="6" y1="17" x2="18" y2="17"/>
+      <line x1="6" y1="21" x2="18" y2="21"/>
+    </svg>
+  );
+}
+
+function IconPin({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+      <circle cx="12" cy="10" r="3"/>
+    </svg>
+  );
+}
+
+function IconClipboard({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/>
+      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+    </svg>
+  );
+}
+
+function IconGear({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+    </svg>
+  );
+}
+
+function IconLightbulb({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <line x1="9" y1="18" x2="15" y2="18"/>
+      <line x1="10" y1="22" x2="14" y2="22"/>
+      <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 019 14"/>
+    </svg>
+  );
+}
+
+function IconChart({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <line x1="18" y1="20" x2="18" y2="10"/>
+      <line x1="12" y1="20" x2="12" y2="4"/>
+      <line x1="6" y1="20" x2="6" y2="14"/>
+    </svg>
+  );
+}
+
+function IconFlame({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 3z"/>
+    </svg>
+  );
+}
+
+function IconStar({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+    </svg>
+  );
+}
+
+function IconTrophy({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <polyline points="6,9 6,2 18,2 18,9"/>
+      <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+      <rect x="6" y="18" width="12" height="4"/>
+    </svg>
+  );
+}
+
+function IconCalendar({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+  );
+}
+
+function IconBell({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 01-3.46 0"/>
+    </svg>
+  );
+}
+
+function IconLock({ size=16, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0110 0v4"/>
+    </svg>
+  );
+}
+
+function IconTarget({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <circle cx="12" cy="12" r="10"/>
+      <circle cx="12" cy="12" r="6"/>
+      <circle cx="12" cy="12" r="2"/>
+    </svg>
+  );
+}
+
+function IconBook({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+    </svg>
+  );
+}
+
+function IconFlex({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M6 4v6a6 6 0 0012 0V4"/>
+      <line x1="4" y1="20" x2="20" y2="20"/>
+    </svg>
+  );
+}
+
+function IconStall({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M3 3h18l-2 7H5L3 3z"/>
+      <path d="M5 10v9a2 2 0 002 2h10a2 2 0 002-2v-9"/>
+      <path d="M9 10v11"/>
+      <path d="M15 10v11"/>
+    </svg>
+  );
+}
+
+function IconHandshake({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+      <path d="M16 3.13a4 4 0 010 7.75"/>
+    </svg>
+  );
+}
+
+function IconZap({ size=16, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+    </svg>
+  );
+}
+
+function IconWave({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M18 8h1a4 4 0 010 8h-1"/>
+      <path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/>
+      <line x1="6" y1="1" x2="6" y2="4"/>
+      <line x1="10" y1="1" x2="10" y2="4"/>
+      <line x1="14" y1="1" x2="14" y2="4"/>
+    </svg>
+  );
+}
+
+function IconScroll({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+      <polyline points="14,2 14,8 20,8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/>
+      <line x1="16" y1="17" x2="8" y2="17"/>
+      <polyline points="10,9 9,9 8,9"/>
+    </svg>
+  );
+}
+
+function IconGlobe({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+    </svg>
+  );
+}
+
+function IconMuscle({ size=22, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={sw} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M6.5 6.5c1-2 3-3 5-2l5 2c2 1 3 3 2 5l-3 6c-1 2-3 3-5 2l-3-1c-2-1-3-3-2-5l1-2"/>
+      <path d="M6.5 6.5L4 9"/>
+      <path d="M15 4l3-1"/>
+    </svg>
+  );
+}
+
+function IconCelebration({ size=48, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} strokeLinecap={sc} strokeLinejoin={sc}>
+      <polyline points="6,9 6,2 18,2 18,9"/>
+      <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+      <rect x="6" y="18" width="12" height="4"/>
+    </svg>
+  );
+}
+
+function IconParty({ size=48, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} strokeLinecap={sc} strokeLinejoin={sc}>
+      <polyline points="20,12 20,22 4,22 4,12"/>
+      <rect x="2" y="7" width="20" height="5"/>
+      <path d="M12 22V7"/>
+      <path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/>
+      <path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/>
+    </svg>
+  );
+}
+
+function IconBookOpen({ size=48, color='currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.5} strokeLinecap={sc} strokeLinejoin={sc}>
+      <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/>
+      <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
+    </svg>
+  );
+}
+
 // ─── Shared UI Helpers ───────────────────────────────────────────────────────
 function PbarTrack({ pct, color='var(--cyan)', glow=true }) {
   return (
@@ -367,13 +671,13 @@ function LCard({ children, cls='' }) {
 }
 
 // ─── Tool Panel Shell ────────────────────────────────────────────────────────
-function ToolPanel({ title, emoji, onClose, children }) {
+function ToolPanel({ title, icon, onClose, children }) {
   return (
     <div className="tool-panel-overlay" onClick={e=>{ if(e.target===e.currentTarget) onClose(); }}>
       <div className="tool-panel-sheet">
         <div className="tool-panel-header">
           <button className="tool-panel-back" onClick={onClose}>←</button>
-          <span className="tool-panel-title">{emoji} {title}</span>
+          <span className="tool-panel-title" style={{display:'flex',alignItems:'center',gap:7}}>{icon} {title}</span>
         </div>
         <div className="tool-panel-content">
           {children}
@@ -388,13 +692,15 @@ function CelebModal({ stageNum, newTools, onClose }) {
   return (
     <div className="modal-overlay">
       <div className="modal-card">
-        <div style={{fontSize:52,marginBottom:12,animation:'celebBounce 0.6s ease 3'}}>🏆</div>
+        <div style={{marginBottom:12,animation:'celebBounce 0.6s ease 3',display:'flex',justifyContent:'center',color:'var(--gold)'}}>
+          <IconTrophy size={52} color="var(--gold)"/>
+        </div>
         <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:8,color:'var(--cyan)',lineHeight:2,marginBottom:8}}>STAGE {stageNum} COMPLETE!</div>
         <div style={{fontSize:13,color:'var(--white)',marginBottom:6}}>+100 XP Earned</div>
         {newTools.length > 0 && (
           <div style={{margin:'12px 0',padding:'10px 12px',background:'rgba(0,245,255,0.06)',border:'1px solid rgba(0,245,255,0.15)',borderRadius:10}}>
             <div style={{fontSize:9,color:'var(--cyan)',fontWeight:700,letterSpacing:'0.1em',marginBottom:6}}>TOOLS UNLOCKED</div>
-            {newTools.map(t => <div key={t} style={{fontSize:12,color:'var(--white)',marginBottom:3}}>✨ {t}</div>)}
+            {newTools.map(t => <div key={t} style={{fontSize:12,color:'var(--white)',marginBottom:3,display:'flex',alignItems:'center',gap:6}}><IconSparkle size={13} color="var(--cyan)"/> {t}</div>)}
           </div>
         )}
         <button onClick={onClose} style={{width:'100%',marginTop:12,padding:'12px',background:'var(--cyan)',color:'#04080f',border:'none',borderRadius:12,fontSize:13,fontWeight:700,cursor:'pointer'}}>
@@ -440,10 +746,10 @@ function QuizComponent({ onXPEarned, onBack }) {
 
   if (phase === 'results') {
     const s = score, t = QUIZ.length;
-    const [emoji,title] = s>=9?['🏆','HAWKER MASTER!']:s>=7?['🎉','EXCELLENT WORK!']:s>=5?['💪','GOOD EFFORT!']:['📚','KEEP LEARNING!'];
+    const [quizIcon,title] = s>=9?[<IconTrophy size={52} color="var(--gold)"/>,'HAWKER MASTER!']:s>=7?[<IconParty size={52} color="var(--magenta)"/>,'EXCELLENT WORK!']:s>=5?[<IconStar size={52} color="var(--cyan)"/>,'GOOD EFFORT!']:[<IconBookOpen size={52} color="var(--grey)"/>,'KEEP LEARNING!'];
     return (
       <div style={{padding:'20px 20px 10px',textAlign:'center'}}>
-        <div style={{fontSize:52,marginBottom:10}}>{emoji}</div>
+        <div style={{marginBottom:10,display:'flex',justifyContent:'center'}}>{quizIcon}</div>
         <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:9,color:'var(--white)',lineHeight:1.9,marginBottom:16}}>{title}</div>
         <div style={{fontSize:52,fontWeight:800,color:'var(--cyan)',lineHeight:1}}>{s}/{t}</div>
         <div style={{fontSize:13,color:'var(--grey)',marginBottom:16}}>Correct answers</div>
@@ -494,7 +800,7 @@ function QuizComponent({ onXPEarned, onBack }) {
       {/* Fact */}
       {answered !== null && (
         <div style={{margin:'8px 16px 0',background:'rgba(0,245,255,0.06)',border:'1px solid rgba(0,245,255,0.14)',borderRadius:12,padding:'11px 13px',fontSize:11,color:'var(--grey)',lineHeight:1.6}}>
-          <strong style={{color:'var(--cyan)'}}>💡 Did you know?</strong> {q.fact}
+          <strong style={{color:'var(--cyan)',display:'inline-flex',alignItems:'center',gap:4}}><IconLightbulb size={13} color="var(--cyan)"/> Did you know?</strong> {q.fact}
         </div>
       )}
       {answered !== null && (
@@ -788,13 +1094,13 @@ function BusinessModule() {
 
 // ─── TOOL DEFINITIONS ────────────────────────────────────────────────────────
 const TOOLS = [
-  { id:'cost',     label:'Cost Engine',        emoji:'💰', desc:'Monthly costs + 6yr projection', Component: CostEngine },
-  { id:'culinary', label:'Culinary Knowledge', emoji:'🍳', desc:'Recipes, costing & suppliers',   Component: CulinaryModule },
-  { id:'stalls',   label:'Stall Finder',       emoji:'📍', desc:'Compare venue types & rental',  Component: StallFinder },
-  { id:'tender',   label:'Tender Intelligence',emoji:'📋', desc:'Master NEA bidding strategy',   Component: TenderModule },
-  { id:'ops',      label:'Operations',         emoji:'⚙️', desc:'Daily ops, SFA, equipment',     Component: OperationsModule },
-  { id:'tips',     label:'Insider Tips',       emoji:'💡', desc:'Real intel from hawkers',       Component: InsiderModule },
-  { id:'biz',      label:'Business Builder',   emoji:'📈', desc:'Grants, scaling & growth',      Component: BusinessModule },
+  { id:'cost',     label:'Cost Engine',        icon:<IconCoins size={24} color="var(--gold)"/>,     desc:'Monthly costs + 6yr projection', Component: CostEngine },
+  { id:'culinary', label:'Culinary Knowledge', icon:<IconChefHat size={24} color="var(--magenta)"/>, desc:'Recipes, costing & suppliers',   Component: CulinaryModule },
+  { id:'stalls',   label:'Stall Finder',       icon:<IconPin size={24} color="var(--cyan)"/>,        desc:'Compare venue types & rental',  Component: StallFinder },
+  { id:'tender',   label:'Tender Intelligence',icon:<IconClipboard size={24} color="var(--magenta)"/>,desc:'Master NEA bidding strategy',   Component: TenderModule },
+  { id:'ops',      label:'Operations',         icon:<IconGear size={24} color="var(--cyan)"/>,       desc:'Daily ops, SFA, equipment',     Component: OperationsModule },
+  { id:'tips',     label:'Insider Tips',       icon:<IconLightbulb size={24} color="var(--gold)"/>,  desc:'Real intel from hawkers',       Component: InsiderModule },
+  { id:'biz',      label:'Business Builder',   icon:<IconChart size={24} color="var(--green)"/>,     desc:'Grants, scaling & growth',      Component: BusinessModule },
 ];
 
 // ─── SCREENS ──────────────────────────────────────────────────────────────────
@@ -803,7 +1109,7 @@ function HomeScreen({ state, dispatch, setTab }) {
   const [showQuiz, setShowQuiz] = useState(false);
   const sp = state.stageProgress[state.stage] || 0;
   const stageNames = {1:'Training',2:'Placement',3:'Aftercare',4:'Ownership'};
-  const stageEmoji = {1:'🍳',2:'🏪',3:'🤝',4:'🏆'};
+  const stageIcon = {1:<IconChefHat size={16} color="var(--cyan)"/>,2:<IconStall size={16} color="var(--magenta)"/>,3:<IconHandshake size={16} color="var(--gold)"/>,4:<IconTrophy size={16} color="var(--green)"/>};
   const xpPct = Math.min(state.xp / state.xpMax, 1);
 
   if (showQuiz) {
@@ -822,11 +1128,11 @@ function HomeScreen({ state, dispatch, setTab }) {
     <div style={{overflowY:'auto',height:'100%'}} className="dark-scroll">
       <div style={{padding:'14px 20px 4px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:9,color:'var(--white)'}}>DASHBOARD</div>
-        <span style={{fontSize:20,cursor:'pointer'}}>🔔</span>
+        <span style={{cursor:'pointer',color:'var(--grey)',display:'flex'}}><IconBell size={20} color="var(--grey)"/></span>
       </div>
       {/* User row */}
       <div style={{padding:'10px 20px 0',display:'flex',alignItems:'center',gap:12}}>
-        <div style={{width:44,height:44,borderRadius:'50%',background:'linear-gradient(135deg,#0a4060,#003040)',border:'2px solid var(--cyan)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,boxShadow:'0 0 14px rgba(0,245,255,0.2)',flexShrink:0}}>👨‍🍳</div>
+        <div style={{width:44,height:44,borderRadius:'50%',background:'linear-gradient(135deg,#0a4060,#003040)',border:'2px solid var(--cyan)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 14px rgba(0,245,255,0.2)',flexShrink:0}}><IconChefHat size={22} color="var(--cyan)"/></div>
         <div>
           <div style={{fontSize:16,fontWeight:700,color:'var(--white)'}}>{state.userName}</div>
           <div style={{fontSize:11,color:'var(--grey)'}}>Cohort 6 · Stage {state.stage}</div>
@@ -843,9 +1149,9 @@ function HomeScreen({ state, dispatch, setTab }) {
       </div>
       {/* Stats */}
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:7,margin:'10px 16px 0'}}>
-        {[['🔥',state.streak,'Streak'],['📅','23','Days In'],['⭐',state.xp,'Total XP']].map(([ico,val,lbl])=>(
+        {[[<IconFlame size={20} color="var(--magenta)"/>,state.streak,'Streak'],[<IconCalendar size={20} color="var(--gold)"/>,'23','Days In'],[<IconStar size={20} color="var(--cyan)"/>,state.xp,'Total XP']].map(([ico,val,lbl])=>(
           <div key={lbl} style={{background:'var(--card)',border:'1px solid var(--border)',borderRadius:12,padding:'11px 6px',textAlign:'center'}}>
-            <div style={{fontSize:18,marginBottom:3}}>{ico}</div>
+            <div style={{marginBottom:3,display:'flex',justifyContent:'center'}}>{ico}</div>
             <div style={{fontSize:16,fontWeight:800,color:'var(--white)'}}>{val}</div>
             <div style={{fontSize:8,color:'var(--grey)',textTransform:'uppercase',letterSpacing:'0.07em',marginTop:2}}>{lbl}</div>
           </div>
@@ -856,7 +1162,7 @@ function HomeScreen({ state, dispatch, setTab }) {
         <div style={{fontSize:9,fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:'var(--grey)',marginBottom:8}}>YOUR JOURNEY</div>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
           <div>
-            <div style={{fontSize:15,fontWeight:700,color:'var(--white)'}}>{stageEmoji[state.stage]} {stageNames[state.stage]}</div>
+            <div style={{fontSize:15,fontWeight:700,color:'var(--white)',display:'flex',alignItems:'center',gap:6}}>{stageIcon[state.stage]} {stageNames[state.stage]}</div>
             <div style={{fontSize:10,color:'var(--grey)',marginTop:2}}>Stage {state.stage} of 4</div>
           </div>
           <div style={{fontSize:11,color:'var(--green)',fontWeight:700}}>On Track ✓</div>
@@ -876,7 +1182,7 @@ function HomeScreen({ state, dispatch, setTab }) {
       {/* Challenge card */}
       <div onClick={()=>setShowQuiz(true)} style={{margin:'10px 16px 0',background:'linear-gradient(135deg,rgba(224,64,251,0.08),rgba(40,0,60,0.04))',border:'1px solid rgba(224,64,251,0.22)',borderRadius:14,padding:14,cursor:'pointer'}}>
         <div style={{display:'flex',justifyContent:'space-between',marginBottom:7}}>
-          <span style={{fontSize:9,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--magenta)'}}>⚡ Today's Challenge</span>
+          <span style={{fontSize:9,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--magenta)',display:'inline-flex',alignItems:'center',gap:5}}><IconZap size={11} color="var(--magenta)"/> Today's Challenge</span>
           <span style={{fontSize:10,fontWeight:700,color:'var(--gold)',background:'rgba(255,214,0,0.1)',padding:'2px 8px',borderRadius:10}}>+50 XP</span>
         </div>
         <div style={{fontSize:13,color:'var(--white)',fontWeight:500,lineHeight:1.4}}>Hawker Culture Quiz — test your knowledge of Singapore's food heritage.</div>
@@ -885,11 +1191,11 @@ function HomeScreen({ state, dispatch, setTab }) {
       {/* Quick actions */}
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:7,margin:'10px 16px 0'}}>
         <div onClick={()=>setTab('pathway')} style={{background:'var(--card)',border:'1px solid var(--border)',borderRadius:12,padding:'12px 10px',display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}>
-          <span style={{fontSize:20}}>🗺️</span>
+          <span style={{display:'flex'}}><IconMap size={20} color="var(--cyan)"/></span>
           <div><div style={{fontSize:12,fontWeight:600,color:'var(--white)'}}>Pathway</div><div style={{fontSize:9,color:'var(--grey)',marginTop:1}}>View all stages</div></div>
         </div>
         <div onClick={()=>setTab('ai')} style={{background:'var(--card)',border:'1px solid var(--border)',borderRadius:12,padding:'12px 10px',display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}>
-          <span style={{fontSize:20}}>✨</span>
+          <span style={{display:'flex'}}><IconSparkle size={20} color="var(--magenta)"/></span>
           <div><div style={{fontSize:12,fontWeight:600,color:'var(--white)'}}>Ask AI</div><div style={{fontSize:9,color:'var(--grey)',marginTop:1}}>Hawker assistant</div></div>
         </div>
       </div>
@@ -904,13 +1210,13 @@ function PathwayScreen({ state, dispatch }) {
   const [prevTools, setPrevTools] = useState([...state.unlockedTools]);
 
   const stageData = [
-    { num:1, emoji:'🍳', label:'Training', color:'var(--cyan)', desc:'Culinary skills, food safety and kitchen operations under experienced mentors.',
+    { num:1, icon:<IconChefHat size={16} color="var(--cyan)"/>, label:'Training', color:'var(--cyan)', desc:'Culinary skills, food safety and kitchen operations under experienced mentors.',
       milestones:['Food Hygiene Cert','Basic Cooking Assessment','Advanced Techniques','Final Practical Exam'] },
-    { num:2, emoji:'🏪', label:'Placement', color:'var(--magenta)', desc:'Live stall under supervision. Real customers, real targets, real accountability.',
+    { num:2, icon:<IconStall size={16} color="var(--magenta)"/>, label:'Placement', color:'var(--magenta)', desc:'Live stall under supervision. Real customers, real targets, real accountability.',
       milestones:['Stall Setup & NEA Inspection','First Week Service','Revenue Target Hit','Supervisor Sign-off'] },
-    { num:3, emoji:'🤝', label:'Aftercare', color:'var(--gold)', desc:'Business support, financial counselling, and peer mentorship to stabilise your stall.',
+    { num:3, icon:<IconHandshake size={16} color="var(--gold)"/>, label:'Aftercare', color:'var(--gold)', desc:'Business support, financial counselling, and peer mentorship to stabilise your stall.',
       milestones:['Monthly P&L Review','Supplier Agreements','SFA Compliance Audit','Peer Mentorship Session'] },
-    { num:4, emoji:'🏆', label:'Ownership', color:'var(--green)', desc:'Your stall, your brand, your income. Join 40+ alumni running their own businesses.',
+    { num:4, icon:<IconTrophy size={16} color="var(--green)"/>, label:'Ownership', color:'var(--green)', desc:'Your stall, your brand, your income. Join 40+ alumni running their own businesses.',
       milestones:['NEA Tender Submitted','Stall Licence Obtained','First Month Revenue','Alumni Network Join'] },
   ];
 
@@ -947,8 +1253,8 @@ function PathwayScreen({ state, dispatch }) {
 
           return (
             <div key={sd.num} style={{display:'flex',gap:12,marginBottom:10}}>
-              <div style={{width:40,height:40,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,border:`2px solid ${isDone?'var(--green)':isActive?sd.color:'var(--gdim)'}`,background:isDone?'rgba(0,230,118,0.1)':isActive?`rgba(${sd.color === 'var(--cyan)' ? '0,245,255' : sd.color === 'var(--magenta)' ? '224,64,251' : sd.color === 'var(--gold)' ? '255,214,0' : '0,230,118'},0.1)`:'var(--gdim)',opacity:isLocked?0.5:1,flexShrink:0,position:'relative',zIndex:1,boxShadow:isActive?`0 0 0 4px rgba(0,245,255,0.12),0 0 14px rgba(0,245,255,0.25)`:'none'}}>
-                {sd.emoji}
+              <div style={{width:40,height:40,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',border:`2px solid ${isDone?'var(--green)':isActive?sd.color:'var(--gdim)'}`,background:isDone?'rgba(0,230,118,0.1)':isActive?`rgba(${sd.color === 'var(--cyan)' ? '0,245,255' : sd.color === 'var(--magenta)' ? '224,64,251' : sd.color === 'var(--gold)' ? '255,214,0' : '0,230,118'},0.1)`:'var(--gdim)',opacity:isLocked?0.5:1,flexShrink:0,position:'relative',zIndex:1,boxShadow:isActive?`0 0 0 4px rgba(0,245,255,0.12),0 0 14px rgba(0,245,255,0.25)`:'none'}}>
+                {sd.icon}
               </div>
               <div style={{flex:1,background:'var(--card)',border:`1px solid ${isActive?sd.color:'var(--border)'}`,background:isActive?`rgba(${sd.color === 'var(--cyan)' ? '0,245,255' : '0,0,0'},0.04)`:'var(--card)',borderRadius:14,padding:14,cursor:'default'}}>
                 <div style={{fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:3,color:isDone?'var(--green)':isActive?sd.color:'var(--grey)'}}>
@@ -967,14 +1273,14 @@ function PathwayScreen({ state, dispatch }) {
                 )}
                 {isActive && prog < 1.0 && (
                   <button onClick={()=>simulateComplete(sd.num)} style={{width:'100%',padding:'8px',background:'rgba(0,245,255,0.1)',border:'1px solid rgba(0,245,255,0.25)',borderRadius:9,fontSize:10,fontWeight:700,color:'var(--cyan)',cursor:'pointer',letterSpacing:'0.05em',marginTop:4}}>
-                    ⚡ Simulate Stage Complete (Demo)
+                    Simulate Stage Complete (Demo)
                   </button>
                 )}
                 {isLocked && (
-                  <div style={{fontSize:11,color:'var(--grey)',opacity:0.5}}>🔒 Complete {stageData[sd.num-2]?.label} first</div>
+                  <div style={{fontSize:11,color:'var(--grey)',opacity:0.5,display:'flex',alignItems:'center',gap:5}}><IconLock size={13} color="var(--grey)"/> Complete {stageData[sd.num-2]?.label} first</div>
                 )}
                 {isDone && sd.num === 4 && (
-                  <div style={{marginTop:8,padding:'9px 11px',background:'rgba(0,230,118,0.06)',border:'1px solid rgba(0,230,118,0.14)',borderRadius:9,fontSize:11,color:'var(--green)',fontWeight:600}}>🏆 Alumni avg revenue: $12,000/month</div>
+                  <div style={{marginTop:8,padding:'9px 11px',background:'rgba(0,230,118,0.06)',border:'1px solid rgba(0,230,118,0.14)',borderRadius:9,fontSize:11,color:'var(--green)',fontWeight:600,display:'flex',alignItems:'center',gap:6}}><IconTrophy size={13} color="var(--green)"/> Alumni avg revenue: $12,000/month</div>
                 )}
               </div>
             </div>
@@ -996,7 +1302,7 @@ function PathwayScreen({ state, dispatch }) {
 // ─── AI SCREEN ───────────────────────────────────────────────────────────────
 function AIScreen({ state, dispatch }) {
   const [msgs, setMsgs] = useState([
-    { role:'ai', text:`Hey ${state.userName} 👋 I'm your Hawker AI assistant.\n\nAsk me anything about your stall — costing, supplier messages, SOPs, pricing, admin templates. What do you need?` }
+    { role:'ai', text:`Hey ${state.userName}! I'm your Hawker AI assistant.\n\nAsk me anything about your stall — costing, supplier messages, SOPs, pricing, admin templates. What do you need?` }
   ]);
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);
@@ -1055,7 +1361,7 @@ function AIScreen({ state, dispatch }) {
       <div style={{flex:1,overflowY:'auto',padding:'12px 16px 8px',display:'flex',flexDirection:'column',gap:10,minHeight:0}} className="dark-scroll">
         {msgs.map((m,i) => m.role === 'ai' ? (
           <div key={i} style={{display:'flex',alignItems:'flex-end',gap:8}}>
-            <div style={{width:28,height:28,borderRadius:'50%',flexShrink:0,background:'linear-gradient(135deg,rgba(0,245,255,0.2),rgba(0,80,100,0.3))',border:'1px solid rgba(0,245,255,0.25)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:13}}>✨</div>
+            <div style={{width:28,height:28,borderRadius:'50%',flexShrink:0,background:'linear-gradient(135deg,rgba(0,245,255,0.2),rgba(0,80,100,0.3))',border:'1px solid rgba(0,245,255,0.25)',display:'flex',alignItems:'center',justifyContent:'center'}}><IconSparkle size={14} color="var(--cyan)"/></div>
             <div style={{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'14px 14px 14px 4px',padding:'11px 13px',fontSize:12,color:'var(--white)',lineHeight:1.65,maxWidth:'78%',whiteSpace:'pre-line'}}>{m.text}</div>
           </div>
         ) : (
@@ -1065,7 +1371,7 @@ function AIScreen({ state, dispatch }) {
         ))}
         {typing && (
           <div style={{display:'flex',alignItems:'flex-end',gap:8}}>
-            <div style={{width:28,height:28,borderRadius:'50%',flexShrink:0,background:'linear-gradient(135deg,rgba(0,245,255,0.2),rgba(0,80,100,0.3))',border:'1px solid rgba(0,245,255,0.25)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:13}}>✨</div>
+            <div style={{width:28,height:28,borderRadius:'50%',flexShrink:0,background:'linear-gradient(135deg,rgba(0,245,255,0.2),rgba(0,80,100,0.3))',border:'1px solid rgba(0,245,255,0.25)',display:'flex',alignItems:'center',justifyContent:'center'}}><IconSparkle size={14} color="var(--cyan)"/></div>
             <div style={{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'14px 14px 14px 4px',padding:'12px 14px',display:'flex',gap:4,alignItems:'center'}}>
               {[0,0.2,0.4].map((d,i)=><div key={i} style={{width:5,height:5,borderRadius:'50%',background:'var(--grey)',animation:`typingBounce 1.2s ${d}s infinite`}}/>)}
             </div>
@@ -1101,12 +1407,12 @@ function ToolsScreen({ state }) {
           return (
             <div key={t.id} onClick={()=>unlocked&&setOpenTool(t.id)}
               style={{background:unlocked?'var(--card)':'rgba(13,21,37,0.5)',border:`1px solid ${unlocked?'var(--border)':'rgba(30,45,69,0.4)'}`,borderRadius:14,padding:'14px 12px',cursor:unlocked?'pointer':'default',opacity:unlocked?1:0.6,transition:'all 0.2s',position:'relative',overflow:'hidden'}}>
-              <div style={{fontSize:24,marginBottom:8}}>{t.emoji}</div>
+              <div style={{marginBottom:8,display:'flex'}}>{t.icon}</div>
               <div style={{fontSize:12,fontWeight:700,color:unlocked?'var(--white)':'var(--grey)',marginBottom:4}}>{t.label}</div>
               <div style={{fontSize:10,color:'var(--grey)',lineHeight:1.4}}>{t.desc}</div>
               {!unlocked && (
                 <div style={{marginTop:8,fontSize:9,color:'var(--grey)',display:'flex',alignItems:'center',gap:4}}>
-                  <span>🔒</span><span>{toolUnlockRequirement(t.id)}</span>
+                  <IconLock size={11} color="var(--grey)"/><span>{toolUnlockRequirement(t.id)}</span>
                 </div>
               )}
               {unlocked && (
@@ -1119,7 +1425,7 @@ function ToolsScreen({ state }) {
       <div style={{height:14}}/>
 
       {openTool && tool && (
-        <ToolPanel title={tool.label} emoji={tool.emoji} onClose={()=>setOpenTool(null)}>
+        <ToolPanel title={tool.label} icon={tool.icon} onClose={()=>setOpenTool(null)}>
           <tool.Component />
         </ToolPanel>
       )}
@@ -1134,10 +1440,14 @@ function ProfileScreen({ state, dispatch }) {
   const xpPct = Math.min(state.xp / state.xpMax, 1);
 
   const BADGE_DEF = [
-    {key:'First Day',  emoji:'🎯'}, {key:'7 Streak',  emoji:'🔥'},
-    {key:'Certified',  emoji:'📜'}, {key:'300 XP',    emoji:'⭐'},
-    {key:'Placed',     emoji:'🏪'}, {key:'First $1K', emoji:'💰'},
-    {key:'Owner',      emoji:'🏆'}, {key:'Mentor',    emoji:'🌟'},
+    {key:'First Day',  icon:<IconTarget size={20} color="var(--cyan)"/>},
+    {key:'7 Streak',   icon:<IconFlame size={20} color="var(--magenta)"/>},
+    {key:'Certified',  icon:<IconScroll size={20} color="var(--gold)"/>},
+    {key:'300 XP',     icon:<IconStar size={20} color="var(--gold)"/>},
+    {key:'Placed',     icon:<IconStall size={20} color="var(--cyan)"/>},
+    {key:'First $1K',  icon:<IconCoins size={20} color="var(--green)"/>},
+    {key:'Owner',      icon:<IconTrophy size={20} color="var(--gold)"/>},
+    {key:'Mentor',     icon:<IconGlobe size={20} color="var(--magenta)"/>},
   ];
 
   function onKeyChange(val) {
@@ -1157,11 +1467,11 @@ function ProfileScreen({ state, dispatch }) {
     <div style={{overflowY:'auto',height:'100%'}} className="dark-scroll">
       <div style={{padding:'14px 20px 4px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:9,color:'var(--white)'}}>PROFILE</div>
-        <span style={{fontSize:18,cursor:'pointer'}}>⚙️</span>
+        <span style={{cursor:'pointer',display:'flex',color:'var(--grey)'}}><IconGear size={18} color="var(--grey)"/></span>
       </div>
       {/* Avatar */}
       <div style={{padding:'14px 20px',display:'flex',alignItems:'center',gap:14}}>
-        <div style={{width:64,height:64,borderRadius:'50%',background:'linear-gradient(135deg,#0a4060,#003040)',border:'3px solid var(--cyan)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:26,boxShadow:'0 0 22px rgba(0,245,255,0.22)'}}>👨‍🍳</div>
+        <div style={{width:64,height:64,borderRadius:'50%',background:'linear-gradient(135deg,#0a4060,#003040)',border:'3px solid var(--cyan)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 0 22px rgba(0,245,255,0.22)'}}><IconChefHat size={30} color="var(--cyan)"/></div>
         <div>
           <div style={{fontSize:17,fontWeight:700,color:'var(--white)',marginBottom:2}}>{state.userName}</div>
           <div style={{fontSize:11,color:'var(--grey)',marginBottom:7}}>Cohort 6 · Batch B · {['Training','Placement','Aftercare','Ownership'][state.stage-1]}</div>
@@ -1185,7 +1495,7 @@ function ProfileScreen({ state, dispatch }) {
             const earned = state.badges[b.key];
             return (
               <div key={b.key} style={{aspectRatio:'1',borderRadius:12,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:4,border:`1.5px solid ${earned?'var(--border)':'rgba(30,45,69,0.5)'}`,background:earned?'var(--card)':'rgba(15,22,38,0.5)',opacity:earned?1:0.42}}>
-                <span style={{fontSize:20}}>{b.emoji}</span>
+                <span style={{display:'flex'}}>{b.icon}</span>
                 <span style={{fontSize:7,fontWeight:600,color:earned?'var(--white)':'var(--grey)',textTransform:'uppercase',letterSpacing:'0.04em',textAlign:'center',lineHeight:1.2}}>{b.key}</span>
               </div>
             );
@@ -1235,11 +1545,11 @@ function App() {
   }, []);
 
   const NAV = [
-    { id:'home',    label:'Home',    icon:'🏠' },
-    { id:'pathway', label:'Pathway', icon:'🗺️' },
-    { id:'ai',      label:'AI',      icon:'✨' },
-    { id:'tools',   label:'Tools',   icon:'🔧' },
-    { id:'profile', label:'Profile', icon:'👤' },
+    { id:'home',    label:'Home',    navIcon: (active) => <IconHome    size={22} color={active?'var(--cyan)':'var(--grey)'}/> },
+    { id:'pathway', label:'Pathway', navIcon: (active) => <IconMap     size={22} color={active?'var(--cyan)':'var(--grey)'}/> },
+    { id:'ai',      label:'AI',      navIcon: (active) => <IconSparkle size={22} color={active?'var(--cyan)':'var(--grey)'}/> },
+    { id:'tools',   label:'Tools',   navIcon: (active) => <IconWrench  size={22} color={active?'var(--cyan)':'var(--grey)'}/> },
+    { id:'profile', label:'Profile', navIcon: (active) => <IconPerson  size={22} color={active?'var(--cyan)':'var(--grey)'}/> },
   ];
 
   function renderScreen() {
@@ -1263,7 +1573,7 @@ function App() {
       <div style={{height:72,background:'rgba(6,10,20,0.97)',backdropFilter:'blur(20px)',borderTop:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'space-around',padding:'0 2px 12px',flexShrink:0,zIndex:30}}>
         {NAV.map(n=>(
           <button key={n.id} onClick={()=>setTab(n.id)} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3,padding:'7px 10px',cursor:'pointer',border:'none',background:'none',borderRadius:12}}>
-            <span style={{fontSize:20,lineHeight:1,filter:tab===n.id?'drop-shadow(0 0 5px var(--cyan))':'none'}}>{n.icon}</span>
+            <span style={{lineHeight:1,filter:tab===n.id?'drop-shadow(0 0 5px var(--cyan))':'none',display:'flex'}}>{n.navIcon(tab===n.id)}</span>
             <span style={{fontSize:8,fontWeight:600,color:tab===n.id?'var(--cyan)':'var(--grey)',letterSpacing:'0.05em',textTransform:'uppercase'}}>{n.label}</span>
           </button>
         ))}
