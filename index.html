@@ -3,865 +3,1288 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hawker Boys App</title>
+  <title>Hawker Boys — Unified App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ember: { DEFAULT: '#E8521A', 50: '#fef3ee', 600: '#c4431a' },
+            ink: '#0F0F0F',
+            fog: '#F2F2F0',
+            teal: { DEFAULT: '#0E7C7B', 50: '#e6f4f4', 600: '#0b6665' },
+            gold: { DEFAULT: '#C9993A', 50: '#fdf6e9', 600: '#a8802f' },
+          },
+          fontFamily: { sans: ['DM Sans', 'sans-serif'], mono: ['DM Mono', 'monospace'] }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+  <script src="https://unpkg.com/recharts@2.5.0/umd/Recharts.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600;700;800&display=swap');
-
     :root {
-      --bg:       #04080f;
-      --card:     #0d1525;
-      --border:   #1e2d45;
-      --cyan:     #00f5ff;
-      --magenta:  #e040fb;
-      --gold:     #ffd600;
-      --green:    #00e676;
-      --red:      #ff4757;
-      --white:    #f0f4ff;
-      --grey:     #7a8699;
-      --gdim:     #1e2d45;
+      --bg:#04080f; --card:#0d1525; --border:#1e2d45;
+      --cyan:#00f5ff; --magenta:#e040fb; --gold:#ffd600;
+      --green:#00e676; --red:#ff4757; --white:#f0f4ff;
+      --grey:#7a8699; --gdim:#1e2d45;
     }
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 48px;}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 15%,rgba(0,70,100,0.22) 0%,transparent 70%);pointer-events:none;}
 
-    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    /* Loading splash */
+    #loading-splash{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;transition:opacity 0.5s;}
+    #loading-splash.hidden{opacity:0;pointer-events:none;}
+    .splash-title{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--cyan);letter-spacing:0.2em;text-shadow:0 0 20px rgba(0,245,255,0.5);}
+    .splash-sub{font-size:11px;color:var(--grey);}
+    .splash-bar{width:160px;height:3px;background:var(--gdim);border-radius:3px;overflow:hidden;}
+    .splash-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--magenta));border-radius:3px;animation:splashLoad 1.5s ease forwards;}
+    @keyframes splashLoad{from{width:0}to{width:100%}}
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 28px 16px 48px;
-    }
+    .outer-label{font-family:'Press Start 2P',monospace;font-size:7px;color:rgba(0,245,255,0.28);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:18px;text-align:center;}
+    .phone-wrap{position:relative;width:400px;flex-shrink:0;}
+    .side-btn{position:absolute;background:linear-gradient(180deg,#1c2538,#0e1825);border-radius:3px;z-index:5;}
+    .btn-silent{left:-3.5px;top:148px;width:4px;height:28px;}
+    .btn-vol-up{left:-3.5px;top:192px;width:4px;height:56px;}
+    .btn-vol-dn{left:-3.5px;top:260px;width:4px;height:56px;}
+    .btn-power{right:-3.5px;top:210px;width:4px;height:76px;}
+    .phone-device{width:390px;height:844px;margin:0 auto;background:linear-gradient(160deg,#1c2436 0%,#0e1825 40%,#060c16 100%);border-radius:52px;border:1.5px solid #253040;box-shadow:0 0 0 0.5px #050a12,0 50px 120px rgba(0,0,0,0.95),0 0 80px rgba(0,245,255,0.05),inset 0 0 0 1px rgba(255,255,255,0.03);position:relative;overflow:hidden;display:flex;flex-direction:column;}
+    .phone-device::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(160deg,rgba(255,255,255,0.022) 0%,transparent 55%);pointer-events:none;z-index:100;border-radius:52px 52px 0 0;}
+    .dynamic-island{position:absolute;top:13px;left:50%;transform:translateX(-50%);width:120px;height:34px;background:#000;border-radius:20px;z-index:60;display:flex;align-items:center;justify-content:flex-end;padding-right:14px;gap:5px;}
+    .di-dot{width:11px;height:11px;border-radius:50%;background:#0d1825;border:1.5px solid #1a2535;}
+    .status-bar{height:54px;padding:14px 28px 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:20;}
+    .status-time{font-size:15px;font-weight:700;color:var(--white);}
+    .status-right{display:flex;align-items:center;gap:5px;}
+    .status-right svg{fill:var(--white);}
+    #react-root{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
 
-    body::before {
-      content:'';
-      position:fixed; inset:0;
-      background:radial-gradient(ellipse 80% 50% at 50% 15%, rgba(0,70,100,0.22) 0%, transparent 70%);
-      pointer-events:none;
-    }
+    /* Tool Panel slide-up overlay */
+    .tool-panel-overlay{position:absolute;inset:0;z-index:50;background:rgba(4,8,15,0.7);display:flex;flex-direction:column;justify-content:flex-end;}
+    .tool-panel-sheet{height:92%;background:#F2F2F0;border-radius:24px 24px 0 0;display:flex;flex-direction:column;overflow:hidden;transform:translateY(100%);animation:slideUp 0.3s cubic-bezier(0.4,0,0.2,1) forwards;}
+    @keyframes slideUp{to{transform:translateY(0)}}
+    .tool-panel-header{background:#0F0F0F;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+    .tool-panel-back{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;}
+    .tool-panel-title{font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;color:white;flex:1;}
+    .tool-panel-content{flex:1;overflow-y:auto;background:#F2F2F0;}
+    .tool-panel-content::-webkit-scrollbar{width:3px;}
+    .tool-panel-content::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px;}
 
-    .outer-label {
-      font-family:'Press Start 2P', monospace;
-      font-size:7px; color:rgba(0,245,255,0.28);
-      letter-spacing:0.2em; text-transform:uppercase;
-      margin-bottom:18px; text-align:center;
-    }
+    /* Celebration modal */
+    .modal-overlay{position:absolute;inset:0;z-index:80;background:rgba(4,8,15,0.85);display:flex;align-items:center;justify-content:center;padding:24px;}
+    .modal-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 24px;text-align:center;width:100%;}
 
-    /* ── PHONE ── */
-    .phone-wrap { position:relative; width:400px; flex-shrink:0; }
+    /* Scrollbar dark */
+    .dark-scroll::-webkit-scrollbar{width:2px;}
+    .dark-scroll::-webkit-scrollbar-thumb{background:var(--gdim);border-radius:2px;}
 
-    .side-btn { position:absolute; background:linear-gradient(180deg,#1c2538,#0e1825); border-radius:3px; z-index:5; }
-    .btn-silent { left:-3.5px; top:148px; width:4px; height:28px; }
-    .btn-vol-up { left:-3.5px; top:192px; width:4px; height:56px; }
-    .btn-vol-dn { left:-3.5px; top:260px; width:4px; height:56px; }
-    .btn-power  { right:-3.5px; top:210px; width:4px; height:76px; }
+    /* light tool scrollbar */
+    ::-webkit-scrollbar{width:4px;}
+    ::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px;}
 
-    .phone-device {
-      width:390px; height:844px;
-      margin:0 auto;
-      background:linear-gradient(160deg,#1c2436 0%,#0e1825 40%,#060c16 100%);
-      border-radius:52px;
-      border:1.5px solid #253040;
-      box-shadow: 0 0 0 0.5px #050a12, 0 50px 120px rgba(0,0,0,0.95),
-        0 0 80px rgba(0,245,255,0.05), inset 0 0 0 1px rgba(255,255,255,0.03);
-      position:relative; overflow:hidden;
-      display:flex; flex-direction:column;
-    }
-
-    .phone-device::after {
-      content:''; position:absolute; top:0; left:0; right:0; height:50%;
-      background:linear-gradient(160deg,rgba(255,255,255,0.022) 0%,transparent 55%);
-      pointer-events:none; z-index:100; border-radius:52px 52px 0 0;
-    }
-
-    .dynamic-island {
-      position:absolute; top:13px; left:50%; transform:translateX(-50%);
-      width:120px; height:34px; background:#000; border-radius:20px;
-      z-index:60; display:flex; align-items:center; justify-content:flex-end;
-      padding-right:14px; gap:5px;
-    }
-    .di-dot { width:11px; height:11px; border-radius:50%; background:#0d1825; border:1.5px solid #1a2535; }
-
-    .status-bar {
-      height:54px; padding:14px 28px 0;
-      display:flex; align-items:center; justify-content:space-between;
-      flex-shrink:0; position:relative; z-index:20;
-    }
-    .status-time { font-size:15px; font-weight:700; color:var(--white); }
-    .status-right { display:flex; align-items:center; gap:5px; }
-    .status-right svg { fill:var(--white); }
-
-    /* ── SCREENS ── */
-    .screen-container { flex:1; position:relative; overflow:hidden; min-height:0; }
-
-    .screen {
-      position:absolute; inset:0;
-      overflow-y:auto; overflow-x:hidden;
-      opacity:0; transform:translateX(20px);
-      transition:opacity 0.28s ease, transform 0.28s ease;
-      pointer-events:none;
-    }
-    .screen.active { opacity:1; transform:translateX(0); pointer-events:all; }
-    .screen::-webkit-scrollbar { width:2px; }
-    .screen::-webkit-scrollbar-track { background:transparent; }
-    .screen::-webkit-scrollbar-thumb { background:var(--gdim); border-radius:2px; }
-
-    #scr-ai { overflow:hidden; display:flex; flex-direction:column; }
-
-    /* ── BOTTOM NAV ── */
-    .bottom-nav {
-      height:72px;
-      background:rgba(6,10,20,0.97);
-      backdrop-filter:blur(20px);
-      border-top:1px solid var(--border);
-      display:flex; align-items:center; justify-content:space-around;
-      padding:0 2px 12px;
-      flex-shrink:0; z-index:30;
-    }
-    .nav-btn {
-      display:flex; flex-direction:column; align-items:center; gap:3px;
-      padding:7px 10px; cursor:pointer;
-      border:none; background:none; border-radius:12px; transition:all 0.2s;
-    }
-    .nav-btn:active { transform:scale(0.9); }
-    .nav-icon  { font-size:20px; line-height:1; transition:filter 0.2s; }
-    .nav-label { font-size:8px; font-weight:600; color:var(--grey); letter-spacing:0.05em; text-transform:uppercase; transition:color 0.2s; }
-    .nav-btn.active .nav-label { color:var(--cyan); }
-    .nav-btn.active .nav-icon  { filter:drop-shadow(0 0 5px var(--cyan)); }
-
-    .home-indicator { width:130px; height:4px; background:rgba(255,255,255,0.18); border-radius:2px; margin:3px auto 5px; flex-shrink:0; }
-
-    /* ── COMMON ── */
-    .screen-hdr { padding:14px 20px 4px; display:flex; align-items:center; justify-content:space-between; }
-    .screen-ttl { font-family:'Press Start 2P',monospace; font-size:9px; color:var(--white); line-height:1.6; }
-
-    .card { margin:10px 16px 0; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; }
-    .card-lbl { font-size:9px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--grey); margin-bottom:10px; }
-
-    .pbar-track { height:5px; background:var(--gdim); border-radius:5px; overflow:hidden; }
-    .pbar-fill  { height:100%; border-radius:5px; transition:width 0.7s cubic-bezier(0.4,0,0.2,1); }
-
-    /* ── HOME ── */
-    .user-row { padding:10px 20px 0; display:flex; align-items:center; gap:12px; }
-    .avatar { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#0a4060,#003040); border:2px solid var(--cyan); display:flex; align-items:center; justify-content:center; font-size:20px; box-shadow:0 0 14px rgba(0,245,255,0.2); flex-shrink:0; }
-    .user-name { font-size:16px; font-weight:700; color:var(--white); }
-    .user-sub  { font-size:11px; color:var(--grey); }
-    .lvl-badge { margin-left:auto; padding:4px 10px; background:rgba(0,245,255,0.1); border:1px solid rgba(0,245,255,0.25); border-radius:20px; font-size:9px; font-weight:700; color:var(--cyan); white-space:nowrap; }
-
-    .xp-card { margin:10px 16px 0; background:linear-gradient(135deg,rgba(0,245,255,0.06),rgba(0,80,120,0.04)); border:1px solid rgba(0,245,255,0.14); border-radius:14px; padding:14px 16px; }
-    .xp-row  { display:flex; justify-content:space-between; align-items:center; margin-bottom:7px; }
-    .xp-lbl  { font-size:10px; color:var(--grey); text-transform:uppercase; letter-spacing:0.1em; }
-    .xp-val  { font-size:11px; font-weight:700; color:var(--cyan); }
-
-    .stats-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; margin:10px 16px 0; }
-    .stat-chip  { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:11px 6px; text-align:center; }
-    .sc-ico { font-size:18px; margin-bottom:3px; }
-    .sc-val { font-size:16px; font-weight:800; color:var(--white); }
-    .sc-lbl { font-size:8px; color:var(--grey); text-transform:uppercase; letter-spacing:0.07em; margin-top:2px; }
-
-    .journey-card { margin:10px 16px 0; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; }
-    .jc-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
-    .jc-name { font-size:15px; font-weight:700; color:var(--white); }
-    .jc-sub  { font-size:10px; color:var(--grey); margin-top:2px; }
-    .stage-pills { display:flex; gap:5px; margin-top:10px; flex-wrap:wrap; }
-    .pill { padding:3px 9px; border-radius:20px; font-size:9px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; border:1px solid; }
-
-    .challenge-card { margin:10px 16px 0; background:linear-gradient(135deg,rgba(224,64,251,0.08),rgba(40,0,60,0.04)); border:1px solid rgba(224,64,251,0.22); border-radius:14px; padding:14px; cursor:pointer; transition:all 0.2s; }
-    .challenge-card:active { transform:scale(0.98); }
-    .cc-head { display:flex; justify-content:space-between; margin-bottom:7px; }
-    .cc-tag  { font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--magenta); }
-    .cc-xp   { font-size:10px; font-weight:700; color:var(--gold); background:rgba(255,214,0,0.1); padding:2px 8px; border-radius:10px; }
-    .cc-text { font-size:13px; color:var(--white); font-weight:500; line-height:1.4; }
-    .cc-cta  { font-size:11px; color:var(--magenta); font-weight:600; margin-top:8px; }
-
-    .quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin:10px 16px 0; }
-    .quick-btn  { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 10px; display:flex; align-items:center; gap:8px; cursor:pointer; transition:all 0.2s; }
-    .quick-btn:active { transform:scale(0.97); }
-    .qb-ico { font-size:20px; }
-    .qb-ttl { font-size:12px; font-weight:600; color:var(--white); }
-    .qb-sub { font-size:9px; color:var(--grey); margin-top:1px; }
-
-    /* ── PATHWAY ── */
-    .pathway-wrap { padding:6px 16px 0; position:relative; }
-    .pathway-wrap::before { content:''; position:absolute; left:36px; top:30px; bottom:0; width:2px; background:linear-gradient(to bottom,var(--cyan),rgba(0,230,118,0.2)); opacity:0.2; }
-    .pt-item { display:flex; gap:12px; margin-bottom:10px; }
-    .pt-node { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; border:2px solid; flex-shrink:0; position:relative; z-index:1; }
-    .pt-node.lit { box-shadow:0 0 0 4px rgba(0,245,255,0.12), 0 0 14px rgba(0,245,255,0.25); }
-    .pt-body { flex:1; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; cursor:pointer; }
-    .pt-body.current { border-color:var(--cyan); background:rgba(0,245,255,0.04); }
-    .pt-stage-lbl  { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:3px; }
-    .pt-stage-ttl  { font-size:14px; font-weight:700; color:var(--white); margin-bottom:5px; }
-    .pt-stage-desc { font-size:11px; color:var(--grey); line-height:1.6; margin-bottom:9px; }
-    .pt-milestones { display:flex; flex-direction:column; gap:4px; }
-    .pt-ms     { display:flex; align-items:center; gap:7px; font-size:11px; color:var(--white); }
-    .pt-ms-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-    .pt-lock   { font-size:11px; color:var(--grey); opacity:0.5; }
-
-    /* ── AI SCREEN ── */
-    .ai-topbar { padding:14px 20px 0; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
-    .ai-status { display:flex; align-items:center; gap:6px; padding:4px 10px; background:rgba(0,230,118,0.08); border:1px solid rgba(0,230,118,0.18); border-radius:20px; }
-    .ai-status-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green); animation:pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-    .ai-status-lbl { font-size:9px; font-weight:700; color:var(--green); }
-
-    .quick-prompts { display:flex; gap:7px; padding:10px 16px 0; overflow-x:auto; flex-shrink:0; scrollbar-width:none; }
-    .quick-prompts::-webkit-scrollbar { display:none; }
-    .qp-chip { padding:7px 12px; background:rgba(0,245,255,0.07); border:1px solid rgba(0,245,255,0.18); border-radius:20px; font-size:11px; font-weight:600; color:var(--cyan); white-space:nowrap; cursor:pointer; flex-shrink:0; transition:all 0.2s; }
-    .qp-chip:active { background:rgba(0,245,255,0.15); transform:scale(0.96); }
-
-    .chat-msgs { flex:1; overflow-y:auto; padding:12px 16px 8px; display:flex; flex-direction:column; gap:10px; min-height:0; }
-    .chat-msgs::-webkit-scrollbar { width:2px; }
-    .chat-msgs::-webkit-scrollbar-thumb { background:var(--gdim); border-radius:2px; }
-
-    .ai-msg { display:flex; align-items:flex-end; gap:8px; }
-    .ai-avatar { width:28px; height:28px; border-radius:50%; flex-shrink:0; background:linear-gradient(135deg,rgba(0,245,255,0.2),rgba(0,80,100,0.3)); border:1px solid rgba(0,245,255,0.25); display:flex; align-items:center; justify-content:center; font-size:13px; }
-    .ai-bubble { background:var(--card); border:1px solid var(--border); border-radius:14px 14px 14px 4px; padding:11px 13px; font-size:12px; color:var(--white); line-height:1.65; max-width:78%; white-space:pre-line; }
-
-    .user-msg { display:flex; justify-content:flex-end; }
-    .user-bubble { background:linear-gradient(135deg,rgba(0,245,255,0.15),rgba(0,100,140,0.1)); border:1px solid rgba(0,245,255,0.2); border-radius:14px 14px 4px 14px; padding:10px 13px; font-size:12px; color:var(--white); line-height:1.5; max-width:72%; }
-
-    .typing-indicator { display:flex; align-items:flex-end; gap:8px; }
-    .typing-dots { background:var(--card); border:1px solid var(--border); border-radius:14px 14px 14px 4px; padding:12px 14px; display:flex; gap:4px; align-items:center; }
-    .typing-dot { width:5px; height:5px; border-radius:50%; background:var(--grey); animation:typingBounce 1.2s infinite; }
-    .typing-dot:nth-child(2) { animation-delay:0.2s; }
-    .typing-dot:nth-child(3) { animation-delay:0.4s; }
-    @keyframes typingBounce { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-4px);opacity:1} }
-
-    .chat-input-bar { padding:10px 16px 12px; background:rgba(6,10,20,0.98); border-top:1px solid var(--border); display:flex; gap:8px; align-items:center; flex-shrink:0; }
-    .chat-input { flex:1; background:var(--card); border:1px solid var(--border); border-radius:22px; padding:10px 14px; font-size:12px; color:var(--white); font-family:'Inter',sans-serif; outline:none; transition:border-color 0.2s; }
-    .chat-input::placeholder { color:var(--grey); }
-    .chat-input:focus { border-color:rgba(0,245,255,0.35); }
-    .send-btn { width:36px; height:36px; border-radius:50%; background:var(--cyan); border:none; display:flex; align-items:center; justify-content:center; font-size:15px; color:#04080f; font-weight:700; cursor:pointer; flex-shrink:0; transition:all 0.2s; }
-    .send-btn:active { transform:scale(0.9); }
-
-    /* ── GAMES ── */
-    .game-main-card { margin:10px 16px 0; background:linear-gradient(135deg,rgba(0,245,255,0.09),rgba(0,60,90,0.05)); border:1px solid rgba(0,245,255,0.22); border-radius:16px; padding:18px 16px; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; }
-    .game-main-card:active { transform:scale(0.98); }
-    .game-main-card::after { content:'🎯'; position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:40px; opacity:0.14; }
-    .gmc-tag  { font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--cyan); margin-bottom:6px; }
-    .gmc-ttl  { font-size:19px; font-weight:800; color:var(--white); margin-bottom:5px; }
-    .gmc-desc { font-size:12px; color:var(--grey); line-height:1.5; margin-bottom:13px; }
-    .gmc-foot { display:flex; align-items:center; justify-content:space-between; }
-    .xp-badge { padding:4px 10px; background:rgba(255,214,0,0.1); border:1px solid rgba(255,214,0,0.2); border-radius:20px; font-size:10px; font-weight:700; color:var(--gold); }
-    .play-btn { padding:9px 20px; border-radius:20px; font-size:12px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; border:none; cursor:pointer; transition:all 0.2s; }
-    .play-btn:active { transform:scale(0.95); }
-    .play-primary { background:var(--cyan); color:#04080f; }
-    .play-gold    { background:var(--gold); color:#04080f; }
-    .game-sec-card { margin:8px 16px 0; background:linear-gradient(135deg,rgba(255,214,0,0.07),rgba(60,50,0,0.04)); border:1px solid rgba(255,214,0,0.18); border-radius:16px; padding:16px; }
-    .lb-card { margin:10px 16px 0; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; }
-    .lb-row  { display:flex; align-items:center; gap:9px; padding:7px 0; border-bottom:1px solid var(--gdim); }
-    .lb-row:last-child { border-bottom:none; }
-    .lb-num { font-size:12px; font-weight:800; width:18px; }
-    .lb-emo { font-size:18px; }
-    .lb-who { flex:1; font-size:12px; font-weight:600; color:var(--white); }
-    .lb-xp  { font-size:12px; font-weight:700; color:var(--cyan); }
-
-    #quizView { display:none; }
-    #quizView.on { display:block; }
-    #gamesHub.off { display:none; }
-    .quiz-topbar { padding:12px 20px; display:flex; align-items:center; gap:10px; }
-    .quiz-back { width:32px; height:32px; border-radius:50%; background:var(--card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:13px; color:var(--white); flex-shrink:0; transition:all 0.2s; }
-    .quiz-back:active { transform:scale(0.9); }
-    .qprog-wrap { flex:1; }
-    .qprog-lbl  { font-size:9px; color:var(--grey); text-align:right; margin-bottom:4px; }
-    .q-score-badge { padding:4px 11px; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.2); border-radius:20px; font-size:11px; font-weight:700; color:var(--green); }
-    .q-card  { margin:6px 16px 0; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px 16px; }
-    .q-num   { font-size:9px; font-weight:700; color:var(--cyan); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:10px; }
-    .q-text  { font-size:15px; font-weight:600; color:var(--white); line-height:1.5; }
-    .opts-list { padding:8px 16px 0; display:flex; flex-direction:column; gap:7px; }
-    .opt-btn { width:100%; padding:12px 14px; background:var(--card); border:1.5px solid var(--border); border-radius:12px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:all 0.18s; text-align:left; }
-    .opt-btn:not([disabled]):hover { border-color:#3a4a60; }
-    .opt-btn:active { transform:scale(0.98); }
-    .opt-ltr { width:28px; height:28px; border-radius:8px; background:var(--gdim); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--white); flex-shrink:0; }
-    .opt-txt { font-size:13px; color:var(--white); flex:1; line-height:1.4; }
-    .opt-btn.correct { border-color:var(--green); background:rgba(0,230,118,0.08); }
-    .opt-btn.correct .opt-ltr { background:var(--green); color:#04080f; }
-    .opt-btn.wrong   { border-color:var(--red); background:rgba(255,71,87,0.08); }
-    .opt-btn.wrong .opt-ltr { background:var(--red); color:#fff; }
-    .fact-pill { margin:8px 16px 0; background:rgba(0,245,255,0.06); border:1px solid rgba(0,245,255,0.14); border-radius:12px; padding:11px 13px; font-size:11px; color:var(--grey); line-height:1.6; display:none; }
-    .fact-pill strong { color:var(--cyan); }
-    .next-q-btn { margin:10px 16px 0; width:calc(100% - 32px); padding:13px; background:var(--cyan); color:#04080f; border:none; border-radius:12px; font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:all 0.2s; display:none; }
-    .next-q-btn:active { transform:scale(0.98); }
-    .quiz-results { padding:20px 20px 10px; text-align:center; display:none; }
-    .res-emoji { font-size:52px; margin-bottom:10px; }
-    .res-title { font-family:'Press Start 2P',monospace; font-size:9px; color:var(--white); line-height:1.9; margin-bottom:16px; }
-    .res-score { font-size:52px; font-weight:800; color:var(--cyan); line-height:1; }
-    .res-sub   { font-size:13px; color:var(--grey); margin-bottom:16px; }
-    .res-xp    { display:inline-flex; align-items:center; gap:5px; padding:10px 22px; border-radius:24px; background:rgba(255,214,0,0.1); border:1px solid rgba(255,214,0,0.25); font-size:17px; font-weight:800; color:var(--gold); margin-bottom:22px; }
-    .res-again { width:100%; padding:13px; background:var(--cyan); color:#04080f; border:none; border-radius:12px; font-size:13px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; margin-bottom:8px; transition:all 0.2s; }
-    .res-back  { width:100%; padding:12px; background:transparent; color:var(--grey); border:1px solid var(--border); border-radius:12px; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.2s; }
-    .res-again:active, .res-back:active { transform:scale(0.98); }
-
-    /* ── PROFILE ── */
-    .prof-hero { padding:14px 20px; display:flex; align-items:center; gap:14px; }
-    .prof-av   { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#0a4060,#003040); border:3px solid var(--cyan); display:flex; align-items:center; justify-content:center; font-size:26px; box-shadow:0 0 22px rgba(0,245,255,0.22); }
-    .prof-name   { font-size:17px; font-weight:700; color:var(--white); margin-bottom:2px; }
-    .prof-cohort { font-size:11px; color:var(--grey); margin-bottom:7px; }
-    .prof-lv     { font-size:11px; font-weight:700; color:var(--cyan); }
-    .badges-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
-    .bdg { aspect-ratio:1; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; border:1.5px solid; }
-    .bdg.earned { background:var(--card); border-color:var(--border); }
-    .bdg.locked { background:rgba(15,22,38,0.5); border-color:rgba(30,45,69,0.5); opacity:0.42; }
-    .bdg-e  { font-size:20px; }
-    .bdg-nm { font-size:7px; font-weight:600; color:var(--grey); text-transform:uppercase; letter-spacing:0.04em; text-align:center; line-height:1.2; }
-    .bdg.earned .bdg-nm { color:var(--white); }
-    .prof-stats { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
-    .ps-item { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 13px; }
-    .ps-val  { font-size:20px; font-weight:800; color:var(--white); }
-    .ps-lbl  { font-size:9px; color:var(--grey); text-transform:uppercase; letter-spacing:0.08em; margin-top:2px; }
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+    @keyframes typingBounce{0%,60%,100%{transform:translateY(0);opacity:0.4}30%{transform:translateY(-4px);opacity:1}}
+    @keyframes celebBounce{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
   </style>
 </head>
 <body>
 
-  <div class="outer-label">Hawker Boys · App Preview</div>
+<div id="loading-splash">
+  <div class="splash-title">HAWKER BOYS</div>
+  <div class="splash-sub">Loading app…</div>
+  <div class="splash-bar"><div class="splash-fill"></div></div>
+</div>
 
-  <div class="phone-wrap">
-    <div class="side-btn btn-silent"></div>
-    <div class="side-btn btn-vol-up"></div>
-    <div class="side-btn btn-vol-dn"></div>
-    <div class="side-btn btn-power"></div>
-
-    <div class="phone-device">
-      <div class="dynamic-island"><div class="di-dot"></div></div>
-
-      <div class="status-bar">
-        <span class="status-time" id="sTime">9:41</span>
-        <div class="status-right">
-          <svg width="16" height="11" viewBox="0 0 16 11"><rect x="0" y="5" width="2.5" height="6" rx="1"/><rect x="4" y="3.5" width="2.5" height="7.5" rx="1" opacity="0.8"/><rect x="8" y="1.5" width="2.5" height="9.5" rx="1" opacity="0.6"/><rect x="12" y="0" width="2.5" height="11" rx="1" opacity="0.3"/></svg>
-          <svg width="14" height="11" viewBox="0 0 14 11"><path d="M7 1.5C4.2 1.5 1.8 3 0.5 5.3 2 7.8 4.4 9.5 7 9.5s5-1.7 6.5-4.2C12.2 3 9.8 1.5 7 1.5z" opacity="0.3"/><path d="M7 3.5C5.2 3.5 3.6 4.6 2.5 6c1.1 1.4 2.7 2.5 4.5 2.5S10.4 7.4 11.5 6C10.4 4.6 8.8 3.5 7 3.5z" opacity="0.6"/><circle cx="7" cy="6" r="2"/></svg>
-          <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="white" stroke-width="1" fill="none"/><rect x="21" y="3" width="2.5" height="5" rx="1.5" fill="white" opacity="0.5"/><rect x="2" y="2" width="16" height="7" rx="1.5" fill="white"/></svg>
-        </div>
+<div class="outer-label">Hawker Boys · Unified App</div>
+<div class="phone-wrap">
+  <div class="side-btn btn-silent"></div>
+  <div class="side-btn btn-vol-up"></div>
+  <div class="side-btn btn-vol-dn"></div>
+  <div class="side-btn btn-power"></div>
+  <div class="phone-device">
+    <div class="dynamic-island"><div class="di-dot"></div></div>
+    <div class="status-bar">
+      <span class="status-time" id="sTime">9:41</span>
+      <div class="status-right">
+        <svg width="16" height="11" viewBox="0 0 16 11"><rect x="0" y="5" width="2.5" height="6" rx="1"/><rect x="4" y="3.5" width="2.5" height="7.5" rx="1" opacity="0.8"/><rect x="8" y="1.5" width="2.5" height="9.5" rx="1" opacity="0.6"/><rect x="12" y="0" width="2.5" height="11" rx="1" opacity="0.3"/></svg>
+        <svg width="14" height="11" viewBox="0 0 14 11"><path d="M7 1.5C4.2 1.5 1.8 3 0.5 5.3 2 7.8 4.4 9.5 7 9.5s5-1.7 6.5-4.2C12.2 3 9.8 1.5 7 1.5z" opacity="0.3"/><path d="M7 3.5C5.2 3.5 3.6 4.6 2.5 6c1.1 1.4 2.7 2.5 4.5 2.5S10.4 7.4 11.5 6C10.4 4.6 8.8 3.5 7 3.5z" opacity="0.6"/><circle cx="7" cy="6" r="2"/></svg>
+        <svg width="24" height="11" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5" stroke="white" stroke-width="1" fill="none"/><rect x="21" y="3" width="2.5" height="5" rx="1.5" fill="white" opacity="0.5"/><rect x="2" y="2" width="16" height="7" rx="1.5" fill="white"/></svg>
       </div>
-
-      <div class="screen-container">
-
-        <!-- HOME -->
-        <div id="scr-home" class="screen active">
-          <div class="screen-hdr"><div class="screen-ttl">DASHBOARD</div><span style="font-size:20px;cursor:pointer;">🔔</span></div>
-          <div class="user-row">
-            <div class="avatar">👨‍🍳</div>
-            <div><div class="user-name">Ahmad R.</div><div class="user-sub">Cohort 6 · Stage 1</div></div>
-            <div class="lvl-badge">LVL 2</div>
-          </div>
-          <div class="xp-card">
-            <div class="xp-row"><span class="xp-lbl">Progress to Level 3</span><span class="xp-val" id="xpDisplay">340 / 500 XP</span></div>
-            <div class="pbar-track"><div class="pbar-fill" id="xpBar" style="width:68%;background:linear-gradient(90deg,#00f5ff,#00c8d4);box-shadow:0 0 8px rgba(0,245,255,0.35);"></div></div>
-          </div>
-          <div class="stats-grid">
-            <div class="stat-chip"><div class="sc-ico">🔥</div><div class="sc-val">7</div><div class="sc-lbl">Streak</div></div>
-            <div class="stat-chip"><div class="sc-ico">📅</div><div class="sc-val">23</div><div class="sc-lbl">Days In</div></div>
-            <div class="stat-chip"><div class="sc-ico">⭐</div><div class="sc-val" id="dashXP">340</div><div class="sc-lbl">Total XP</div></div>
-          </div>
-          <div class="journey-card">
-            <div class="card-lbl">Your Journey</div>
-            <div class="jc-head">
-              <div><div class="jc-name">🍳 Training</div><div class="jc-sub">Stage 1 of 4 · Week 3</div></div>
-              <div style="font-size:11px;color:var(--green);font-weight:700;align-self:flex-end;">On Track ✓</div>
-            </div>
-            <div class="pbar-track"><div class="pbar-fill" style="width:35%;background:var(--cyan);box-shadow:0 0 8px rgba(0,245,255,0.35);"></div></div>
-            <div style="display:flex;justify-content:space-between;margin-top:6px;"><span style="font-size:10px;color:var(--grey)">35% complete</span></div>
-            <div class="stage-pills">
-              <div class="pill" style="color:var(--cyan);border-color:rgba(0,245,255,0.3);background:rgba(0,245,255,0.08);">Training</div>
-              <div class="pill" style="color:var(--grey);border-color:var(--gdim)">Placement</div>
-              <div class="pill" style="color:var(--grey);border-color:var(--gdim)">Aftercare</div>
-              <div class="pill" style="color:var(--grey);border-color:var(--gdim)">Ownership</div>
-            </div>
-          </div>
-          <div class="challenge-card" onclick="navTo('games')">
-            <div class="cc-head"><span class="cc-tag">⚡ Today's Challenge</span><span class="cc-xp">+50 XP</span></div>
-            <div class="cc-text">Hawker Culture Quiz — test your knowledge of Singapore's food heritage.</div>
-            <div class="cc-cta">Tap to play →</div>
-          </div>
-          <div class="quick-grid">
-            <div class="quick-btn" onclick="navTo('pathway')"><div class="qb-ico">🗺️</div><div><div class="qb-ttl">Pathway</div><div class="qb-sub">View all stages</div></div></div>
-            <div class="quick-btn" onclick="navTo('ai')"><div class="qb-ico">✨</div><div><div class="qb-ttl">Ask AI</div><div class="qb-sub">Hawker assistant</div></div></div>
-          </div>
-          <div style="height:14px;"></div>
-        </div>
-
-        <!-- PATHWAY -->
-        <div id="scr-pathway" class="screen">
-          <div class="screen-hdr"><div class="screen-ttl">YOUR JOURNEY</div><span style="font-size:11px;color:var(--grey);font-weight:600;">1 / 4</span></div>
-          <div style="padding:4px 20px 10px;font-size:12px;color:var(--grey);line-height:1.6;">From zero experience to owning your own hawker stall.</div>
-          <div class="pathway-wrap">
-            <div class="pt-item">
-              <div class="pt-node lit" style="border-color:var(--cyan);background:rgba(0,245,255,0.1);color:var(--cyan);">🍳</div>
-              <div class="pt-body current">
-                <div class="pt-stage-lbl" style="color:var(--cyan);">Stage 01 — Active</div>
-                <div class="pt-stage-ttl">Training</div>
-                <div class="pt-stage-desc">Culinary skills, food safety and kitchen operations under experienced mentors.</div>
-                <div style="margin-bottom:9px;">
-                  <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:10px;color:var(--grey);">Your progress</span><span style="font-size:10px;color:var(--cyan);font-weight:700;">35%</span></div>
-                  <div class="pbar-track"><div class="pbar-fill" style="width:35%;background:var(--cyan);box-shadow:0 0 6px rgba(0,245,255,0.35);"></div></div>
-                </div>
-                <div class="pt-milestones">
-                  <div class="pt-ms"><div class="pt-ms-dot" style="background:var(--green)"></div>Food Hygiene Cert — Done</div>
-                  <div class="pt-ms"><div class="pt-ms-dot" style="background:var(--green)"></div>Basic Cooking Assessment — Done</div>
-                  <div class="pt-ms"><div class="pt-ms-dot" style="background:var(--cyan)"></div>Advanced Techniques — In Progress</div>
-                  <div class="pt-ms"><div class="pt-ms-dot" style="background:var(--gdim)"></div>Final Practical Exam — Pending</div>
-                </div>
-              </div>
-            </div>
-            <div class="pt-item">
-              <div class="pt-node" style="border-color:var(--gdim);background:var(--gdim);color:var(--grey);opacity:.6;">🏪</div>
-              <div class="pt-body">
-                <div class="pt-stage-lbl" style="color:var(--magenta);">Stage 02 — Upcoming</div>
-                <div class="pt-stage-ttl">Placement</div>
-                <div class="pt-stage-desc">Live stall under supervision. Real customers, real targets, real accountability.</div>
-                <div class="pt-milestones"><div class="pt-lock">🔒 Complete Training first</div></div>
-              </div>
-            </div>
-            <div class="pt-item">
-              <div class="pt-node" style="border-color:var(--gdim);background:var(--gdim);color:var(--grey);opacity:.6;">🤝</div>
-              <div class="pt-body">
-                <div class="pt-stage-lbl" style="color:var(--gold);">Stage 03 — Locked</div>
-                <div class="pt-stage-ttl">Aftercare</div>
-                <div class="pt-stage-desc">Business support, financial counselling, and peer mentorship to stabilise your stall.</div>
-                <div class="pt-milestones"><div class="pt-lock">🔒 Complete Placement first</div></div>
-              </div>
-            </div>
-            <div class="pt-item">
-              <div class="pt-node" style="border-color:var(--gdim);background:var(--gdim);color:var(--grey);opacity:.6;">🏆</div>
-              <div class="pt-body">
-                <div class="pt-stage-lbl" style="color:var(--green);">Stage 04 — Goal</div>
-                <div class="pt-stage-ttl">Ownership</div>
-                <div class="pt-stage-desc">Your stall, your brand, your income. Join 40+ alumni running their own businesses.</div>
-                <div style="margin-top:8px;padding:9px 11px;background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.14);border-radius:9px;font-size:11px;color:var(--green);font-weight:600;">🏆 Alumni avg revenue: $12,000/month</div>
-              </div>
-            </div>
-          </div>
-          <div style="height:14px;"></div>
-        </div>
-
-        <!-- AI -->
-        <div id="scr-ai" class="screen">
-          <div class="ai-topbar">
-            <div class="screen-ttl">HAWKER AI</div>
-            <div class="ai-status"><div class="ai-status-dot"></div><span class="ai-status-lbl">Online</span></div>
-          </div>
-          <div class="quick-prompts">
-            <div class="qp-chip" onclick="sendPrompt('Cost a dish')">Cost a dish</div>
-            <div class="qp-chip" onclick="sendPrompt('Supplier message')">Supplier message</div>
-            <div class="qp-chip" onclick="sendPrompt('Opening SOP')">Opening SOP</div>
-            <div class="qp-chip" onclick="sendPrompt('Price my menu')">Price menu</div>
-            <div class="qp-chip" onclick="sendPrompt('Customer complaint')">Customer issue</div>
-            <div class="qp-chip" onclick="sendPrompt('Daily revenue tracking')">Track revenue</div>
-          </div>
-          <div class="chat-msgs" id="chatMsgs">
-            <div class="ai-msg">
-              <div class="ai-avatar">✨</div>
-              <div class="ai-bubble">Hey Ahmad 👋 I'm your Hawker AI assistant.
-
-Ask me anything about your stall — costing, supplier messages, SOPs, pricing, admin templates. What do you need?</div>
-            </div>
-          </div>
-          <div class="chat-input-bar">
-            <input class="chat-input" id="chatInput" placeholder="Ask anything about your stall…" onkeydown="if(event.key==='Enter')sendMsg()">
-            <button class="send-btn" onclick="sendMsg()">↑</button>
-          </div>
-        </div>
-
-        <!-- GAMES -->
-        <div id="scr-games" class="screen">
-          <div id="gamesHub">
-            <div class="screen-hdr"><div class="screen-ttl">GAMES</div><span style="font-size:11px;color:var(--grey);font-weight:600;" id="totalXPLbl">340 XP</span></div>
-            <div class="game-main-card" onclick="startQuiz()">
-              <div class="gmc-tag">🎯 Featured Game</div>
-              <div class="gmc-ttl">Hawker Quiz</div>
-              <div class="gmc-desc">10 questions on Singapore hawker culture, food history & industry knowledge.</div>
-              <div class="gmc-foot"><div class="xp-badge">Up to +150 XP</div><button class="play-btn play-primary" onclick="event.stopPropagation();startQuiz()">Play Now</button></div>
-            </div>
-            <div class="game-sec-card">
-              <div class="gmc-tag" style="color:var(--gold);">📅 Daily Challenge</div>
-              <div class="gmc-ttl" style="font-size:17px;">Stall Ops Q&amp;A</div>
-              <div class="gmc-desc">One operational question per day. Build real stall management knowledge.</div>
-              <div class="gmc-foot"><div class="xp-badge">+25 XP</div><button class="play-btn play-gold">Today's Q</button></div>
-            </div>
-            <div class="lb-card">
-              <div class="card-lbl">🏆 Cohort Leaderboard</div>
-              <div class="lb-row"><span class="lb-num" style="color:var(--gold)">1</span><span class="lb-emo">🧑‍🍳</span><span class="lb-who">Farah M.</span><span class="lb-xp">820 XP</span></div>
-              <div class="lb-row"><span class="lb-num" style="color:#c0c8d0">2</span><span class="lb-emo">👩‍🍳</span><span class="lb-who">Wei Lin</span><span class="lb-xp">610 XP</span></div>
-              <div class="lb-row"><span class="lb-num" style="color:#cd7f32">3</span><span class="lb-emo">👨‍🍳</span><span class="lb-who">Ahmad R. <span style="color:var(--cyan);font-size:9px;">(You)</span></span><span class="lb-xp" id="lbYou">340 XP</span></div>
-              <div class="lb-row"><span class="lb-num" style="color:var(--grey)">4</span><span class="lb-emo">🧑‍🍳</span><span class="lb-who">Ravi S.</span><span class="lb-xp">280 XP</span></div>
-              <div class="lb-row"><span class="lb-num" style="color:var(--grey)">5</span><span class="lb-emo">👩‍🍳</span><span class="lb-who">Mei Ling</span><span class="lb-xp">195 XP</span></div>
-            </div>
-            <div style="height:14px;"></div>
-          </div>
-          <div id="quizView">
-            <div class="quiz-topbar">
-              <div class="quiz-back" onclick="exitQuiz()">←</div>
-              <div class="qprog-wrap"><div class="qprog-lbl" id="qProgLbl">Question 1 of 10</div><div class="pbar-track"><div class="pbar-fill" id="qProgBar" style="width:10%;background:var(--cyan);box-shadow:0 0 8px rgba(0,245,255,0.35);"></div></div></div>
-              <div class="q-score-badge" id="qScoreBadge">0 / 0</div>
-            </div>
-            <div id="qCard" class="q-card"><div class="q-num" id="qNum">QUESTION 01</div><div class="q-text" id="qText">Loading…</div></div>
-            <div class="opts-list" id="optsList"></div>
-            <div class="fact-pill" id="factPill"></div>
-            <button class="next-q-btn" id="nextQBtn" onclick="nextQ()">Next Question →</button>
-            <div class="quiz-results" id="quizResults">
-              <div class="res-emoji" id="resEmoji">🎉</div>
-              <div class="res-title" id="resTitle">QUIZ COMPLETE!</div>
-              <div class="res-score" id="resScore">8/10</div>
-              <div class="res-sub">Correct answers</div>
-              <div class="res-xp" id="resXP">+130 XP Earned</div>
-              <button class="res-again" onclick="restartQuiz()">Play Again</button>
-              <button class="res-back" onclick="exitQuiz()">Back to Games</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- PROFILE -->
-        <div id="scr-profile" class="screen">
-          <div class="screen-hdr"><div class="screen-ttl">PROFILE</div><span style="font-size:18px;cursor:pointer;" onclick="document.getElementById('apiKeyCard').scrollIntoView({behavior:'smooth'});document.getElementById('apiKeyInput').focus();">⚙️</span></div>
-          <div class="prof-hero">
-            <div class="prof-av">👨‍🍳</div>
-            <div><div class="prof-name">Ahmad R.</div><div class="prof-cohort">Cohort 6 · Batch B · Training</div><div class="prof-lv">Level 2 — Trainee</div></div>
-          </div>
-          <div class="xp-card">
-            <div class="xp-row"><span class="xp-lbl">Level Progress</span><span class="xp-val" id="profXP">340 / 500 XP</span></div>
-            <div class="pbar-track"><div class="pbar-fill" id="profXPBar" style="width:68%;background:linear-gradient(90deg,#00f5ff,#00c8d4);box-shadow:0 0 8px rgba(0,245,255,0.35);"></div></div>
-            <div style="margin-top:7px;font-size:10px;color:var(--grey);">160 XP to Level 3 — Operator</div>
-          </div>
-          <div class="card">
-            <div class="card-lbl">Achievements</div>
-            <div class="badges-grid">
-              <div class="bdg earned"><div class="bdg-e">🎯</div><div class="bdg-nm">First Day</div></div>
-              <div class="bdg earned"><div class="bdg-e">🔥</div><div class="bdg-nm">7 Streak</div></div>
-              <div class="bdg earned"><div class="bdg-e">📜</div><div class="bdg-nm">Certified</div></div>
-              <div class="bdg earned"><div class="bdg-e">⭐</div><div class="bdg-nm">300 XP</div></div>
-              <div class="bdg locked"><div class="bdg-e">🏪</div><div class="bdg-nm">Placed</div></div>
-              <div class="bdg locked"><div class="bdg-e">💰</div><div class="bdg-nm">First $1K</div></div>
-              <div class="bdg locked"><div class="bdg-e">🏆</div><div class="bdg-nm">Owner</div></div>
-              <div class="bdg locked"><div class="bdg-e">🌟</div><div class="bdg-nm">Mentor</div></div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-lbl">Your Stats</div>
-            <div class="prof-stats">
-              <div class="ps-item"><div class="ps-val" style="color:var(--cyan)" id="profXPStat">340</div><div class="ps-lbl">Total XP</div></div>
-              <div class="ps-item"><div class="ps-val" style="color:var(--gold)">23</div><div class="ps-lbl">Days Active</div></div>
-              <div class="ps-item"><div class="ps-val" style="color:var(--magenta)">7</div><div class="ps-lbl">Day Streak</div></div>
-              <div class="ps-item"><div class="ps-val" style="color:var(--green)">35%</div><div class="ps-lbl">Stage Done</div></div>
-            </div>
-          </div>
-          <div class="card" id="apiKeyCard">
-            <div class="card-lbl">AI Settings</div>
-            <div style="font-size:12px;color:var(--grey);margin-bottom:10px;">Enter your Anthropic API key to power the AI chat with real responses. Stored locally on your device only.</div>
-            <input id="apiKeyInput" type="password" placeholder="sk-ant-..." autocomplete="off"
-              style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--white);font-size:13px;font-family:'DM Mono',monospace,sans-serif;outline:none;"
-              oninput="saveApiKey(this.value)" />
-            <div id="apiKeyStatus" style="margin-top:8px;font-size:11px;color:var(--grey);"></div>
-          </div>
-          <div style="height:14px;"></div>
-        </div>
-
-      </div><!-- /screen-container -->
-
-      <div class="bottom-nav">
-        <button class="nav-btn active" id="nav-home"    onclick="navTo('home')">   <span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
-        <button class="nav-btn"        id="nav-pathway" onclick="navTo('pathway')"><span class="nav-icon">🗺️</span><span class="nav-label">Pathway</span></button>
-        <button class="nav-btn"        id="nav-ai"      onclick="navTo('ai')">     <span class="nav-icon">✨</span><span class="nav-label">AI</span></button>
-        <button class="nav-btn"        id="nav-games"   onclick="navTo('games')">  <span class="nav-icon">🎮</span><span class="nav-label">Games</span></button>
-        <button class="nav-btn"        id="nav-profile" onclick="navTo('profile')"><span class="nav-icon">👤</span><span class="nav-label">Profile</span></button>
-      </div>
-      <div class="home-indicator"></div>
-
     </div>
+    <div id="react-root"></div>
   </div>
+</div>
 
-  <script>
-  const S = { xp: 340, xpMax: 500 };
+<script type="text/babel">
+const { useState, useEffect, useRef, useReducer, useCallback } = React;
+const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
 
-  const QUIZ = [
-    { q:"What is considered Singapore's unofficial national dish?", opts:["Char Kway Teow","Hainanese Chicken Rice","Laksa"], ans:1, fact:"Hainanese Chicken Rice is served across 5,000+ stalls — the most iconic dish in Singapore." },
-    { q:"What does 'wok hei' (镬气) literally translate to?", opts:["Wok smoke","Breath of the wok","Wok fire"], ans:1, fact:"Wok hei is the charred, smoky flavour only achievable at extreme heat — the mark of a skilled hawker." },
-    { q:"Which year was Singapore hawker culture inscribed on UNESCO's Intangible Heritage list?", opts:["2019","2020","2022"], ans:1, fact:"Singapore became the first country to have hawker culture recognised by UNESCO." },
-    { q:"What does 'teh tarik' literally mean in Malay?", opts:["Sweet milk tea","Pulled tea","Frothy tea"], ans:1, fact:"The 'pulling' pours tea between containers to aerate it — creating that thick creamy froth." },
-    { q:"In hawker context, what does 'tapao' mean?", opts:["Share a dish","Extra spicy","Take away"], ans:2, fact:"Tapao (打包) comes from Cantonese and is used across all races in Singapore — a true cultural blend." },
-    { q:"Which fat gives authentic char kway teow its signature flavour?", opts:["Vegetable oil","Sesame oil","Lard"], ans:2, fact:"Authentic char kway teow uses lard for its distinctive rich depth. Many modern stalls now substitute this." },
-    { q:"Laksa is a fusion of which two food traditions?", opts:["Indian & Malay","Chinese & Malay","Indian & Chinese"], ans:1, fact:"Laksa reflects Peranakan heritage — a beautiful blend of Chinese and Malay cooking cultures." },
-    { q:"What does 'cai png' (菜饭) literally mean?", opts:["Fried rice","Mixed rice","Egg rice"], ans:1, fact:"Cai png — rice with a selection of dishes — is one of Singapore's most affordable and popular meals." },
-    { q:"Approximately how many hawker stalls operate in Singapore?", opts:["~6,000","~14,000","~3,000"], ans:1, fact:"Singapore has over 14,000 stalls across 114 NEA-managed centres — one of the world's great street food cultures." },
-    { q:"Wok hei is best achieved by cooking at…", opts:["Medium heat for longer","Extremely high heat quickly","Low heat with a lid"], ans:1, fact:"Blazing heat and speed are the keys to wok hei. Hawker cooking is both an art and a sport." }
-  ];
+// ─── Constants & Data ────────────────────────────────────────────────────────
+const LS_KEY = 'hb_v1';
+
+const DEFAULT_STATE = {
+  xp: 340, xpMax: 500, level: 2, streak: 7,
+  lastActiveDate: null,
+  stage: 1,
+  stageProgress: { 1: 0.65, 2: 0, 3: 0, 4: 0 },
+  completedMilestones: ['Food Hygiene Cert', 'Basic Cooking Assessment'],
+  unlockedTools: ['ai', 'culinary'],
+  apiKey: '',
+  userName: 'Ahmad R.',
+  badges: {
+    'First Day': true, '7 Streak': true, 'Certified': true, '300 XP': true,
+    'Placed': false, 'First $1K': false, 'Owner': false, 'Mentor': false
+  }
+};
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(LS_KEY);
+    return s ? { ...DEFAULT_STATE, ...JSON.parse(s) } : { ...DEFAULT_STATE };
+  } catch { return { ...DEFAULT_STATE }; }
+}
+
+function saveState(s) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(s)); } catch {}
+}
+
+function isToolUnlocked(toolId, state) {
+  const { stage, stageProgress } = state;
+  const p1 = stageProgress[1] || 0;
+  switch(toolId) {
+    case 'ai': return true;
+    case 'culinary': return p1 >= 0.5;
+    case 'cost': return p1 >= 1.0;
+    case 'stalls': return stage >= 2;
+    case 'tender': return stage >= 2;
+    case 'ops': return stage >= 3;
+    case 'tips': return stage >= 3;
+    case 'biz': return stage >= 4;
+    default: return false;
+  }
+}
+
+function toolUnlockRequirement(toolId) {
+  switch(toolId) {
+    case 'culinary': return 'Stage 1: 50% progress';
+    case 'cost': return 'Stage 1: Complete';
+    case 'stalls': return 'Stage 2';
+    case 'tender': return 'Stage 2';
+    case 'ops': return 'Stage 3';
+    case 'tips': return 'Stage 3';
+    case 'biz': return 'Stage 4';
+    default: return 'Locked';
+  }
+}
+
+function stateReducer(state, action) {
+  let next;
+  switch(action.type) {
+    case 'ADD_XP':
+      next = { ...state, xp: state.xp + action.amount };
+      break;
+    case 'SET_TAB':
+      return state;
+    case 'SAVE_API_KEY':
+      next = { ...state, apiKey: action.key };
+      break;
+    case 'SET_STAGE_PROGRESS': {
+      const sp = { ...state.stageProgress, [action.stage]: action.progress };
+      next = { ...state, stageProgress: sp };
+      break;
+    }
+    case 'COMPLETE_STAGE': {
+      const s = action.stage;
+      const sp = { ...state.stageProgress, [s]: 1.0 };
+      const newStage = Math.max(state.stage, s + 1);
+      const tools = [...state.unlockedTools];
+      if (s >= 1 && !tools.includes('cost')) tools.push('cost');
+      if (s >= 1 && !tools.includes('stalls')) tools.push('stalls');
+      if (s >= 1 && !tools.includes('tender')) tools.push('tender');
+      if (s >= 2 && !tools.includes('ops')) tools.push('ops');
+      if (s >= 2 && !tools.includes('tips')) tools.push('tips');
+      if (s >= 3 && !tools.includes('biz')) tools.push('biz');
+      next = { ...state, stageProgress: sp, stage: Math.min(newStage, 4), unlockedTools: tools, xp: state.xp + 100 };
+      break;
+    }
+    default: return state;
+  }
+  saveState(next);
+  return next;
+}
+
+// ─── Quiz Data ───────────────────────────────────────────────────────────────
+const QUIZ = [
+  { q:"What is considered Singapore's unofficial national dish?", opts:["Char Kway Teow","Hainanese Chicken Rice","Laksa"], ans:1, fact:"Hainanese Chicken Rice is served across 5,000+ stalls — the most iconic dish in Singapore." },
+  { q:"What does 'wok hei' (镬气) literally translate to?", opts:["Wok smoke","Breath of the wok","Wok fire"], ans:1, fact:"Wok hei is the charred, smoky flavour only achievable at extreme heat — the mark of a skilled hawker." },
+  { q:"Which year was Singapore hawker culture inscribed on UNESCO's Intangible Heritage list?", opts:["2019","2020","2022"], ans:1, fact:"Singapore became the first country to have hawker culture recognised by UNESCO." },
+  { q:"What does 'teh tarik' literally mean in Malay?", opts:["Sweet milk tea","Pulled tea","Frothy tea"], ans:1, fact:"The 'pulling' pours tea between containers to aerate it — creating that thick creamy froth." },
+  { q:"In hawker context, what does 'tapao' mean?", opts:["Share a dish","Extra spicy","Take away"], ans:2, fact:"Tapao (打包) comes from Cantonese and is used across all races in Singapore — a true cultural blend." },
+  { q:"Which fat gives authentic char kway teow its signature flavour?", opts:["Vegetable oil","Sesame oil","Lard"], ans:2, fact:"Authentic char kway teow uses lard for its distinctive rich depth. Many modern stalls now substitute this." },
+  { q:"Laksa is a fusion of which two food traditions?", opts:["Indian & Malay","Chinese & Malay","Indian & Chinese"], ans:1, fact:"Laksa reflects Peranakan heritage — a beautiful blend of Chinese and Malay cooking cultures." },
+  { q:"What does 'cai png' (菜饭) literally mean?", opts:["Fried rice","Mixed rice","Egg rice"], ans:1, fact:"Cai png — rice with a selection of dishes — is one of Singapore's most affordable and popular meals." },
+  { q:"Approximately how many hawker stalls operate in Singapore?", opts:["~6,000","~14,000","~3,000"], ans:1, fact:"Singapore has over 14,000 stalls across 114 NEA-managed centres — one of the world's great street food cultures." },
+  { q:"Wok hei is best achieved by cooking at…", opts:["Medium heat for longer","Extremely high heat quickly","Low heat with a lid"], ans:1, fact:"Blazing heat and speed are the keys to wok hei. Hawker cooking is both an art and a sport." }
+];
+
+// ─── Business Tool Data ──────────────────────────────────────────────────────
+const VENUES = [
+  { id:1, name:'NEA Hawker Centres', badge:'NEA', rental:'$500–$6,000', model:'Competitive Tender', footfall:'High', pros:['Subsidised infrastructure','High foot traffic','NEA support programmes'], cons:['Competitive bidding','3+3 year tenure','Strict hygiene rules'] },
+  { id:2, name:'Social Enterprise Hawker Centres (SEHC)', badge:'SEHC', rental:'$1,200–$3,500', model:'Fixed (No Bidding)', footfall:'High', pros:['Predictable rent','No bidding war','Managed operator support'], cons:['Less flexibility','Operator rules apply','Limited stall types'] },
+  { id:3, name:'Town Council Centres', badge:'Town Council', rental:'$800–$2,500', model:'Application-based', footfall:'Medium', pros:['Lower rent','Community footfall','Flexible hours'], cons:['Smaller crowd','Varies by town','Basic facilities'] },
+  { id:4, name:'Kopitiam (Foodfare/Kopitiam Group)', badge:'Private', rental:'$2,000–$5,000', model:'Fixed Lease', footfall:'High', pros:['Air-conditioned','Branding support','Multiple locations'], cons:['High rent','Strict menu approval','Revenue sharing possible'] },
+  { id:5, name:'Food Junction / Koufu', badge:'Private', rental:'$2,500–$6,000', model:'Fixed Lease', footfall:'Very High', pros:['Mall locations','High lunch crowds','Professional management'], cons:['Very high competition','Mall operating hours','High cost base'] },
+  { id:6, name:'HDB Shophouse (F&B Ground Floor)', badge:'HDB', rental:'$3,000–$8,000', model:'Commercial Lease', footfall:'Variable', pros:['Full autonomy','Brand-building potential','No platform fees'], cons:['High fitout costs','Self-managed marketing','Longer lease'] },
+  { id:7, name:'Food Courts (Independent)', badge:'Food Court', rental:'$1,500–$4,000', model:'Revenue Share / Fixed', footfall:'Medium-High', pros:['Lower startup cost','Shared infrastructure','Ready customers'], cons:['Revenue share cuts margin','Limited brand identity','Operator-dependent'] },
+];
+
+const RECIPES = [
+  { name:'Hainanese Chicken Rice', cuisine:'Chinese', cost:1.80, sell:4.50, ingredients:['Whole chicken 1.5kg','Jasmine rice 500g','Ginger','Garlic','Pandan leaves'], notes:'Source whole chickens from Lim Ah Boy or Pasir Panjang. 1.5kg bird yields ~600g cooked meat.' },
+  { name:'Char Kway Teow', cuisine:'Chinese', cost:1.40, sell:4.00, ingredients:['Flat rice noodles 200g','Bean sprouts','Eggs x2','Prawns 3–4 pcs','Cockles 6–8','Lard'], notes:'Lard is non-negotiable for wok hei. Cockles from wet market dawn run.' },
+  { name:'Laksa', cuisine:'Peranakan', cost:2.20, sell:6.00, ingredients:['Laksa rempah 100g','Coconut milk 400ml','Rice vermicelli','Tau pok','Prawns 3 pcs'], notes:'Rempah grinding is the key skill. Blend and freeze in portions.' },
+  { name:'Nasi Lemak', cuisine:'Malay', cost:1.60, sell:4.00, ingredients:['Jasmine rice 2kg','Coconut milk 600ml','Ikan bilis','Sambal','Cucumber','Egg'], notes:'Sambal is your differentiator. Cook low and slow 45 min.' },
+  { name:'Hokkien Mee', cuisine:'Chinese', cost:1.80, sell:5.00, ingredients:['Yellow noodles','Vermicelli','Prawns','Pork belly','Prawn stock 200ml'], notes:'Prawn stock quality is everything. Roast prawn heads before boiling.' },
+  { name:'Roti Prata', cuisine:'Indian', cost:0.40, sell:1.20, ingredients:['Plain flour 1kg','Ghee 100g','Water 500ml'], notes:'Lamination technique takes 2–3 weeks to master. Dhal curry is your margin booster.' },
+  { name:'Bak Chor Mee', cuisine:'Chinese', cost:1.50, sell:4.50, ingredients:['Mee pok 100g','Minced pork 80g','Pork liver','Vinegar','Lard'], notes:'Vinegar ratio is your secret weapon. Pork liver must be fresh — order daily.' },
+  { name:'Chicken Biryani', cuisine:'Indian', cost:2.80, sell:7.00, ingredients:['Basmati rice 1kg','Chicken 2kg','Biryani masala','Ghee','Saffron'], notes:'High prep but excellent margin. Popular for office lunch crowd.' },
+  { name:'Carrot Cake (Chai Tow Kway)', cuisine:'Chinese', cost:0.80, sell:3.50, ingredients:['White radish 1kg','Rice flour 500g','Eggs x4','Bean sprouts','Dark soy'], notes:'Radish cake keeps 5 days refrigerated. Black version more profitable.' },
+];
+
+const SUPPLIERS = [
+  { name:'Pasir Panjang Wholesale Market', cat:'Wet Market', loc:'Pasir Panjang', products:'Vegetables, fruits, tofu', notes:'Best prices dawn 4–6am. Bring trolley.' },
+  { name:'Jurong Fishery Port', cat:'Seafood', loc:'Jurong', products:'All fresh seafood, prawns, fish', notes:'Open 12am–8am. Auction prices. Bring cool box.' },
+  { name:'Kim San Leng Food Industries', cat:'Dry Goods', loc:'Geylang', products:'Noodles, dried goods, sauces', notes:'Delivery available min $200 order.' },
+  { name:'Tong Lee Co', cat:'Specialty', loc:'Jalan Besar', products:'Spices, rempah bases, curry powders', notes:'Family-run since 1938. Best spice blends in Singapore.' },
+  { name:'Sin Chew Foodstuff', cat:'Frozen/Chilled', loc:'Jurong West', products:'Frozen seafood, meat portions, dim sum', notes:'Good for backup stock.' },
+  { name:'PackServ', cat:'Packaging', loc:'Ubi', products:'Containers, bags, cutlery, printed boxes', notes:'Custom printing min 1000 units. 2-week lead time.' },
+];
+
+const TIPS = [
+  { id:1, cat:'Tender Tricks', title:'Reading Vacancy Signals', body:'NEA publishes tender notices 4–6 weeks before closing. Track go.gov.sg/tendernotice weekly. Stalls vacant >3 months signal low AMR — bid-able at 10–15% above AMR.' },
+  { id:2, cat:'Tender Tricks', title:'The Overbid Cost Calculator', body:'Every $100 you bid over AMR costs $3,600 over 3 years. $500 overbid over 6-year tenancy = $27,000 excess total. Use this to anchor your maximum bid.' },
+  { id:3, cat:'Tender Tricks', title:'Equipment Red Flags', body:'"Existing hood/exhaust" in tender notice = saves $3–8k. "Shell condition" = budget $10–25k for A&A. Check for existing 3-phase power — essential for steamers.' },
+  { id:4, cat:'Ops Survival', title:'First 3 Months Cash Buffer', body:'Hold 3× monthly operating costs before opening. Month 1 revenue = 40–60% of steady state. If costs are $8k/month, keep $24k in reserve. Not for fitout — keep it sacred.' },
+  { id:5, cat:'Ops Survival', title:'R&R Closure Risk', body:'NEA conducts R&R closures every 5–7 years, typically 3–6 months. Build an R&R fund of $5–10k by Year 2. Check when centre last had R&R before bidding.' },
+  { id:6, cat:'Ops Survival', title:'S&CC Negotiation in Private Venues', body:'In kopitiams and private food courts, S&CC is negotiable. Request itemised breakdown, remove services you self-manage. Savings: $100–300/month possible.' },
+  { id:7, cat:'Ops Survival', title:'Opening Week Stock Calibration', body:'Prepare 60% of steady-state volume for Week 1. Sold out by 12pm = increase 20%. Leftovers >20% at close = reduce 15%. Hit 90% accuracy by Day 10.' },
+  { id:8, cat:'Cost Traps', title:'A&A Exhaust Hood Costs', body:'NEA-compliant exhaust hood: $3,000–$8,000 installed. SFA + NEA structural approval = 6–12 weeks. Budget this BEFORE bidding.' },
+  { id:9, cat:'Cost Traps', title:'SFA Licence Timeline', body:'Food Stall Licence takes 4–6 weeks. Cannot operate without it. Need: food handler certs, fire safety, SFA pre-inspection, ACRA bizfile. Missing one item resets the clock.' },
+  { id:10, cat:'Cost Traps', title:'Crockery Float at Productive Hawker Centres', body:'PHCs require crockery float — $500–$2,000 capital on Day 1. Most startup budgets miss this. Check if your target centre is Productive before planning.' },
+  { id:11, cat:'Scaling Up', title:'When to Consider Central Kitchen', body:'Ready signals: 2+ stalls, prep time >3 hrs/day, >$3k/month on prep labour, quality inconsistency costing customers. Entry-level shared CK from $1,500/month.' },
+  { id:12, cat:'Scaling Up', title:'NEA Rules on Subletting', body:'You CANNOT sublet your NEA stall. Violation = immediate termination + blacklisting from all future NEA tenders. No exceptions.' },
+];
+
+const EQUIPMENT = [
+  { name:'Commercial Wok Range', spec:'2-burner, 120k+ BTU', priceNew:'$800–$2,500', priceUsed:'$300–$800', where:'Sing Lian, Geylang' },
+  { name:'Flat Top Griddle (Tawa)', spec:'90cm, cast iron preferred', priceNew:'$400–$1,200', priceUsed:'$150–$400', where:'Little India hardware suppliers' },
+  { name:'Commercial Deep Fryer', spec:'15–20L, dual basket', priceNew:'$600–$1,800', priceUsed:'$200–$600', where:'Sing Lian or Liang Court Kitchen' },
+  { name:'Commercial Steamer', spec:'3-deck, electric 3-phase', priceNew:'$1,500–$4,000', priceUsed:'$500–$1,200', where:'Thian Seng or Koon Seng Hardware' },
+  { name:'Upright Chiller (2-door)', spec:'600L, 0–4°C', priceNew:'$2,000–$4,500', priceUsed:'$800–$1,800', where:'Harvey Norman Commercial' },
+  { name:'Commercial Rice Cooker', spec:'10L / 55-cup', priceNew:'$300–$800', priceUsed:'$100–$250', where:'NTUC Finest Commercial' },
+  { name:'POS System (Tablet)', spec:'NETS + PayNow integrated', priceNew:'$500–$2,000/yr', priceUsed:'N/A', where:'Grab Merchant, Square, Softinnov' },
+  { name:'Display Warmer / Bain Marie', spec:'3-pan, 60–80°C', priceNew:'$300–$800', priceUsed:'$100–$300', where:'Sing Lian, Geylang' },
+];
+
+const GRANTS = [
+  {title:'NEA Incubation Stall Programme', badge:'NEA Grant', col:'ember', desc:'Subsidised stall rent for 18 months for new hawkers. Competitive — focus on food quality and business viability in your application.'},
+  {title:'Enterprise Development Grant (EDG)', badge:'EnterpriseSG', col:'teal', desc:'Up to 70% funding for consultancy, branding, and tech adoption. Min 6 months operating. Apply via Business Grants Portal.'},
+  {title:'Productivity Solutions Grant (PSG)', badge:'EnterpriseSG', col:'gold', desc:'Up to 70% subsidy for pre-approved tech: POS, queue management, inventory systems. Good for cashless infrastructure.'},
+  {title:'Michelin Bib Gourmand', badge:'Recognition', col:'gray', desc:'Inspectors visit anonymously 3–5 times. Focus on signature dish consistency. Min 2 years operation. Cannot apply — you get selected.'},
+  {title:'SFA Food Safety Excellence Award', badge:'SFA Award', col:'blue', desc:'Annual award for Grade A stalls with systematic FSMS. Document food safety procedures. Certificate gives marketing rights.'},
+  {title:'FairPrice Finest Local Showcase', badge:'Retail', col:'teal', desc:'Get your signature sauce into retail. $5k seed + retail listing. Apply via FairPrice supplier portal.'},
+];
+
+// ─── AI ──────────────────────────────────────────────────────────────────────
+const SYSTEM_PROMPTS = {
+  1: "You are a hawker training mentor. The user is in Stage 1 Training. Focus on culinary skills, food safety, kitchen fundamentals. Keep responses concise and practical for Singapore context.",
+  2: "You are a hawker business coach. Stage 2 Placement. Focus on real stall operations, customer service, first revenue. Use Singapore terms naturally (AMR, SFA, NEA, kopitiam).",
+  3: "You are a hawker business advisor. Stage 3 Aftercare. Focus on financial stability, supplier relationships, SFA compliance, scaling early operations.",
+  4: "You are HAWKR.AI — Singapore's hawker intelligence platform. Stage 4 Ownership. Full business advisory: NEA tender mechanics, AMR bidding, SFA licensing, ingredient sourcing, recipe costing. Give specific numbers and be direct."
+};
+
+const CANNED = {
+  cost:`Here's a simple dish costing formula:\n\n1. List every ingredient + qty per portion\n2. Calculate ingredient cost per portion\n3. Add packaging ($0.10–0.20)\n4. Add 15% buffer for waste/spillage\n5. Divide by 0.30 = your minimum sell price\n\nExample — Chicken Rice:\nChicken $0.80 + Rice $0.20 + Sauce $0.10 = $1.10\n÷ 0.30 = $3.67 → round to $4.00 ✓\n\nAim to keep food cost under 30%.`,
+  supplier:`Clean supplier message template:\n\nHi [Name],\n\nPlease confirm availability for the following:\n• [Item] × [Qty] — needed by [Date]\n• [Item] × [Qty] — needed by [Date]\n\nPlease advise on pricing and earliest delivery. We prefer delivery before 7am for morning prep.\n\nBest regards,\n[Your name]\n[Stall name] | [Contact no.]`,
+  sop:`Opening SOP — Hawker Stall\n\n☐ Arrive 90 min before service\n☐ Check cold storage temperatures (≤4°C)\n☐ Inspect ingredient freshness\n☐ Set up mise en place for first service\n☐ Test all equipment (wok, fryer, steamer)\n☐ Restock condiments and sauces\n☐ Set cash float and check change\n☐ Sanitise all prep surfaces\n☐ Brief assistant on specials\n☐ Ready for service ✓`,
+  price:`Menu pricing guide:\n\nTarget food cost: 28–32%\nFormula: Ingredient cost ÷ 0.30 = Min price\n\nExamples:\n$1.20 cost → $4.00 min → sell at $4.50\n$1.80 cost → $6.00 min → sell at $6.50\n\nTips:\n• Check what competitors nearby charge\n• Adjust portion size before lowering price\n• Bundle deals improve perceived value\n• Review pricing every 6 months`,
+  customer:`Customer complaint — how to handle:\n\n1. Stop what you're doing. Listen fully.\n2. Say: "I hear you, let me sort this now."\n3. Offer a fix immediately:\n   → Replace the dish, or\n   → Partial refund for the item\n4. Don't argue about quality in public\n5. Thank them for telling you\n6. Log it internally after they leave\n\nGolden rule: resolve in under 60 seconds. A fast, calm fix turns complaints into loyalty.`,
+  revenue:`Simple daily revenue tracking:\n\nEnd of each day, record:\n• Total sales ($)\n• No. of customers served\n• Top 3 dishes sold\n• Any unusual waste\n\nWeekly: compare Tuesday–Tuesday, not day to day.\n\nTrack in a notes app or WhatsApp yourself.\n\nTarget: revenue up, costs stable = you're on track ✓`,
+  default:`Good question. I can help you right now with:\n→ Costing a dish\n→ Writing a supplier message\n→ Creating a daily opening SOP\n→ Pricing your menu\n→ Handling a customer complaint\n→ Tracking daily revenue\n\nJust type your question or tap a chip above.`
+};
+
+function findCanned(t) {
+  t = t.toLowerCase();
+  if (t.includes('cost')||t.includes('ingredient')) return CANNED.cost;
+  if (t.includes('supplier')||t.includes('message')||t.includes('order')) return CANNED.supplier;
+  if (t.includes('sop')||t.includes('opening')||t.includes('checklist')) return CANNED.sop;
+  if (t.includes('price')||t.includes('pricing')||t.includes('sell')) return CANNED.price;
+  if (t.includes('customer')||t.includes('complaint')) return CANNED.customer;
+  if (t.includes('revenue')||t.includes('track')||t.includes('daily')) return CANNED.revenue;
+  return CANNED.default;
+}
+
+async function callClaude(userText, apiKey, stage) {
+  const res = await fetch('https://hawkr-proxy.jaromelgee.workers.dev', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 600,
+      system: SYSTEM_PROMPTS[stage] || SYSTEM_PROMPTS[1],
+      messages: [{ role: 'user', content: userText }]
+    })
+  });
+  if (!res.ok) throw new Error('API error ' + res.status);
+  const d = await res.json();
+  return d.content[0].text;
+}
+
+// ─── Shared UI Helpers ───────────────────────────────────────────────────────
+function PbarTrack({ pct, color='var(--cyan)', glow=true }) {
+  return (
+    <div style={{height:5,background:'var(--gdim)',borderRadius:5,overflow:'hidden'}}>
+      <div style={{height:'100%',borderRadius:5,width:(pct*100)+'%',background:color,boxShadow:glow?`0 0 8px ${color}33`:'none',transition:'width 0.7s cubic-bezier(0.4,0,0.2,1)'}}/>
+    </div>
+  );
+}
+
+// Light-theme badge for tool panels
+function LBadge({ children, col='gray' }) {
+  const cols = {gray:'bg-gray-100 text-gray-600', ember:'bg-orange-100 text-orange-700', teal:'bg-teal-50 text-teal-700', gold:'bg-yellow-50 text-yellow-700', blue:'bg-blue-50 text-blue-700', green:'bg-green-50 text-green-700'};
+  return <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full flex-shrink-0 ${cols[col]||cols.gray}`}>{children}</span>;
+}
+
+function LCard({ children, cls='' }) {
+  return <div className={`bg-white rounded-2xl shadow-sm p-5 ${cls}`}>{children}</div>;
+}
+
+// ─── Tool Panel Shell ────────────────────────────────────────────────────────
+function ToolPanel({ title, emoji, onClose, children }) {
+  return (
+    <div className="tool-panel-overlay" onClick={e=>{ if(e.target===e.currentTarget) onClose(); }}>
+      <div className="tool-panel-sheet">
+        <div className="tool-panel-header">
+          <button className="tool-panel-back" onClick={onClose}>←</button>
+          <span className="tool-panel-title">{emoji} {title}</span>
+        </div>
+        <div className="tool-panel-content">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Celebration Modal ───────────────────────────────────────────────────────
+function CelebModal({ stageNum, newTools, onClose }) {
+  return (
+    <div className="modal-overlay">
+      <div className="modal-card">
+        <div style={{fontSize:52,marginBottom:12,animation:'celebBounce 0.6s ease 3'}}>🏆</div>
+        <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:8,color:'var(--cyan)',lineHeight:2,marginBottom:8}}>STAGE {stageNum} COMPLETE!</div>
+        <div style={{fontSize:13,color:'var(--white)',marginBottom:6}}>+100 XP Earned</div>
+        {newTools.length > 0 && (
+          <div style={{margin:'12px 0',padding:'10px 12px',background:'rgba(0,245,255,0.06)',border:'1px solid rgba(0,245,255,0.15)',borderRadius:10}}>
+            <div style={{fontSize:9,color:'var(--cyan)',fontWeight:700,letterSpacing:'0.1em',marginBottom:6}}>TOOLS UNLOCKED</div>
+            {newTools.map(t => <div key={t} style={{fontSize:12,color:'var(--white)',marginBottom:3}}>✨ {t}</div>)}
+          </div>
+        )}
+        <button onClick={onClose} style={{width:'100%',marginTop:12,padding:'12px',background:'var(--cyan)',color:'#04080f',border:'none',borderRadius:12,fontSize:13,fontWeight:700,cursor:'pointer'}}>
+          Continue →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Quiz Component ──────────────────────────────────────────────────────────
+function QuizComponent({ onXPEarned, onBack }) {
+  const [phase, setPhase] = useState('quiz'); // quiz | results
+  const [idx, setIdx] = useState(0);
+  const [score, setScore] = useState(0);
+  const [answered, setAnswered] = useState(null);
+  const [xpEarned, setXpEarned] = useState(0);
   const LTRS = ['A','B','C'];
-  let QS = { idx:0, score:0, answered:null, xpEarned:0 };
 
-  const AI = {
-    cost:`Here's a simple dish costing formula:
+  const q = QUIZ[idx];
 
-1. List every ingredient + qty per portion
-2. Calculate ingredient cost per portion
-3. Add packaging ($0.10–0.20)
-4. Add 15% buffer for waste/spillage
-5. Divide by 0.30 = your minimum sell price
+  function pickAns(chosen) {
+    if (answered !== null) return;
+    setAnswered(chosen);
+    const correct = chosen === q.ans;
+    if (correct) {
+      setScore(s => s+1);
+      setXpEarned(x => x+15);
+    }
+  }
 
-Example — Chicken Rice:
-Chicken $0.80 + Rice $0.20 + Sauce $0.10 = $1.10
-÷ 0.30 = $3.67 → round to $4.00 ✓
+  function nextQ() {
+    if (idx >= QUIZ.length - 1) {
+      const total = xpEarned + 50;
+      setXpEarned(total);
+      onXPEarned(total);
+      setPhase('results');
+    } else {
+      setIdx(i => i+1);
+      setAnswered(null);
+    }
+  }
 
-Aim to keep food cost under 30%.`,
-    supplier:`Clean supplier message template:
+  if (phase === 'results') {
+    const s = score, t = QUIZ.length;
+    const [emoji,title] = s>=9?['🏆','HAWKER MASTER!']:s>=7?['🎉','EXCELLENT WORK!']:s>=5?['💪','GOOD EFFORT!']:['📚','KEEP LEARNING!'];
+    return (
+      <div style={{padding:'20px 20px 10px',textAlign:'center'}}>
+        <div style={{fontSize:52,marginBottom:10}}>{emoji}</div>
+        <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:9,color:'var(--white)',lineHeight:1.9,marginBottom:16}}>{title}</div>
+        <div style={{fontSize:52,fontWeight:800,color:'var(--cyan)',lineHeight:1}}>{s}/{t}</div>
+        <div style={{fontSize:13,color:'var(--grey)',marginBottom:16}}>Correct answers</div>
+        <div style={{display:'inline-flex',alignItems:'center',gap:5,padding:'10px 22px',borderRadius:24,background:'rgba(255,214,0,0.1)',border:'1px solid rgba(255,214,0,0.25)',fontSize:17,fontWeight:800,color:'var(--gold)',marginBottom:22}}>+{xpEarned} XP Earned</div>
+        <button onClick={()=>{setPhase('quiz');setIdx(0);setScore(0);setAnswered(null);setXpEarned(0);}} style={{width:'100%',padding:'13px',background:'var(--cyan)',color:'#04080f',border:'none',borderRadius:12,fontSize:13,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',cursor:'pointer',marginBottom:8}}>Play Again</button>
+        <button onClick={onBack} style={{width:'100%',padding:'12px',background:'transparent',color:'var(--grey)',border:'1px solid var(--border)',borderRadius:12,fontSize:12,fontWeight:600,cursor:'pointer'}}>Back</button>
+      </div>
+    );
+  }
 
-Hi [Name],
+  return (
+    <div>
+      {/* Progress bar */}
+      <div style={{padding:'12px 20px',display:'flex',alignItems:'center',gap:10}}>
+        <button onClick={onBack} style={{width:32,height:32,borderRadius:'50%',background:'var(--card)',border:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',fontSize:13,color:'var(--white)',flexShrink:0}}>←</button>
+        <div style={{flex:1}}>
+          <div style={{fontSize:9,color:'var(--grey)',textAlign:'right',marginBottom:4}}>Question {idx+1} of {QUIZ.length}</div>
+          <PbarTrack pct={(idx+1)/QUIZ.length}/>
+        </div>
+        <div style={{padding:'4px 11px',background:'rgba(0,230,118,0.1)',border:'1px solid rgba(0,230,118,0.2)',borderRadius:20,fontSize:11,fontWeight:700,color:'var(--green)'}}>{score} / {idx}</div>
+      </div>
+      {/* Question */}
+      <div style={{margin:'6px 16px 0',background:'var(--card)',border:'1px solid var(--border)',borderRadius:16,padding:'18px 16px'}}>
+        <div style={{fontSize:9,fontWeight:700,color:'var(--cyan)',letterSpacing:'0.15em',textTransform:'uppercase',marginBottom:10}}>QUESTION {String(idx+1).padStart(2,'0')}</div>
+        <div style={{fontSize:15,fontWeight:600,color:'var(--white)',lineHeight:1.5}}>{q.q}</div>
+      </div>
+      {/* Options */}
+      <div style={{padding:'8px 16px 0',display:'flex',flexDirection:'column',gap:7}}>
+        {q.opts.map((opt,i) => {
+          let cls = '';
+          if (answered !== null) {
+            if (i === q.ans) cls = 'correct';
+            else if (i === answered) cls = 'wrong';
+          }
+          return (
+            <button key={i} disabled={answered!==null} onClick={()=>pickAns(i)}
+              style={{
+                width:'100%',padding:'12px 14px',background:cls==='correct'?'rgba(0,230,118,0.08)':cls==='wrong'?'rgba(255,71,87,0.08)':'var(--card)',
+                border:`1.5px solid ${cls==='correct'?'var(--green)':cls==='wrong'?'var(--red)':'var(--border)'}`,
+                borderRadius:12,display:'flex',alignItems:'center',gap:10,cursor:answered!==null?'default':'pointer',textAlign:'left'
+              }}>
+              <div style={{width:28,height:28,borderRadius:8,background:cls==='correct'?'var(--green)':cls==='wrong'?'var(--red)':'var(--gdim)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:cls?'#fff':'var(--white)',flexShrink:0}}>{LTRS[i]}</div>
+              <span style={{fontSize:13,color:'var(--white)',flex:1,lineHeight:1.4}}>{opt}</span>
+            </button>
+          );
+        })}
+      </div>
+      {/* Fact */}
+      {answered !== null && (
+        <div style={{margin:'8px 16px 0',background:'rgba(0,245,255,0.06)',border:'1px solid rgba(0,245,255,0.14)',borderRadius:12,padding:'11px 13px',fontSize:11,color:'var(--grey)',lineHeight:1.6}}>
+          <strong style={{color:'var(--cyan)'}}>💡 Did you know?</strong> {q.fact}
+        </div>
+      )}
+      {answered !== null && (
+        <button onClick={nextQ} style={{margin:'10px 16px 0',width:'calc(100% - 32px)',padding:13,background:'var(--cyan)',color:'#04080f',border:'none',borderRadius:12,fontSize:13,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',cursor:'pointer',display:'block'}}>
+          {idx >= QUIZ.length-1 ? 'See Results →' : 'Next Question →'}
+        </button>
+      )}
+    </div>
+  );
+}
 
-Please confirm availability for the following:
-• [Item] × [Qty] — needed by [Date]
-• [Item] × [Qty] — needed by [Date]
+// ─── COST ENGINE ─────────────────────────────────────────────────────────────
+function calcCosts(f) {
+  const rev = f.covers * f.avgSpend * f.daysPerWeek * 4.33;
+  const labour = f.staff * 1800 * 1.17;
+  const scc = f.rent * 0.15;
+  const utilities = 400 + (f.hoursPerDay * f.daysPerWeek * 4.33 * 8);
+  const cogs = rev * (f.foodCostPct / 100);
+  const packaging = f.covers * f.daysPerWeek * 4.33 * 0.30;
+  const total = f.rent + scc + 150 + utilities + labour + cogs + packaging;
+  return { rev, labour, scc, utilities, cogs, packaging, total, fixed: f.rent + scc + 150 + utilities + labour + packaging };
+}
 
-Please advise on pricing and earliest delivery. We prefer delivery before 7am for morning prep.
+function CostEngine() {
+  const [form, setForm] = useState({rent:2000,hoursPerDay:12,daysPerWeek:6,staff:1,foodCostPct:30,covers:80,avgSpend:5.50,cuisine:'Chinese',centreName:''});
+  const [res, setRes] = useState(null);
+  const [proj, setProj] = useState(null);
+  const up = (k,v) => setForm(p=>({...p,[k]:v}));
+  const fmt = v => `$${Math.round(v).toLocaleString()}`;
 
-Best regards,
-[Your name]
-[Stall name] | [Contact no.]`,
-    sop:`Opening SOP — Hawker Stall
-
-☐ Arrive 90 min before service
-☐ Check cold storage temperatures (≤4°C)
-☐ Inspect ingredient freshness
-☐ Set up mise en place for first service
-☐ Test all equipment (wok, fryer, steamer)
-☐ Restock condiments and sauces
-☐ Set cash float and check change
-☐ Sanitise all prep surfaces
-☐ Brief assistant on specials
-☐ Ready for service ✓`,
-    price:`Menu pricing guide:
-
-Target food cost: 28–32%
-Formula: Ingredient cost ÷ 0.30 = Min price
-
-Examples:
-$1.20 cost → $4.00 min → sell at $4.50
-$1.80 cost → $6.00 min → sell at $6.50
-
-Tips:
-• Check what competitors nearby charge
-• Adjust portion size before lowering price
-• Bundle deals improve perceived value
-• Review pricing every 6 months`,
-    customer:`Customer complaint — how to handle:
-
-1. Stop what you're doing. Listen fully.
-2. Say: "I hear you, let me sort this now."
-3. Offer a fix immediately:
-   → Replace the dish, or
-   → Partial refund for the item
-4. Don't argue about quality in public
-5. Thank them for telling you
-6. Log it internally after they leave
-
-Golden rule: resolve in under 60 seconds. A fast, calm fix turns complaints into loyalty.`,
-    revenue:`Simple daily revenue tracking:
-
-End of each day, record:
-• Total sales ($)
-• No. of customers served
-• Top 3 dishes sold
-• Any unusual waste
-
-Weekly: compare Tuesday–Tuesday, not day to day.
-
-Track in a notes app or WhatsApp yourself. The Hawker Boys dashboard will do this automatically once your stall is live.
-
-Target: revenue up, costs stable = you're on track ✓`,
-    default:`Good question. For anything specific to your programme, check with your mentor.
-
-I can help you right now with:
-→ Costing a dish
-→ Writing a supplier message
-→ Creating a daily opening SOP
-→ Pricing your menu
-→ Handling a customer complaint
-→ Tracking daily revenue
-
-Tap a chip above or just type your question.`
+  const calc = () => {
+    const f = {...form,rent:+form.rent,hoursPerDay:+form.hoursPerDay,daysPerWeek:+form.daysPerWeek,staff:+form.staff,foodCostPct:+form.foodCostPct,covers:+form.covers,avgSpend:+form.avgSpend};
+    setRes({...calcCosts(f),f});
+    const amr = f.rent * 0.7;
+    setProj([1,2,3,4,5,6,7].map(y=>{
+      const rent = y<=3?f.rent:y<=6?f.rent-(f.rent-amr)*0.5:amr;
+      const c = calcCosts({...f,rent});
+      return {year:`Yr ${y}`,profit70:c.rev*0.7-(c.fixed+c.rev*0.7*(f.foodCostPct/100)),profit100:c.rev-c.total,profit130:c.rev*1.3-(c.fixed+c.rev*1.3*(f.foodCostPct/100))};
+    }));
   };
 
-  function findAIResponse(t) {
-    t = t.toLowerCase();
-    if (t.includes('cost')||t.includes('ingredient')) return AI.cost;
-    if (t.includes('supplier')||t.includes('message')||t.includes('order')||t.includes('reply')) return AI.supplier;
-    if (t.includes('sop')||t.includes('opening')||t.includes('checklist')||t.includes('open')) return AI.sop;
-    if (t.includes('price')||t.includes('menu')||t.includes('pricing')||t.includes('sell')) return AI.price;
-    if (t.includes('customer')||t.includes('complaint')||t.includes('issue')) return AI.customer;
-    if (t.includes('revenue')||t.includes('track')||t.includes('daily')||t.includes('sales')) return AI.revenue;
-    return AI.default;
+  const inp = "border border-gray-200 rounded-lg px-3 py-2 w-full text-sm outline-none focus:ring-2 focus:ring-orange-400 bg-white";
+  return (
+    <div className="p-4 space-y-4" style={{fontFamily:'DM Sans,sans-serif'}}>
+      <LCard>
+        <h2 className="font-bold text-base mb-3">Stall Configuration</h2>
+        <div className="space-y-3">
+          <div><label className="block text-xs font-medium text-gray-600 mb-1">Hawker Centre</label><input value={form.centreName} onChange={e=>up('centreName',e.target.value)} placeholder="e.g. Tiong Bahru Market" className={inp}/></div>
+          <div><label className="block text-xs font-medium text-gray-600 mb-1">Cuisine</label>
+            <select value={form.cuisine} onChange={e=>up('cuisine',e.target.value)} className={inp+" bg-white"}>{['Chinese','Malay','Indian','Western','Mixed'].map(c=><option key={c}>{c}</option>)}</select>
+          </div>
+          <div><label className="block text-xs font-medium text-gray-600 mb-1">Tendered Rent (SGD/mo)</label><input type="number" value={form.rent} onChange={e=>up('rent',e.target.value)} className={inp}/></div>
+          <div className="grid grid-cols-2 gap-2">
+            <div><label className="block text-xs font-medium text-gray-600 mb-1">Hours/Day</label><input type="number" value={form.hoursPerDay} onChange={e=>up('hoursPerDay',e.target.value)} min="1" max="24" className={inp}/></div>
+            <div><label className="block text-xs font-medium text-gray-600 mb-1">Days/Week</label><input type="number" value={form.daysPerWeek} onChange={e=>up('daysPerWeek',e.target.value)} min="1" max="7" className={inp}/></div>
+          </div>
+          <div><label className="block text-xs font-medium text-gray-600 mb-1">Staff (0 = solo)</label><input type="number" value={form.staff} onChange={e=>up('staff',e.target.value)} min="0" className={inp}/></div>
+          <div className="grid grid-cols-2 gap-2">
+            <div><label className="block text-xs font-medium text-gray-600 mb-1">Food Cost %</label><input type="number" value={form.foodCostPct} onChange={e=>up('foodCostPct',e.target.value)} className={inp}/></div>
+            <div><label className="block text-xs font-medium text-gray-600 mb-1">Avg Spend ($)</label><input type="number" step="0.5" value={form.avgSpend} onChange={e=>up('avgSpend',e.target.value)} className={inp}/></div>
+          </div>
+          <div><label className="block text-xs font-medium text-gray-600 mb-1">Daily Covers</label><input type="number" value={form.covers} onChange={e=>up('covers',e.target.value)} className={inp}/></div>
+          <button onClick={calc} className="w-full bg-orange-500 text-white py-2.5 rounded-xl font-semibold text-sm hover:bg-orange-600 transition-colors">Calculate Breakdown</button>
+        </div>
+      </LCard>
+
+      {res && (
+        <LCard>
+          <h2 className="font-bold text-base mb-3">Monthly Breakdown</h2>
+          <div className="space-y-1.5">
+            {[['Tendered Rent',res.f.rent],['S&CC (~15%)',res.scc],['Table Cleaning',150],['Utilities',res.utilities],['Labour (incl. CPF 17%)',res.labour],['Ingredients / COGS',res.cogs],['Packaging',res.packaging]].map(([l,v])=>(
+              <div key={l} className="flex justify-between py-1 border-b border-gray-50 text-sm">
+                <span className="text-gray-600">{l}</span>
+                <span className="font-mono font-medium text-orange-600">{fmt(v)}</span>
+              </div>
+            ))}
+            <div className="flex justify-between pt-2"><span className="font-bold text-sm">Total Monthly Costs</span><span className="font-mono font-bold">{fmt(res.total)}</span></div>
+            <div className="flex justify-between text-sm text-gray-500"><span>Monthly Revenue</span><span className="font-mono">{fmt(res.rev)}</span></div>
+            <div className={`flex justify-between text-sm font-semibold ${res.rev-res.total>=0?'text-teal-600':'text-red-500'}`}>
+              <span>Net Profit/Loss</span><span className="font-mono">{res.rev-res.total>=0?'+':''}{fmt(res.rev-res.total)}</span>
+            </div>
+          </div>
+        </LCard>
+      )}
+
+      {res && (
+        <LCard>
+          <h2 className="font-bold text-base mb-2">Revenue Scenarios</h2>
+          <div className="grid grid-cols-3 gap-2">
+            {[{label:'70% Rev',mult:0.7,cls:'bg-red-50 border-red-100'},{label:'100% Rev',mult:1,cls:'bg-teal-50 border-teal-100'},{label:'130% Rev',mult:1.3,cls:'bg-green-50 border-green-100'}].map(s=>{
+              const rev = res.rev*s.mult;
+              const profit = rev-(res.fixed+rev*(res.f.foodCostPct/100));
+              return <div key={s.label} className={`rounded-xl p-2 border ${s.cls} text-center`}>
+                <div className="text-xs text-gray-500 mb-0.5">{s.label}</div>
+                <div className="font-mono text-xs font-bold">{fmt(rev)}</div>
+                <div className={`font-mono text-xs font-semibold ${profit>=0?'text-teal-600':'text-red-500'}`}>{profit>=0?'+':''}{fmt(profit)}</div>
+              </div>;
+            })}
+          </div>
+        </LCard>
+      )}
+
+      {proj && (
+        <LCard>
+          <h2 className="font-bold text-base mb-3">6-Year Projection</h2>
+          <div style={{height:200}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={proj}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0"/>
+                <XAxis dataKey="year" tick={{fontSize:10}}/>
+                <YAxis tick={{fontSize:9}} tickFormatter={v=>`$${(v/1000).toFixed(0)}k`}/>
+                <Tooltip formatter={(v,n)=>[`$${Math.round(v).toLocaleString()}`,n]}/>
+                <Legend wrapperStyle={{fontSize:10}}/>
+                <Line type="monotone" dataKey="profit70" stroke="#EF4444" name="@70%" strokeWidth={2} dot={false}/>
+                <Line type="monotone" dataKey="profit100" stroke="#0E7C7B" name="@100%" strokeWidth={2.5} dot={false}/>
+                <Line type="monotone" dataKey="profit130" stroke="#C9993A" name="@130%" strokeWidth={2} dot={false}/>
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <p className="text-xs text-gray-400 mt-2">Yr 4–6: rent steps toward AMR. Yr 7: full AMR.</p>
+        </LCard>
+      )}
+    </div>
+  );
+}
+
+// ─── CULINARY MODULE ─────────────────────────────────────────────────────────
+function CulinaryModule() {
+  const [search, setSearch] = useState('');
+  const [sel, setSel] = useState(null);
+  const filtered = RECIPES.filter(r=>r.name.toLowerCase().includes(search.toLowerCase())||r.cuisine.toLowerCase().includes(search.toLowerCase()));
+  const cusCols = {Chinese:'ember',Malay:'teal',Indian:'gold',Peranakan:'blue'};
+  const margin = r => (((r.sell-r.cost)/r.sell)*100).toFixed(0);
+
+  return (
+    <div className="p-4 space-y-4" style={{fontFamily:'DM Sans,sans-serif'}}>
+      <div className="relative">
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search dishes or cuisine..." className="w-full pl-4 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none bg-white"/>
+      </div>
+      <div className="space-y-3">
+        {filtered.map(r=>(
+          <div key={r.name} onClick={()=>setSel(sel?.name===r.name?null:r)} className="bg-white rounded-2xl shadow-sm p-4 cursor-pointer">
+            <div className="flex items-start justify-between gap-2 mb-2"><h3 className="font-semibold text-sm">{r.name}</h3><LBadge col={cusCols[r.cuisine]||'gray'}>{r.cuisine}</LBadge></div>
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="bg-gray-50 rounded-lg p-1.5"><div className="text-xs text-gray-400">Cost</div><div className="font-mono text-sm font-bold text-orange-600">${r.cost.toFixed(2)}</div></div>
+              <div className="bg-gray-50 rounded-lg p-1.5"><div className="text-xs text-gray-400">Sell</div><div className="font-mono text-sm font-bold">${r.sell.toFixed(2)}</div></div>
+              <div className="bg-gray-50 rounded-lg p-1.5"><div className="text-xs text-gray-400">Margin</div><div className="font-mono text-sm font-bold text-teal-600">{margin(r)}%</div></div>
+            </div>
+            {sel?.name===r.name && (
+              <div className="mt-3 pt-3 border-t border-gray-100 text-xs space-y-2">
+                <div className="text-gray-600"><strong>Ingredients:</strong> {r.ingredients.join(', ')}</div>
+                <div className="bg-amber-50 rounded-lg p-2 text-amber-800">{r.notes}</div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <LCard>
+        <h2 className="font-bold text-base mb-3">Wholesale Suppliers</h2>
+        <div className="space-y-3">
+          {SUPPLIERS.map(s=>(
+            <div key={s.name} className="border border-gray-100 rounded-xl p-3">
+              <div className="flex items-start justify-between gap-2 mb-1"><h3 className="font-semibold text-sm">{s.name}</h3><LBadge>{s.cat}</LBadge></div>
+              <p className="text-xs text-gray-500 mb-1">{s.loc} · {s.products}</p>
+              <p className="text-xs text-gray-600 italic">{s.notes}</p>
+            </div>
+          ))}
+        </div>
+      </LCard>
+    </div>
+  );
+}
+
+// ─── STALL FINDER ─────────────────────────────────────────────────────────────
+function StallFinder() {
+  const [search, setSearch] = useState('');
+  const [sel, setSel] = useState(null);
+  const filtered = VENUES.filter(v=>v.name.toLowerCase().includes(search.toLowerCase()));
+  const badgeCol = {NEA:'ember',SEHC:'teal','Town Council':'blue',Private:'gray',HDB:'gold','Food Court':'gray'};
+
+  return (
+    <div className="p-4 space-y-3" style={{fontFamily:'DM Sans,sans-serif'}}>
+      <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search venues..." className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none bg-white"/>
+      {filtered.map(v=>(
+        <div key={v.id} onClick={()=>setSel(sel?.id===v.id?null:v)} className="bg-white rounded-2xl shadow-sm p-4 cursor-pointer">
+          <div className="flex items-start justify-between gap-2 mb-2"><h3 className="font-semibold text-sm leading-tight">{v.name}</h3><LBadge col={badgeCol[v.badge]||'gray'}>{v.badge}</LBadge></div>
+          <div className="grid grid-cols-2 gap-2 mb-1">
+            <div className="bg-gray-50 rounded-lg p-2"><div className="text-xs text-gray-400">Rental Range</div><div className="text-xs font-mono font-semibold text-orange-600">{v.rental}</div></div>
+            <div className="bg-gray-50 rounded-lg p-2"><div className="text-xs text-gray-400">Model</div><div className="text-xs font-medium">{v.model}</div></div>
+          </div>
+          {sel?.id===v.id && (
+            <div className="mt-2 pt-2 border-t border-gray-100 grid grid-cols-2 gap-3 text-xs">
+              <div><div className="font-semibold text-green-600 mb-1">Pros</div><ul className="space-y-1">{v.pros.map(p=><li key={p} className="text-gray-600">✓ {p}</li>)}</ul></div>
+              <div><div className="font-semibold text-red-500 mb-1">Cons</div><ul className="space-y-1">{v.cons.map(c=><li key={c} className="text-gray-600">✗ {c}</li>)}</ul></div>
+            </div>
+          )}
+          <div className="text-xs text-gray-400 mt-1 text-right">{sel?.id===v.id?'↑ collapse':'↓ details'}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── TENDER MODULE ───────────────────────────────────────────────────────────
+function TenderModule() {
+  const [cat, setCat] = useState('All');
+  const cats = ['All','Tender Tricks','Cost Traps'];
+  const filtered = cat==='All'?TIPS:TIPS.filter(t=>t.cat===cat);
+  const catCol = {'Tender Tricks':'ember','Cost Traps':'gold','Ops Survival':'teal','Scaling Up':'green'};
+
+  return (
+    <div className="p-4 space-y-3" style={{fontFamily:'DM Sans,sans-serif'}}>
+      <div className="flex gap-2 flex-wrap">
+        {cats.map(c=><button key={c} onClick={()=>setCat(c)} className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${cat===c?'bg-orange-500 text-white':'bg-white text-gray-600 border border-gray-200'}`}>{c}</button>)}
+      </div>
+      <div className="space-y-3">
+        {filtered.map(t=>(
+          <LCard key={t.id} cls="!p-4">
+            <div className="flex items-start justify-between gap-2 mb-1"><h3 className="font-semibold text-sm">{t.title}</h3><LBadge col={catCol[t.cat]||'gray'}>{t.cat}</LBadge></div>
+            <p className="text-xs text-gray-600 leading-relaxed">{t.body}</p>
+          </LCard>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── OPERATIONS MODULE ───────────────────────────────────────────────────────
+function OperationsModule() {
+  return (
+    <div className="p-4 space-y-4" style={{fontFamily:'DM Sans,sans-serif'}}>
+      <LCard>
+        <h2 className="font-bold text-base mb-3">Equipment Guide</h2>
+        <div className="space-y-2">
+          {EQUIPMENT.map(e=>(
+            <div key={e.name} className="border border-gray-100 rounded-xl p-3">
+              <div className="flex justify-between items-start mb-1">
+                <span className="font-semibold text-sm">{e.name}</span>
+              </div>
+              <p className="text-xs text-gray-500 mb-1">{e.spec}</p>
+              <div className="flex gap-4 text-xs">
+                <span className="text-orange-600 font-mono">New: {e.priceNew}</span>
+                <span className="text-teal-600 font-mono">Used: {e.priceUsed}</span>
+              </div>
+              <p className="text-xs text-gray-400 mt-0.5">{e.where}</p>
+            </div>
+          ))}
+        </div>
+      </LCard>
+    </div>
+  );
+}
+
+// ─── INSIDER TIPS MODULE ─────────────────────────────────────────────────────
+function InsiderModule() {
+  const [cat, setCat] = useState('All');
+  const cats = ['All','Tender Tricks','Ops Survival','Cost Traps','Scaling Up'];
+  const filtered = cat==='All'?TIPS:TIPS.filter(t=>t.cat===cat);
+  const catCol = {'Tender Tricks':'ember','Ops Survival':'teal','Cost Traps':'gold','Scaling Up':'green'};
+
+  return (
+    <div className="p-4 space-y-3" style={{fontFamily:'DM Sans,sans-serif'}}>
+      <div className="flex gap-2 flex-wrap">
+        {cats.map(c=><button key={c} onClick={()=>setCat(c)} className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${cat===c?'bg-orange-500 text-white':'bg-white text-gray-600 border border-gray-200'}`}>{c} ({c==='All'?TIPS.length:TIPS.filter(t=>t.cat===c).length})</button>)}
+      </div>
+      <div className="space-y-3">
+        {filtered.map(t=>(
+          <LCard key={t.id} cls="!p-4">
+            <div className="flex items-start justify-between gap-2 mb-1"><h3 className="font-semibold text-sm">{t.title}</h3><LBadge col={catCol[t.cat]||'gray'}>{t.cat}</LBadge></div>
+            <p className="text-xs text-gray-600 leading-relaxed">{t.body}</p>
+          </LCard>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── BUSINESS MODULE ─────────────────────────────────────────────────────────
+function BusinessModule() {
+  return (
+    <div className="p-4 space-y-3" style={{fontFamily:'DM Sans,sans-serif'}}>
+      {GRANTS.map(g=>(
+        <LCard key={g.title} cls="!p-4">
+          <div className="flex items-start justify-between gap-2 mb-1"><h3 className="font-semibold text-sm">{g.title}</h3><LBadge col={g.col}>{g.badge}</LBadge></div>
+          <p className="text-xs text-gray-600 leading-relaxed">{g.desc}</p>
+        </LCard>
+      ))}
+    </div>
+  );
+}
+
+// ─── TOOL DEFINITIONS ────────────────────────────────────────────────────────
+const TOOLS = [
+  { id:'cost',     label:'Cost Engine',        emoji:'💰', desc:'Monthly costs + 6yr projection', Component: CostEngine },
+  { id:'culinary', label:'Culinary Knowledge', emoji:'🍳', desc:'Recipes, costing & suppliers',   Component: CulinaryModule },
+  { id:'stalls',   label:'Stall Finder',       emoji:'📍', desc:'Compare venue types & rental',  Component: StallFinder },
+  { id:'tender',   label:'Tender Intelligence',emoji:'📋', desc:'Master NEA bidding strategy',   Component: TenderModule },
+  { id:'ops',      label:'Operations',         emoji:'⚙️', desc:'Daily ops, SFA, equipment',     Component: OperationsModule },
+  { id:'tips',     label:'Insider Tips',       emoji:'💡', desc:'Real intel from hawkers',       Component: InsiderModule },
+  { id:'biz',      label:'Business Builder',   emoji:'📈', desc:'Grants, scaling & growth',      Component: BusinessModule },
+];
+
+// ─── SCREENS ──────────────────────────────────────────────────────────────────
+
+function HomeScreen({ state, dispatch, setTab }) {
+  const [showQuiz, setShowQuiz] = useState(false);
+  const sp = state.stageProgress[state.stage] || 0;
+  const stageNames = {1:'Training',2:'Placement',3:'Aftercare',4:'Ownership'};
+  const stageEmoji = {1:'🍳',2:'🏪',3:'🤝',4:'🏆'};
+  const xpPct = Math.min(state.xp / state.xpMax, 1);
+
+  if (showQuiz) {
+    return (
+      <div style={{position:'absolute',inset:0,background:'var(--bg)',overflowY:'auto'}} className="dark-scroll">
+        <QuizComponent
+          onXPEarned={amt => dispatch({ type:'ADD_XP', amount:amt })}
+          onBack={() => setShowQuiz(false)}
+        />
+        <div style={{height:14}}/>
+      </div>
+    );
   }
 
-  function addUserMsg(text) {
-    const m = document.getElementById('chatMsgs');
-    const d = document.createElement('div'); d.className='user-msg';
-    d.innerHTML=`<div class="user-bubble">${text}</div>`;
-    m.appendChild(d); m.scrollTop=m.scrollHeight;
-  }
-  function addAIMsg(text) {
-    const m = document.getElementById('chatMsgs');
-    const d = document.createElement('div'); d.className='ai-msg';
-    d.innerHTML=`<div class="ai-avatar">✨</div><div class="ai-bubble">${text}</div>`;
-    m.appendChild(d); m.scrollTop=m.scrollHeight;
-  }
-  function showTyping() {
-    const m = document.getElementById('chatMsgs');
-    const d = document.createElement('div'); d.className='typing-indicator'; d.id='typingDots';
-    d.innerHTML=`<div class="ai-avatar">✨</div><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
-    m.appendChild(d); m.scrollTop=m.scrollHeight;
-  }
-  function removeTyping() { const el=document.getElementById('typingDots'); if(el)el.remove(); }
+  return (
+    <div style={{overflowY:'auto',height:'100%'}} className="dark-scroll">
+      <div style={{padding:'14px 20px 4px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+        <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:9,color:'var(--white)'}}>DASHBOARD</div>
+        <span style={{fontSize:20,cursor:'pointer'}}>🔔</span>
+      </div>
+      {/* User row */}
+      <div style={{padding:'10px 20px 0',display:'flex',alignItems:'center',gap:12}}>
+        <div style={{width:44,height:44,borderRadius:'50%',background:'linear-gradient(135deg,#0a4060,#003040)',border:'2px solid var(--cyan)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,boxShadow:'0 0 14px rgba(0,245,255,0.2)',flexShrink:0}}>👨‍🍳</div>
+        <div>
+          <div style={{fontSize:16,fontWeight:700,color:'var(--white)'}}>{state.userName}</div>
+          <div style={{fontSize:11,color:'var(--grey)'}}>Cohort 6 · Stage {state.stage}</div>
+        </div>
+        <div style={{marginLeft:'auto',padding:'4px 10px',background:'rgba(0,245,255,0.1)',border:'1px solid rgba(0,245,255,0.25)',borderRadius:20,fontSize:9,fontWeight:700,color:'var(--cyan)',whiteSpace:'nowrap'}}>LVL {state.level}</div>
+      </div>
+      {/* XP Bar */}
+      <div style={{margin:'10px 16px 0',background:'linear-gradient(135deg,rgba(0,245,255,0.06),rgba(0,80,120,0.04))',border:'1px solid rgba(0,245,255,0.14)',borderRadius:14,padding:'14px 16px'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:7}}>
+          <span style={{fontSize:10,color:'var(--grey)',textTransform:'uppercase',letterSpacing:'0.1em'}}>Progress to Level {state.level+1}</span>
+          <span style={{fontSize:11,fontWeight:700,color:'var(--cyan)'}}>{state.xp} / {state.xpMax} XP</span>
+        </div>
+        <PbarTrack pct={xpPct} color="linear-gradient(90deg,#00f5ff,#00c8d4)"/>
+      </div>
+      {/* Stats */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:7,margin:'10px 16px 0'}}>
+        {[['🔥',state.streak,'Streak'],['📅','23','Days In'],['⭐',state.xp,'Total XP']].map(([ico,val,lbl])=>(
+          <div key={lbl} style={{background:'var(--card)',border:'1px solid var(--border)',borderRadius:12,padding:'11px 6px',textAlign:'center'}}>
+            <div style={{fontSize:18,marginBottom:3}}>{ico}</div>
+            <div style={{fontSize:16,fontWeight:800,color:'var(--white)'}}>{val}</div>
+            <div style={{fontSize:8,color:'var(--grey)',textTransform:'uppercase',letterSpacing:'0.07em',marginTop:2}}>{lbl}</div>
+          </div>
+        ))}
+      </div>
+      {/* Journey card */}
+      <div style={{margin:'10px 16px 0',background:'var(--card)',border:'1px solid var(--border)',borderRadius:14,padding:14}}>
+        <div style={{fontSize:9,fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:'var(--grey)',marginBottom:8}}>YOUR JOURNEY</div>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:8}}>
+          <div>
+            <div style={{fontSize:15,fontWeight:700,color:'var(--white)'}}>{stageEmoji[state.stage]} {stageNames[state.stage]}</div>
+            <div style={{fontSize:10,color:'var(--grey)',marginTop:2}}>Stage {state.stage} of 4</div>
+          </div>
+          <div style={{fontSize:11,color:'var(--green)',fontWeight:700}}>On Track ✓</div>
+        </div>
+        <PbarTrack pct={sp}/>
+        <div style={{display:'flex',justifyContent:'space-between',marginTop:6}}>
+          <span style={{fontSize:10,color:'var(--grey)'}}>{Math.round(sp*100)}% complete</span>
+        </div>
+        <div style={{display:'flex',gap:5,marginTop:10,flexWrap:'wrap'}}>
+          {[1,2,3,4].map(s=>(
+            <div key={s} style={{padding:'3px 9px',borderRadius:20,fontSize:9,fontWeight:700,textTransform:'uppercase',border:'1px solid',color:s===state.stage?'var(--cyan)':s<state.stage?'var(--green)':'var(--grey)',borderColor:s===state.stage?'rgba(0,245,255,0.3)':s<state.stage?'rgba(0,230,118,0.3)':'var(--gdim)',background:s===state.stage?'rgba(0,245,255,0.08)':s<state.stage?'rgba(0,230,118,0.06)':'transparent'}}>
+              {stageNames[s]}
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Challenge card */}
+      <div onClick={()=>setShowQuiz(true)} style={{margin:'10px 16px 0',background:'linear-gradient(135deg,rgba(224,64,251,0.08),rgba(40,0,60,0.04))',border:'1px solid rgba(224,64,251,0.22)',borderRadius:14,padding:14,cursor:'pointer'}}>
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:7}}>
+          <span style={{fontSize:9,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',color:'var(--magenta)'}}>⚡ Today's Challenge</span>
+          <span style={{fontSize:10,fontWeight:700,color:'var(--gold)',background:'rgba(255,214,0,0.1)',padding:'2px 8px',borderRadius:10}}>+50 XP</span>
+        </div>
+        <div style={{fontSize:13,color:'var(--white)',fontWeight:500,lineHeight:1.4}}>Hawker Culture Quiz — test your knowledge of Singapore's food heritage.</div>
+        <div style={{fontSize:11,color:'var(--magenta)',fontWeight:600,marginTop:8}}>Tap to play →</div>
+      </div>
+      {/* Quick actions */}
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:7,margin:'10px 16px 0'}}>
+        <div onClick={()=>setTab('pathway')} style={{background:'var(--card)',border:'1px solid var(--border)',borderRadius:12,padding:'12px 10px',display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}>
+          <span style={{fontSize:20}}>🗺️</span>
+          <div><div style={{fontSize:12,fontWeight:600,color:'var(--white)'}}>Pathway</div><div style={{fontSize:9,color:'var(--grey)',marginTop:1}}>View all stages</div></div>
+        </div>
+        <div onClick={()=>setTab('ai')} style={{background:'var(--card)',border:'1px solid var(--border)',borderRadius:12,padding:'12px 10px',display:'flex',alignItems:'center',gap:8,cursor:'pointer'}}>
+          <span style={{fontSize:20}}>✨</span>
+          <div><div style={{fontSize:12,fontWeight:600,color:'var(--white)'}}>Ask AI</div><div style={{fontSize:9,color:'var(--grey)',marginTop:1}}>Hawker assistant</div></div>
+        </div>
+      </div>
+      <div style={{height:14}}/>
+    </div>
+  );
+}
 
-  function saveApiKey(val) {
-    localStorage.setItem('hawkrboys_api_key', val);
-    const status = document.getElementById('apiKeyStatus');
+// ─── PATHWAY SCREEN ──────────────────────────────────────────────────────────
+function PathwayScreen({ state, dispatch }) {
+  const [celebStage, setCelebStage] = useState(null);
+  const [prevTools, setPrevTools] = useState([...state.unlockedTools]);
+
+  const stageData = [
+    { num:1, emoji:'🍳', label:'Training', color:'var(--cyan)', desc:'Culinary skills, food safety and kitchen operations under experienced mentors.',
+      milestones:['Food Hygiene Cert','Basic Cooking Assessment','Advanced Techniques','Final Practical Exam'] },
+    { num:2, emoji:'🏪', label:'Placement', color:'var(--magenta)', desc:'Live stall under supervision. Real customers, real targets, real accountability.',
+      milestones:['Stall Setup & NEA Inspection','First Week Service','Revenue Target Hit','Supervisor Sign-off'] },
+    { num:3, emoji:'🤝', label:'Aftercare', color:'var(--gold)', desc:'Business support, financial counselling, and peer mentorship to stabilise your stall.',
+      milestones:['Monthly P&L Review','Supplier Agreements','SFA Compliance Audit','Peer Mentorship Session'] },
+    { num:4, emoji:'🏆', label:'Ownership', color:'var(--green)', desc:'Your stall, your brand, your income. Join 40+ alumni running their own businesses.',
+      milestones:['NEA Tender Submitted','Stall Licence Obtained','First Month Revenue','Alumni Network Join'] },
+  ];
+
+  function simulateComplete(stageNum) {
+    const before = [...state.unlockedTools];
+    dispatch({ type:'COMPLETE_STAGE', stage:stageNum });
+    setTimeout(() => {
+      setCelebStage(stageNum);
+      setPrevTools(before);
+    }, 50);
+  }
+
+  const getNewTools = () => {
+    if (!celebStage) return [];
+    const after = state.unlockedTools;
+    const toolNames = { cost:'Cost Engine', stalls:'Stall Finder', tender:'Tender Intelligence', ops:'Operations', tips:'Insider Tips', biz:'Business Builder' };
+    return after.filter(t=>!prevTools.includes(t)).map(t=>toolNames[t]||t);
+  };
+
+  return (
+    <div style={{overflowY:'auto',height:'100%'}} className="dark-scroll">
+      <div style={{padding:'14px 20px 4px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+        <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:9,color:'var(--white)'}}>YOUR JOURNEY</div>
+        <span style={{fontSize:11,color:'var(--grey)',fontWeight:600}}>{state.stage} / 4</span>
+      </div>
+      <div style={{padding:'4px 20px 10px',fontSize:12,color:'var(--grey)',lineHeight:1.6}}>From zero experience to owning your own hawker stall.</div>
+      <div style={{padding:'6px 16px 0',position:'relative'}}>
+        <div style={{position:'absolute',left:36,top:30,bottom:0,width:2,background:'linear-gradient(to bottom,var(--cyan),rgba(0,230,118,0.2))',opacity:0.2}}/>
+        {stageData.map(sd => {
+          const prog = state.stageProgress[sd.num] || 0;
+          const isActive = state.stage === sd.num;
+          const isDone = state.stage > sd.num || prog >= 1.0;
+          const isLocked = state.stage < sd.num;
+
+          return (
+            <div key={sd.num} style={{display:'flex',gap:12,marginBottom:10}}>
+              <div style={{width:40,height:40,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,border:`2px solid ${isDone?'var(--green)':isActive?sd.color:'var(--gdim)'}`,background:isDone?'rgba(0,230,118,0.1)':isActive?`rgba(${sd.color === 'var(--cyan)' ? '0,245,255' : sd.color === 'var(--magenta)' ? '224,64,251' : sd.color === 'var(--gold)' ? '255,214,0' : '0,230,118'},0.1)`:'var(--gdim)',opacity:isLocked?0.5:1,flexShrink:0,position:'relative',zIndex:1,boxShadow:isActive?`0 0 0 4px rgba(0,245,255,0.12),0 0 14px rgba(0,245,255,0.25)`:'none'}}>
+                {sd.emoji}
+              </div>
+              <div style={{flex:1,background:'var(--card)',border:`1px solid ${isActive?sd.color:'var(--border)'}`,background:isActive?`rgba(${sd.color === 'var(--cyan)' ? '0,245,255' : '0,0,0'},0.04)`:'var(--card)',borderRadius:14,padding:14,cursor:'default'}}>
+                <div style={{fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:3,color:isDone?'var(--green)':isActive?sd.color:'var(--grey)'}}>
+                  Stage 0{sd.num} — {isDone?'Complete':isActive?'Active':isLocked?'Locked':'Upcoming'}
+                </div>
+                <div style={{fontSize:14,fontWeight:700,color:'var(--white)',marginBottom:5}}>{sd.label}</div>
+                <div style={{fontSize:11,color:'var(--grey)',lineHeight:1.6,marginBottom:isLocked?0:9}}>{sd.desc}</div>
+                {!isLocked && (
+                  <div style={{marginBottom:9}}>
+                    <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                      <span style={{fontSize:10,color:'var(--grey)'}}>Progress</span>
+                      <span style={{fontSize:10,color:isActive?sd.color:'var(--green)',fontWeight:700}}>{Math.round(prog*100)}%</span>
+                    </div>
+                    <PbarTrack pct={prog} color={isDone?'var(--green)':sd.color}/>
+                  </div>
+                )}
+                {isActive && prog < 1.0 && (
+                  <button onClick={()=>simulateComplete(sd.num)} style={{width:'100%',padding:'8px',background:'rgba(0,245,255,0.1)',border:'1px solid rgba(0,245,255,0.25)',borderRadius:9,fontSize:10,fontWeight:700,color:'var(--cyan)',cursor:'pointer',letterSpacing:'0.05em',marginTop:4}}>
+                    ⚡ Simulate Stage Complete (Demo)
+                  </button>
+                )}
+                {isLocked && (
+                  <div style={{fontSize:11,color:'var(--grey)',opacity:0.5}}>🔒 Complete {stageData[sd.num-2]?.label} first</div>
+                )}
+                {isDone && sd.num === 4 && (
+                  <div style={{marginTop:8,padding:'9px 11px',background:'rgba(0,230,118,0.06)',border:'1px solid rgba(0,230,118,0.14)',borderRadius:9,fontSize:11,color:'var(--green)',fontWeight:600}}>🏆 Alumni avg revenue: $12,000/month</div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{height:14}}/>
+      {celebStage && (
+        <CelebModal
+          stageNum={celebStage}
+          newTools={getNewTools()}
+          onClose={()=>setCelebStage(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ─── AI SCREEN ───────────────────────────────────────────────────────────────
+function AIScreen({ state, dispatch }) {
+  const [msgs, setMsgs] = useState([
+    { role:'ai', text:`Hey ${state.userName} 👋 I'm your Hawker AI assistant.\n\nAsk me anything about your stall — costing, supplier messages, SOPs, pricing, admin templates. What do you need?` }
+  ]);
+  const [input, setInput] = useState('');
+  const [typing, setTyping] = useState(false);
+  const bottomRef = useRef(null);
+  const inputRef = useRef(null);
+
+  useEffect(() => { bottomRef.current?.scrollIntoView({behavior:'smooth'}); }, [msgs, typing]);
+
+  const CHIPS = ['Cost a dish','Supplier message','Opening SOP','Price my menu','Customer complaint','Track revenue'];
+
+  async function send(text) {
+    const q = text || input.trim();
+    if (!q || typing) return;
+    setInput('');
+    setMsgs(m => [...m, {role:'user', text:q}]);
+    setTyping(true);
+    try {
+      let reply;
+      if (state.apiKey) {
+        try { reply = await callClaude(q, state.apiKey, state.stage); }
+        catch(e) { reply = 'API error: ' + e.message + '\n\nFalling back to offline response:\n\n' + findCanned(q); }
+      } else {
+        await new Promise(r=>setTimeout(r,900));
+        reply = findCanned(q);
+      }
+      setMsgs(m => [...m, {role:'ai', text:reply}]);
+    } catch(e) {
+      setMsgs(m => [...m, {role:'ai', text:'Something went wrong. Try again.'}]);
+    }
+    setTyping(false);
+    inputRef.current?.focus();
+  }
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+      <div style={{padding:'14px 20px 0',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+        <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:9,color:'var(--white)'}}>HAWKER AI</div>
+        <div style={{display:'flex',alignItems:'center',gap:6,padding:'4px 10px',background:'rgba(0,230,118,0.08)',border:'1px solid rgba(0,230,118,0.18)',borderRadius:20}}>
+          <div style={{width:6,height:6,borderRadius:'50%',background:'var(--green)',boxShadow:'0 0 6px var(--green)',animation:'pulse 2s infinite'}}/>
+          <span style={{fontSize:9,fontWeight:700,color:'var(--green)'}}>{state.apiKey ? 'Live' : 'Offline'}</span>
+        </div>
+      </div>
+      {/* Stage context */}
+      <div style={{padding:'6px 16px 0',flexShrink:0}}>
+        <div style={{fontSize:10,color:'var(--grey)',padding:'4px 10px',background:'rgba(0,245,255,0.04)',border:'1px solid rgba(0,245,255,0.1)',borderRadius:10,display:'inline-block'}}>
+          Stage {state.stage} mode — {['Training mentor','Business coach','Business advisor','HAWKR.AI'][state.stage-1]}
+        </div>
+      </div>
+      {/* Quick chips */}
+      <div style={{display:'flex',gap:7,padding:'10px 16px 0',overflowX:'auto',flexShrink:0,scrollbarWidth:'none'}}>
+        {CHIPS.map(c=>(
+          <div key={c} onClick={()=>send(c)} style={{padding:'7px 12px',background:'rgba(0,245,255,0.07)',border:'1px solid rgba(0,245,255,0.18)',borderRadius:20,fontSize:11,fontWeight:600,color:'var(--cyan)',whiteSpace:'nowrap',cursor:'pointer',flexShrink:0}}>
+            {c}
+          </div>
+        ))}
+      </div>
+      {/* Messages */}
+      <div style={{flex:1,overflowY:'auto',padding:'12px 16px 8px',display:'flex',flexDirection:'column',gap:10,minHeight:0}} className="dark-scroll">
+        {msgs.map((m,i) => m.role === 'ai' ? (
+          <div key={i} style={{display:'flex',alignItems:'flex-end',gap:8}}>
+            <div style={{width:28,height:28,borderRadius:'50%',flexShrink:0,background:'linear-gradient(135deg,rgba(0,245,255,0.2),rgba(0,80,100,0.3))',border:'1px solid rgba(0,245,255,0.25)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:13}}>✨</div>
+            <div style={{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'14px 14px 14px 4px',padding:'11px 13px',fontSize:12,color:'var(--white)',lineHeight:1.65,maxWidth:'78%',whiteSpace:'pre-line'}}>{m.text}</div>
+          </div>
+        ) : (
+          <div key={i} style={{display:'flex',justifyContent:'flex-end'}}>
+            <div style={{background:'linear-gradient(135deg,rgba(0,245,255,0.15),rgba(0,100,140,0.1))',border:'1px solid rgba(0,245,255,0.2)',borderRadius:'14px 14px 4px 14px',padding:'10px 13px',fontSize:12,color:'var(--white)',lineHeight:1.5,maxWidth:'72%'}}>{m.text}</div>
+          </div>
+        ))}
+        {typing && (
+          <div style={{display:'flex',alignItems:'flex-end',gap:8}}>
+            <div style={{width:28,height:28,borderRadius:'50%',flexShrink:0,background:'linear-gradient(135deg,rgba(0,245,255,0.2),rgba(0,80,100,0.3))',border:'1px solid rgba(0,245,255,0.25)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:13}}>✨</div>
+            <div style={{background:'var(--card)',border:'1px solid var(--border)',borderRadius:'14px 14px 14px 4px',padding:'12px 14px',display:'flex',gap:4,alignItems:'center'}}>
+              {[0,0.2,0.4].map((d,i)=><div key={i} style={{width:5,height:5,borderRadius:'50%',background:'var(--grey)',animation:`typingBounce 1.2s ${d}s infinite`}}/>)}
+            </div>
+          </div>
+        )}
+        <div ref={bottomRef}/>
+      </div>
+      {/* Input */}
+      <div style={{padding:'10px 16px 12px',background:'rgba(6,10,20,0.98)',borderTop:'1px solid var(--border)',display:'flex',gap:8,alignItems:'center',flexShrink:0}}>
+        <input ref={inputRef} value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send()} placeholder="Ask anything about your stall…"
+          style={{flex:1,background:'var(--card)',border:'1px solid var(--border)',borderRadius:22,padding:'10px 14px',fontSize:12,color:'var(--white)',fontFamily:'Inter,sans-serif',outline:'none'}}/>
+        <button onClick={()=>send()} style={{width:36,height:36,borderRadius:'50%',background:'var(--cyan)',border:'none',display:'flex',alignItems:'center',justifyContent:'center',fontSize:15,color:'#04080f',fontWeight:700,cursor:'pointer'}}>↑</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── TOOLS SCREEN ────────────────────────────────────────────────────────────
+function ToolsScreen({ state }) {
+  const [openTool, setOpenTool] = useState(null);
+
+  const tool = TOOLS.find(t=>t.id===openTool);
+
+  return (
+    <div style={{overflowY:'auto',height:'100%'}} className="dark-scroll">
+      <div style={{padding:'14px 20px 4px'}}>
+        <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:9,color:'var(--white)'}}>TOOLS</div>
+        <div style={{fontSize:11,color:'var(--grey)',marginTop:4}}>Unlock tools as you progress through your journey.</div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,padding:'10px 16px 0'}}>
+        {TOOLS.map(t => {
+          const unlocked = isToolUnlocked(t.id, state);
+          return (
+            <div key={t.id} onClick={()=>unlocked&&setOpenTool(t.id)}
+              style={{background:unlocked?'var(--card)':'rgba(13,21,37,0.5)',border:`1px solid ${unlocked?'var(--border)':'rgba(30,45,69,0.4)'}`,borderRadius:14,padding:'14px 12px',cursor:unlocked?'pointer':'default',opacity:unlocked?1:0.6,transition:'all 0.2s',position:'relative',overflow:'hidden'}}>
+              <div style={{fontSize:24,marginBottom:8}}>{t.emoji}</div>
+              <div style={{fontSize:12,fontWeight:700,color:unlocked?'var(--white)':'var(--grey)',marginBottom:4}}>{t.label}</div>
+              <div style={{fontSize:10,color:'var(--grey)',lineHeight:1.4}}>{t.desc}</div>
+              {!unlocked && (
+                <div style={{marginTop:8,fontSize:9,color:'var(--grey)',display:'flex',alignItems:'center',gap:4}}>
+                  <span>🔒</span><span>{toolUnlockRequirement(t.id)}</span>
+                </div>
+              )}
+              {unlocked && (
+                <div style={{position:'absolute',top:10,right:10,width:8,height:8,borderRadius:'50%',background:'var(--green)',boxShadow:'0 0 6px var(--green)'}}/>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{height:14}}/>
+
+      {openTool && tool && (
+        <ToolPanel title={tool.label} emoji={tool.emoji} onClose={()=>setOpenTool(null)}>
+          <tool.Component />
+        </ToolPanel>
+      )}
+    </div>
+  );
+}
+
+// ─── PROFILE SCREEN ──────────────────────────────────────────────────────────
+function ProfileScreen({ state, dispatch }) {
+  const [keyInput, setKeyInput] = useState(state.apiKey || '');
+  const [keyStatus, setKeyStatus] = useState('');
+  const xpPct = Math.min(state.xp / state.xpMax, 1);
+
+  const BADGE_DEF = [
+    {key:'First Day',  emoji:'🎯'}, {key:'7 Streak',  emoji:'🔥'},
+    {key:'Certified',  emoji:'📜'}, {key:'300 XP',    emoji:'⭐'},
+    {key:'Placed',     emoji:'🏪'}, {key:'First $1K', emoji:'💰'},
+    {key:'Owner',      emoji:'🏆'}, {key:'Mentor',    emoji:'🌟'},
+  ];
+
+  function onKeyChange(val) {
+    setKeyInput(val);
     if (val.startsWith('sk-ant-') && val.length > 20) {
-      status.textContent = '✓ Key saved';
-      status.style.color = 'var(--green)';
+      setKeyStatus('✓ Key saved');
+      dispatch({ type:'SAVE_API_KEY', key:val });
     } else if (val.length > 0) {
-      status.textContent = 'Key looks incomplete (should start with sk-ant-)';
-      status.style.color = 'var(--gold)';
+      setKeyStatus('Key looks incomplete (should start with sk-ant-)');
     } else {
-      status.textContent = '';
+      setKeyStatus('');
+      dispatch({ type:'SAVE_API_KEY', key:'' });
     }
   }
 
-  function getApiKey() { return localStorage.getItem('hawkrboys_api_key') || ''; }
+  return (
+    <div style={{overflowY:'auto',height:'100%'}} className="dark-scroll">
+      <div style={{padding:'14px 20px 4px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+        <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:9,color:'var(--white)'}}>PROFILE</div>
+        <span style={{fontSize:18,cursor:'pointer'}}>⚙️</span>
+      </div>
+      {/* Avatar */}
+      <div style={{padding:'14px 20px',display:'flex',alignItems:'center',gap:14}}>
+        <div style={{width:64,height:64,borderRadius:'50%',background:'linear-gradient(135deg,#0a4060,#003040)',border:'3px solid var(--cyan)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:26,boxShadow:'0 0 22px rgba(0,245,255,0.22)'}}>👨‍🍳</div>
+        <div>
+          <div style={{fontSize:17,fontWeight:700,color:'var(--white)',marginBottom:2}}>{state.userName}</div>
+          <div style={{fontSize:11,color:'var(--grey)',marginBottom:7}}>Cohort 6 · Batch B · {['Training','Placement','Aftercare','Ownership'][state.stage-1]}</div>
+          <div style={{fontSize:11,fontWeight:700,color:'var(--cyan)'}}>Level {state.level} — {['Novice','Trainee','Operator','Owner'][state.level-1]||'Trainee'}</div>
+        </div>
+      </div>
+      {/* XP */}
+      <div style={{margin:'0 16px',background:'linear-gradient(135deg,rgba(0,245,255,0.06),rgba(0,80,120,0.04))',border:'1px solid rgba(0,245,255,0.14)',borderRadius:14,padding:'14px 16px'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:7}}>
+          <span style={{fontSize:10,color:'var(--grey)',textTransform:'uppercase',letterSpacing:'0.1em'}}>Level Progress</span>
+          <span style={{fontSize:11,fontWeight:700,color:'var(--cyan)'}}>{state.xp} / {state.xpMax} XP</span>
+        </div>
+        <PbarTrack pct={xpPct} color="linear-gradient(90deg,#00f5ff,#00c8d4)"/>
+        <div style={{marginTop:7,fontSize:10,color:'var(--grey)'}}>{state.xpMax-state.xp} XP to Level {state.level+1}</div>
+      </div>
+      {/* Badges */}
+      <div style={{margin:'10px 16px 0',background:'var(--card)',border:'1px solid var(--border)',borderRadius:16,padding:16}}>
+        <div style={{fontSize:9,fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:'var(--grey)',marginBottom:10}}>ACHIEVEMENTS</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:7}}>
+          {BADGE_DEF.map(b=>{
+            const earned = state.badges[b.key];
+            return (
+              <div key={b.key} style={{aspectRatio:'1',borderRadius:12,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:4,border:`1.5px solid ${earned?'var(--border)':'rgba(30,45,69,0.5)'}`,background:earned?'var(--card)':'rgba(15,22,38,0.5)',opacity:earned?1:0.42}}>
+                <span style={{fontSize:20}}>{b.emoji}</span>
+                <span style={{fontSize:7,fontWeight:600,color:earned?'var(--white)':'var(--grey)',textTransform:'uppercase',letterSpacing:'0.04em',textAlign:'center',lineHeight:1.2}}>{b.key}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      {/* Stats */}
+      <div style={{margin:'10px 16px 0',background:'var(--card)',border:'1px solid var(--border)',borderRadius:16,padding:16}}>
+        <div style={{fontSize:9,fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:'var(--grey)',marginBottom:10}}>YOUR STATS</div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:7}}>
+          {[[state.xp,'var(--cyan)','Total XP'],[23,'var(--gold)','Days Active'],[state.streak,'var(--magenta)','Day Streak'],[Math.round((state.stageProgress[state.stage]||0)*100)+'%','var(--green)','Stage Done']].map(([val,color,lbl])=>(
+            <div key={lbl} style={{background:'var(--card)',border:'1px solid var(--border)',borderRadius:12,padding:'12px 13px'}}>
+              <div style={{fontSize:20,fontWeight:800,color}}>{val}</div>
+              <div style={{fontSize:9,color:'var(--grey)',textTransform:'uppercase',letterSpacing:'0.08em',marginTop:2}}>{lbl}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* API Key */}
+      <div style={{margin:'10px 16px 0',background:'var(--card)',border:'1px solid var(--border)',borderRadius:16,padding:16}}>
+        <div style={{fontSize:9,fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:'var(--grey)',marginBottom:10}}>AI SETTINGS</div>
+        <div style={{fontSize:12,color:'var(--grey)',marginBottom:10}}>Enter your Anthropic API key to power the AI chat with real responses. Stored locally on your device only.</div>
+        <input type="password" value={keyInput} onChange={e=>onKeyChange(e.target.value)} placeholder="sk-ant-..." autocomplete="off"
+          style={{width:'100%',background:'var(--bg)',border:'1px solid var(--border)',borderRadius:10,padding:'10px 12px',color:'var(--white)',fontSize:13,fontFamily:"'DM Mono',monospace,sans-serif",outline:'none'}}/>
+        {keyStatus && (
+          <div style={{marginTop:8,fontSize:11,color:keyStatus.startsWith('✓')?'var(--green)':'var(--gold)'}}>{keyStatus}</div>
+        )}
+      </div>
+      <div style={{height:14}}/>
+    </div>
+  );
+}
 
-  async function callClaude(userText) {
-    const sys = `You are HAWKR.AI — the AI advisor for the Hawker Boys programme in Singapore. You help aspiring hawker stall owners with practical, specific advice on: costing dishes, writing supplier messages, creating SOPs, pricing menus, handling customer issues, tracking revenue, NEA regulations, and hawker business operations. Keep responses concise and practical. Use Singapore context naturally.`;
-    const res = await fetch('https://hawkr-proxy.jaromelgee.workers.dev', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 600, system: sys, messages: [{ role: 'user', content: userText }] })
-    });
-    if (!res.ok) {
-      const errBody = await res.json().catch(() => ({}));
-      throw new Error('API error ' + res.status + ': ' + (errBody?.error?.message || ''));
+// ─── ROOT APP ────────────────────────────────────────────────────────────────
+function App() {
+  const [state, dispatch] = useReducer(stateReducer, null, loadState);
+  const [tab, setTab] = useState('home');
+
+  // Clock
+  useEffect(() => {
+    function tick() {
+      const n = new Date();
+      const el = document.getElementById('sTime');
+      if (el) el.textContent = String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
     }
-    const d = await res.json();
-    return d.content[0].text;
-  }
+    tick();
+    const id = setInterval(tick, 15000);
+    return () => clearInterval(id);
+  }, []);
 
-  async function sendPrompt(topic) {
-    addUserMsg(topic);
-    showTyping();
-    const key = getApiKey();
-    if (!key) {
-      setTimeout(() => { removeTyping(); addAIMsg(findAIResponse(topic)); }, 900);
-      return;
+  // Hide loading splash
+  useEffect(() => {
+    const splash = document.getElementById('loading-splash');
+    if (splash) {
+      setTimeout(() => splash.classList.add('hidden'), 200);
     }
-    try {
-      const reply = await callClaude(topic);
-      removeTyping(); addAIMsg(reply);
-    } catch(e) {
-      removeTyping(); addAIMsg('Error: ' + e.message);
-    }
-  }
+  }, []);
 
-  async function sendMsg() {
-    const inp = document.getElementById('chatInput'); const text = inp.value.trim(); if (!text) return;
-    inp.value=''; addUserMsg(text); showTyping();
-    const key = getApiKey();
-    if (!key) {
-      setTimeout(() => { removeTyping(); addAIMsg(findAIResponse(text)); }, 900);
-      return;
-    }
-    try {
-      const reply = await callClaude(text);
-      removeTyping(); addAIMsg(reply);
-    } catch(e) {
-      removeTyping(); addAIMsg('Error: ' + e.message);
+  const NAV = [
+    { id:'home',    label:'Home',    icon:'🏠' },
+    { id:'pathway', label:'Pathway', icon:'🗺️' },
+    { id:'ai',      label:'AI',      icon:'✨' },
+    { id:'tools',   label:'Tools',   icon:'🔧' },
+    { id:'profile', label:'Profile', icon:'👤' },
+  ];
+
+  function renderScreen() {
+    switch(tab) {
+      case 'home':    return <HomeScreen state={state} dispatch={dispatch} setTab={setTab}/>;
+      case 'pathway': return <PathwayScreen state={state} dispatch={dispatch}/>;
+      case 'ai':      return <AIScreen state={state} dispatch={dispatch}/>;
+      case 'tools':   return <ToolsScreen state={state}/>;
+      case 'profile': return <ProfileScreen state={state} dispatch={dispatch}/>;
+      default:        return <HomeScreen state={state} dispatch={dispatch} setTab={setTab}/>;
     }
   }
 
-  function navTo(id) {
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    document.getElementById('scr-'+id).classList.add('active');
-    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-    document.getElementById('nav-'+id).classList.add('active');
-    if(id!=='ai') document.getElementById('scr-'+id).scrollTop=0;
-  }
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'100%',position:'relative'}}>
+      {/* Screen area */}
+      <div style={{flex:1,position:'relative',overflow:'hidden',minHeight:0}}>
+        {renderScreen()}
+      </div>
+      {/* Bottom Nav */}
+      <div style={{height:72,background:'rgba(6,10,20,0.97)',backdropFilter:'blur(20px)',borderTop:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'space-around',padding:'0 2px 12px',flexShrink:0,zIndex:30}}>
+        {NAV.map(n=>(
+          <button key={n.id} onClick={()=>setTab(n.id)} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3,padding:'7px 10px',cursor:'pointer',border:'none',background:'none',borderRadius:12}}>
+            <span style={{fontSize:20,lineHeight:1,filter:tab===n.id?'drop-shadow(0 0 5px var(--cyan))':'none'}}>{n.icon}</span>
+            <span style={{fontSize:8,fontWeight:600,color:tab===n.id?'var(--cyan)':'var(--grey)',letterSpacing:'0.05em',textTransform:'uppercase'}}>{n.label}</span>
+          </button>
+        ))}
+      </div>
+      <div style={{width:130,height:4,background:'rgba(255,255,255,0.18)',borderRadius:2,margin:'3px auto 5px',flexShrink:0}}/>
+    </div>
+  );
+}
 
-  function startQuiz() {
-    QS={idx:0,score:0,answered:null,xpEarned:0};
-    document.getElementById('gamesHub').classList.add('off');
-    document.getElementById('quizView').classList.add('on');
-    document.getElementById('qCard').style.display='block';
-    document.getElementById('optsList').style.display='flex';
-    document.getElementById('quizResults').style.display='none';
-    renderQ();
-  }
-  function renderQ() {
-    const q=QUIZ[QS.idx];
-    document.getElementById('qProgLbl').textContent=`Question ${QS.idx+1} of ${QUIZ.length}`;
-    document.getElementById('qProgBar').style.width=((QS.idx+1)/QUIZ.length*100)+'%';
-    document.getElementById('qScoreBadge').textContent=`${QS.score} / ${QS.idx}`;
-    document.getElementById('qNum').textContent=`QUESTION ${String(QS.idx+1).padStart(2,'0')}`;
-    document.getElementById('qText').textContent=q.q;
-    const list=document.getElementById('optsList'); list.innerHTML='';
-    q.opts.forEach((opt,i)=>{ const btn=document.createElement('button'); btn.className='opt-btn'; btn.innerHTML=`<div class="opt-ltr">${LTRS[i]}</div><span class="opt-txt">${opt}</span>`; btn.onclick=()=>pickAns(i); list.appendChild(btn); });
-    document.getElementById('factPill').style.display='none';
-    document.getElementById('nextQBtn').style.display='none';
-    QS.answered=null;
-    document.getElementById('scr-games').scrollTop=0;
-  }
-  function pickAns(chosen) {
-    if(QS.answered!==null)return; QS.answered=chosen;
-    const q=QUIZ[QS.idx]; const correct=chosen===q.ans;
-    document.querySelectorAll('.opt-btn').forEach((b,i)=>{ b.disabled=true; if(i===q.ans)b.classList.add('correct'); if(i===chosen&&!correct)b.classList.add('wrong'); });
-    if(correct){QS.score++;QS.xpEarned+=15;}
-    const fp=document.getElementById('factPill'); fp.innerHTML=`<strong>💡 Did you know?</strong> ${q.fact}`; fp.style.display='block';
-    const nb=document.getElementById('nextQBtn'); nb.style.display='block'; nb.textContent=QS.idx>=QUIZ.length-1?'See Results →':'Next Question →';
-    document.getElementById('scr-games').scrollTop=999;
-  }
-  function nextQ() { if(QS.idx>=QUIZ.length-1){showResults();return;} QS.idx++;renderQ(); }
-  function showResults() {
-    QS.xpEarned+=50; S.xp+=QS.xpEarned; updateXP();
-    document.getElementById('qCard').style.display='none';
-    document.getElementById('optsList').style.display='none';
-    document.getElementById('factPill').style.display='none';
-    document.getElementById('nextQBtn').style.display='none';
-    const s=QS.score,t=QUIZ.length;
-    const [emoji,title]=s>=9?['🏆','HAWKER MASTER!']:s>=7?['🎉','EXCELLENT WORK!']:s>=5?['💪','GOOD EFFORT!']:['📚','KEEP LEARNING!'];
-    document.getElementById('resEmoji').textContent=emoji;
-    document.getElementById('resTitle').textContent=title;
-    document.getElementById('resScore').textContent=`${s}/${t}`;
-    document.getElementById('resXP').textContent=`+${QS.xpEarned} XP Earned`;
-    document.getElementById('quizResults').style.display='block';
-    document.getElementById('scr-games').scrollTop=0;
-  }
-  function restartQuiz(){startQuiz();}
-  function exitQuiz() {
-    document.getElementById('gamesHub').classList.remove('off');
-    document.getElementById('quizView').classList.remove('on');
-    document.getElementById('qCard').style.display='block';
-    document.getElementById('optsList').style.display='flex';
-    document.getElementById('quizResults').style.display='none';
-    document.getElementById('factPill').style.display='none';
-    document.getElementById('nextQBtn').style.display='none';
-    document.getElementById('scr-games').scrollTop=0;
-  }
-
-  function updateXP() {
-    const pct=Math.min(S.xp/S.xpMax*100,100);
-    document.getElementById('xpDisplay').textContent=`${S.xp} / ${S.xpMax} XP`;
-    document.getElementById('xpBar').style.width=pct+'%';
-    document.getElementById('dashXP').textContent=S.xp;
-    document.getElementById('totalXPLbl').textContent=`${S.xp} XP`;
-    document.getElementById('lbYou').textContent=`${S.xp} XP`;
-    document.getElementById('profXP').textContent=`${S.xp} / ${S.xpMax} XP`;
-    document.getElementById('profXPBar').style.width=pct+'%';
-    document.getElementById('profXPStat').textContent=S.xp;
-  }
-
-  function tick(){const n=new Date();document.getElementById('sTime').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
-  tick();setInterval(tick,15000);
-  updateXP();
-
-  // Load saved API key
-  const _savedKey = localStorage.getItem('hawkrboys_api_key');
-  if (_savedKey) {
-    document.getElementById('apiKeyInput').value = _savedKey;
-    const st = document.getElementById('apiKeyStatus');
-    st.textContent = '✓ Key saved'; st.style.color = 'var(--green)';
-  }
-  </script>
+ReactDOM.createRoot(document.getElementById('react-root')).render(<App/>);
+</script>
 </body>
 </html>
