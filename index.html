@@ -1014,11 +1014,9 @@ function AIScreen({ state, dispatch }) {
     setTyping(true);
     try {
       let reply;
-      if (state.apiKey) {
-        try { reply = await callClaude(q, state.apiKey, state.stage); }
-        catch(e) { reply = 'API error: ' + e.message + '\n\nFalling back to offline response:\n\n' + findCanned(q); }
-      } else {
-        await new Promise(r=>setTimeout(r,900));
+      try { reply = await callClaude(q, state.apiKey, state.stage); }
+      catch(e) {
+        await new Promise(r=>setTimeout(r,600));
         reply = findCanned(q);
       }
       setMsgs(m => [...m, {role:'ai', text:reply}]);
@@ -1035,7 +1033,7 @@ function AIScreen({ state, dispatch }) {
         <div style={{fontFamily:"'Press Start 2P',monospace",fontSize:9,color:'var(--white)'}}>HAWKER AI</div>
         <div style={{display:'flex',alignItems:'center',gap:6,padding:'4px 10px',background:'rgba(0,230,118,0.08)',border:'1px solid rgba(0,230,118,0.18)',borderRadius:20}}>
           <div style={{width:6,height:6,borderRadius:'50%',background:'var(--green)',boxShadow:'0 0 6px var(--green)',animation:'pulse 2s infinite'}}/>
-          <span style={{fontSize:9,fontWeight:700,color:'var(--green)'}}>{state.apiKey ? 'Live' : 'Offline'}</span>
+          <span style={{fontSize:9,fontWeight:700,color:'var(--green)'}}>{'Live'}</span>
         </div>
       </div>
       {/* Stage context */}
