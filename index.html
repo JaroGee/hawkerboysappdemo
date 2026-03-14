@@ -1204,16 +1204,6 @@ function ProfileScreen({ state, dispatch }) {
           ))}
         </div>
       </div>
-      {/* API Key */}
-      <div style={{margin:'10px 16px 0',background:'var(--card)',border:'1px solid var(--border)',borderRadius:16,padding:16}}>
-        <div style={{fontSize:9,fontWeight:700,letterSpacing:'0.14em',textTransform:'uppercase',color:'var(--grey)',marginBottom:10}}>AI SETTINGS</div>
-        <div style={{fontSize:12,color:'var(--grey)',marginBottom:10}}>Enter your Anthropic API key to power the AI chat with real responses. Stored locally on your device only.</div>
-        <input type="password" value={keyInput} onChange={e=>onKeyChange(e.target.value)} placeholder="sk-ant-..." autocomplete="off"
-          style={{width:'100%',background:'var(--bg)',border:'1px solid var(--border)',borderRadius:10,padding:'10px 12px',color:'var(--white)',fontSize:13,fontFamily:"'DM Mono',monospace,sans-serif",outline:'none'}}/>
-        {keyStatus && (
-          <div style={{marginTop:8,fontSize:11,color:keyStatus.startsWith('✓')?'var(--green)':'var(--gold)'}}>{keyStatus}</div>
-        )}
-      </div>
       <div style={{height:14}}/>
     </div>
   );
