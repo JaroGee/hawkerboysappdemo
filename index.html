@@ -156,6 +156,7 @@ function saveState(s) {
 }
 
 function isToolUnlocked(toolId, state) {
+  return true;
   const { stage, stageProgress } = state;
   const p1 = stageProgress[1] || 0;
   switch(toolId) {
