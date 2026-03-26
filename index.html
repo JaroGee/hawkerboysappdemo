@@ -1092,6 +1092,1214 @@ function BusinessModule() {
   );
 }
 
+// ─── RECIPE BOOK DATA ────────────────────────────────────────────────────────
+const RECIPE_BOOK = [
+  {
+    id:'chicken-rice',
+    name:'Hainanese Chicken Rice',
+    cuisine:'Chinese',
+    category:'Rice',
+    difficulty:'Medium',
+    prepTime:'30 min',
+    cookTime:'1 hr',
+    costPer:1.80,
+    sellAt:4.50,
+    emoji:'🍚',
+    tags:['Signature','Crowd Pleaser','Lunch'],
+    servings:1,
+    ingredients:[
+      {item:'Whole chicken (kampung)',qty:'1.5',unit:'kg',notes:'Yields ~600g cooked meat, ~8–10 portions'},
+      {item:'Jasmine rice',qty:'500',unit:'g',notes:'Rinsed 3×'},
+      {item:'Ginger',qty:'50',unit:'g',notes:'Bruised'},
+      {item:'Garlic',qty:'6',unit:'cloves',notes:'Whole'},
+      {item:'Pandan leaves',qty:'3',unit:'leaves',notes:'Knotted'},
+      {item:'Sesame oil',qty:'1',unit:'tbsp',notes:'Finishing drizzle'},
+      {item:'Light soy sauce',qty:'2',unit:'tbsp',notes:''},
+      {item:'Spring onions',qty:'3',unit:'stalks',notes:'Garnish'},
+    ],
+    method:[
+      'Blanch whole chicken in boiling water 10 min, then submerge in ice bath immediately — this tightens the skin.',
+      'Return chicken to pot, poach on low heat (not boiling) for 35–40 min until thigh juices run clear.',
+      'Remove chicken, brush with sesame oil. Rest 15 min before chopping.',
+      'For rice: fry garlic and ginger in chicken fat until fragrant. Add washed rice, stir 2 min.',
+      'Add poaching stock 1:1.2 ratio, pandan leaves, pinch of salt. Cook in rice cooker.',
+      'Chop chicken, serve over rice with dark soy, ginger-chilli sauce, and light chicken broth.',
+    ],
+    tips:[
+      'Never boil — poach at 85°C. Vigorous boiling toughens the meat.',
+      'Ice bath is non-negotiable for silky skin texture.',
+      'Save all poaching stock. Use as soup base — zero waste.',
+      'Kampung chicken from Pasir Panjang Market: $12–15 per bird.',
+    ],
+    scaling:{50:'25 birds, 12.5kg rice',100:'50 birds, 25kg rice',200:'100 birds, 50kg rice'},
+    commonMistakes:['Overboiling chicken (tough meat)','Skipping ice bath (loose skin)','Wrong rice-to-stock ratio'],
+  },
+  {
+    id:'char-kway-teow',
+    name:'Char Kway Teow',
+    cuisine:'Chinese',
+    category:'Noodles',
+    difficulty:'Hard',
+    prepTime:'20 min',
+    cookTime:'5 min per portion',
+    costPer:1.40,
+    sellAt:4.50,
+    emoji:'🍜',
+    tags:['Wok Hei','Signature','Street Classic'],
+    servings:1,
+    ingredients:[
+      {item:'Flat rice noodles (kway teow)',qty:'200',unit:'g',notes:'Freshly made preferred'},
+      {item:'Bean sprouts',qty:'80',unit:'g',notes:'Tails pinched'},
+      {item:'Eggs',qty:'2',unit:'whole',notes:''},
+      {item:'Prawns',qty:'4',unit:'pcs',notes:'Medium, shelled'},
+      {item:'Cockles (hum)',qty:'8',unit:'pcs',notes:'Half-cooked, from wet market'},
+      {item:'Chinese lap cheong (sausage)',qty:'1',unit:'link',notes:'Sliced diagonally'},
+      {item:'Lard',qty:'1',unit:'tbsp',notes:'Non-negotiable for wok hei'},
+      {item:'Dark soy sauce',qty:'1',unit:'tbsp',notes:''},
+      {item:'Light soy sauce',qty:'1',unit:'tsp',notes:''},
+      {item:'Fish sauce',qty:'1',unit:'tsp',notes:''},
+      {item:'Chilli paste',qty:'1',unit:'tsp',notes:'Optional but standard'},
+    ],
+    method:[
+      'Heat wok until smoking. Add lard, then lap cheong — fry 30 seconds.',
+      'Add prawns, toss 1 min until just pink. Push to side.',
+      'Crack eggs into wok, scramble 70% done, then fold into everything.',
+      'Add noodles, spread flat — DO NOT stir for 30 seconds (char on bottom).',
+      'Add dark soy, light soy, fish sauce, chilli paste. Toss hard 1 min.',
+      'Add bean sprouts, toss 30 seconds — sprouts must still have crunch.',
+      'Add cockles last, fold in gently. Plate immediately.',
+    ],
+    tips:[
+      'Single portion only per batch — wok must be screaming hot. Batching kills wok hei.',
+      'Get cockles half-cooked from wet market or blanch yourself at 70°C, 1 min.',
+      'Lard from pork fat, rendered yourself. Substituting oil = inferior product.',
+      'Flat rice noodles fresh from Kim San Leng, Geylang. Pre-day-old noodles break apart.',
+    ],
+    scaling:{50:'50 separate wok tosses — prep mise en place per station',100:'2 wok stations running parallel',200:'3–4 wok stations; CK for prep recommended'},
+    commonMistakes:['Wok not hot enough (steaming, not charring)','Over-stirring (breaks noodles)','Adding cockles too early (rubbery)'],
+  },
+  {
+    id:'laksa',
+    name:'Laksa',
+    cuisine:'Peranakan',
+    category:'Noodles',
+    difficulty:'Hard',
+    prepTime:'1 hr',
+    cookTime:'40 min',
+    costPer:2.20,
+    sellAt:6.00,
+    emoji:'🍲',
+    tags:['Signature','High Margin','Complex'],
+    servings:1,
+    ingredients:[
+      {item:'Laksa rempah (paste)',qty:'100',unit:'g',notes:'See method — grind fresh'},
+      {item:'Coconut milk',qty:'400',unit:'ml',notes:'Full fat, Ayam brand'},
+      {item:'Prawn stock',qty:'400',unit:'ml',notes:'From prawn heads/shells'},
+      {item:'Rice vermicelli',qty:'100',unit:'g',notes:'Soaked in cold water 20 min'},
+      {item:'Thick rice noodles',qty:'80',unit:'g',notes:''},
+      {item:'Prawns',qty:'3',unit:'pcs',notes:'Medium, whole'},
+      {item:'Tau pok (fried tofu puffs)',qty:'3',unit:'pcs',notes:'Halved'},
+      {item:'Fish cake',qty:'3',unit:'slices',notes:''},
+      {item:'Bean sprouts',qty:'50',unit:'g',notes:'Blanched'},
+      {item:'Cockles',qty:'6',unit:'pcs',notes:'Blanched'},
+      {item:'Hard-boiled egg',qty:'1',unit:'whole',notes:'Halved'},
+      {item:'Fresh laksa leaves (daun kesum)',qty:'5',unit:'leaves',notes:'Torn, garnish'},
+    ],
+    method:[
+      'REMPAH: Blend dried chillies (rehydrated), lemongrass, galangal, turmeric, shallots, belacan, candlenuts, dried shrimp until smooth paste.',
+      'Fry rempah in oil over medium heat, stirring constantly, 20–25 min until oil splits and paste is fragrant and darkened.',
+      'Add prawn stock, bring to boil. Reduce 10 min.',
+      'Add coconut milk, bring to gentle simmer (never boil after adding coconut milk — it splits).',
+      'Season with salt and sugar. Taste — broth should be rich, spicy, slightly sweet.',
+      'Cook prawns, tau pok, fish cake in broth 3 min.',
+      'Arrange noodles in bowl, ladle hot broth and toppings over. Garnish with cockles, egg, bean sprouts, laksa leaves.',
+    ],
+    tips:[
+      'Rempah grinding is the skill. No shortcut paste matches fresh-ground. Freeze rempah in 100g portions.',
+      'Oil splitting during frying = rempah is cooked. Rushing this step = raw paste taste.',
+      'Belacan (shrimp paste) is critical. Toast it lightly in dry pan before blending.',
+      'Daun kesum (laksa leaf) only from wet market — supermarkets rarely stock fresh.',
+      'Pre-batch broth for service. Reheat portions per order — never reboil full pot.',
+    ],
+    scaling:{50:'5kg rempah batch, 20L broth, portion for service',100:'10kg rempah, 40L broth — 2 large stock pots',200:'Central kitchen essential for rempah at this scale'},
+    commonMistakes:['Boiling broth after coconut milk added (splits)','Under-frying rempah (raw paste taste)','Using canned coconut cream (too thick)'],
+  },
+  {
+    id:'nasi-lemak',
+    name:'Nasi Lemak',
+    cuisine:'Malay',
+    category:'Rice',
+    difficulty:'Medium',
+    prepTime:'30 min',
+    cookTime:'30 min',
+    costPer:1.60,
+    sellAt:4.00,
+    emoji:'🍛',
+    tags:['National Dish','Breakfast','Crowd Pleaser'],
+    servings:1,
+    ingredients:[
+      {item:'Jasmine rice',qty:'2',unit:'kg',notes:'Washed 3×'},
+      {item:'Coconut milk',qty:'600',unit:'ml',notes:'Full fat'},
+      {item:'Pandan leaves',qty:'4',unit:'leaves',notes:'Knotted'},
+      {item:'Lemongrass',qty:'2',unit:'stalks',notes:'Bruised'},
+      {item:'Ikan bilis (dried anchovies)',qty:'100',unit:'g',notes:'Fried until crisp'},
+      {item:'Peanuts',qty:'80',unit:'g',notes:'Roasted with skin'},
+      {item:'Cucumber',qty:'1',unit:'whole',notes:'Sliced thin'},
+      {item:'Egg',qty:'1',unit:'whole',notes:'Fried, sunny side up'},
+      {item:'Sambal ikan bilis',qty:'3',unit:'tbsp',notes:'See tips — key differentiator'},
+    ],
+    method:[
+      'Mix coconut milk with water 1:1. Combine with washed rice, pandan, lemongrass, 1 tsp salt.',
+      'Cook in rice cooker until done. Fluff immediately, remove pandan and lemongrass.',
+      'IKAN BILIS: Deep fry at 170°C until golden and crisp. Drain on paper, cool before storing.',
+      'SAMBAL: Blend dried chillies, onions, garlic, belacan. Fry in oil 15 min, add tamarind juice, sugar, salt. Cook low-slow 45 min until oil splits and sambal darkens.',
+      'Fry egg to order or batch cook.',
+      'Wrap banana leaf style or plate: rice in centre, sambal on side, cucumber slices, ikan bilis, peanuts, egg.',
+    ],
+    tips:[
+      'Sambal is your signature — the differentiator between average and great nasi lemak. Cook it low and slow.',
+      'Ikan bilis must be completely dry before frying, or they steam and go soft.',
+      'Batch-cook rice in 2kg lots. Freshly cooked only — stale coconut rice smells.',
+      'Banana leaf packaging commands $0.50–1.00 premium and reduces paper waste.',
+      'Add rendang chicken or otah add-ons at $1.50–2.00 each to boost average spend.',
+    ],
+    scaling:{50:'4kg rice, ~3L coconut milk, 500g sambal batch',100:'8kg rice, 6L coconut milk, 1kg sambal batch',200:'16kg rice — need 2 large rice cookers minimum'},
+    commonMistakes:['Wet ikan bilis (goes soft)','Under-cooking sambal (raw taste, short shelf life)','Over-salting coconut rice'],
+  },
+  {
+    id:'hokkien-mee',
+    name:'Hokkien Mee',
+    cuisine:'Chinese',
+    category:'Noodles',
+    difficulty:'Hard',
+    prepTime:'45 min',
+    cookTime:'8 min per portion',
+    costPer:1.80,
+    sellAt:5.50,
+    emoji:'🍝',
+    tags:['Wok Hei','Prawn Stock','Street Classic'],
+    servings:1,
+    ingredients:[
+      {item:'Yellow noodles (Hokkien mee)',qty:'100',unit:'g',notes:'Thick round type'},
+      {item:'Rice vermicelli',qty:'60',unit:'g',notes:'Soaked 10 min'},
+      {item:'Prawns',qty:'3',unit:'pcs',notes:'Whole, medium'},
+      {item:'Pork belly',qty:'60',unit:'g',notes:'Sliced thin'},
+      {item:'Squid',qty:'40',unit:'g',notes:'Scored and sliced'},
+      {item:'Eggs',qty:'1',unit:'whole',notes:''},
+      {item:'Bean sprouts',qty:'60',unit:'g',notes:''},
+      {item:'Prawn stock',qty:'200',unit:'ml',notes:'CRITICAL — from roasted prawn heads'},
+      {item:'Lard',qty:'1',unit:'tbsp',notes:''},
+      {item:'Sambal belachan',qty:'1',unit:'tbsp',notes:'Served on side'},
+      {item:'Calamansi',qty:'2',unit:'pcs',notes:'Halved, served on side'},
+    ],
+    method:[
+      'PRAWN STOCK: Roast prawn heads and shells in dry pan until charred. Boil with water 30 min. Strain. This stock is the soul of the dish.',
+      'Heat wok, add lard, fry pork belly until slightly crisp.',
+      'Add prawns and squid, toss 1 min.',
+      'Push aside, scramble egg 70% done.',
+      'Add both noodle types, toss hard. Add stock 100ml, cover wok 2 min to braise.',
+      'Uncover, toss hard to absorb remaining stock and achieve slight char.',
+      'Add bean sprouts last, toss 30 seconds. Serve with sambal and calamansi on side.',
+    ],
+    tips:[
+      'Prawn stock quality is EVERYTHING. Roast the heads in a dry pan until they char — this creates umami depth.',
+      'Two noodle types is non-negotiable for authentic Hokkien Mee texture.',
+      'Cover and braise step creates the gravy — do not skip or rush.',
+      'Calamansi and sambal are table condiments, not optional.',
+    ],
+    scaling:{50:'50 portions — prep mise en place, batch stock daily',100:'2 wok stations, stock in 20L batches',200:'Central kitchen for stock; 3–4 wok stations at service'},
+    commonMistakes:['Skipping prawn stock roasting step','Only one type of noodle','Not braising with lid (dry noodles)'],
+  },
+  {
+    id:'roti-prata',
+    name:'Roti Prata',
+    cuisine:'Indian',
+    category:'Bread',
+    difficulty:'Hard',
+    prepTime:'2 hr (dough rest)',
+    cookTime:'4 min per piece',
+    costPer:0.40,
+    sellAt:1.30,
+    emoji:'🫓',
+    tags:['Breakfast','High Volume','Skill-Based'],
+    servings:1,
+    ingredients:[
+      {item:'Plain flour',qty:'1',unit:'kg',notes:'High gluten preferred'},
+      {item:'Ghee',qty:'150',unit:'g',notes:'Clarified butter — not margarine'},
+      {item:'Water',qty:'550',unit:'ml',notes:'Warm'},
+      {item:'Salt',qty:'1.5',unit:'tsp',notes:''},
+      {item:'Sugar',qty:'1',unit:'tbsp',notes:''},
+      {item:'Condensed milk',qty:'2',unit:'tbsp',notes:'Adds softness and colour'},
+      {item:'Egg',qty:'1',unit:'whole',notes:'For egg prata variant'},
+    ],
+    method:[
+      'Mix flour, salt, sugar. Add condensed milk and warm water gradually, knead 10 min until smooth and elastic.',
+      'Divide into 80g balls. Coat each ball generously in ghee. Rest covered 1–2 hours minimum (overnight better).',
+      'On oiled surface, stretch each ball paper-thin using fingers — spread outward from centre. Laminate with ghee as you go.',
+      'Fold into layered square or rectangle. The lamination creates the layers.',
+      'Cook on flat iron griddle at medium-high heat. Press gently. Flip when golden. Cook 2 min per side.',
+      'Clap between both hands immediately off griddle to separate the layers.',
+      'Serve with fish curry, dhal, or sugar/condensed milk.',
+    ],
+    tips:[
+      'Lamination technique takes 2–3 weeks of daily practice to master. The stretch defines the quality.',
+      'Dough rest is critical — under-rested dough tears instead of stretches.',
+      'Ghee, not oil or margarine. The flavour is in the fat.',
+      'Dhal curry is your margin booster — cost $0.30 to make, sell at $1.00 as add-on.',
+      'Egg prata: crack egg onto stretched dough before folding. Premium $0.30.',
+      'Cheese prata, mushroom prata: easy premium variants at $2.00–2.50.',
+    ],
+    scaling:{50:'50 dough balls pre-made, rest overnight, cook to order',100:'Pre-portion 100 balls across 2 batches',200:'Second skilled pratamaker essential — this dish cannot be rushed'},
+    commonMistakes:['Dough not rested enough (tears)','Too much flour on surface (dough dries out)','Not clapping after cooking (layers don\'t separate)'],
+  },
+  {
+    id:'bak-chor-mee',
+    name:'Bak Chor Mee',
+    cuisine:'Chinese',
+    category:'Noodles',
+    difficulty:'Medium',
+    prepTime:'40 min',
+    cookTime:'5 min per portion',
+    costPer:1.50,
+    sellAt:5.00,
+    emoji:'🥢',
+    tags:['Dry Noodles','Vinegar','Pork'],
+    servings:1,
+    ingredients:[
+      {item:'Mee pok (flat egg noodles)',qty:'100',unit:'g',notes:'Fresh, from noodle supplier'},
+      {item:'Minced pork',qty:'80',unit:'g',notes:'70/30 lean-fat ratio'},
+      {item:'Pork liver',qty:'40',unit:'g',notes:'MUST be fresh — order daily'},
+      {item:'Pork balls',qty:'3',unit:'pcs',notes:'Handmade or from supplier'},
+      {item:'Pork lard',qty:'1',unit:'tbsp',notes:'Rendered with lard bits (chu yao zha)'},
+      {item:'Black vinegar',qty:'1.5',unit:'tbsp',notes:'Your secret weapon ratio'},
+      {item:'Dark soy sauce',qty:'1',unit:'tsp',notes:''},
+      {item:'Light soy sauce',qty:'1',unit:'tsp',notes:''},
+      {item:'Chilli sauce (house-made)',qty:'1',unit:'tbsp',notes:''},
+      {item:'Dried sole fish (tee poh)',qty:'1',unit:'pinch',notes:'Fried crisp, crushed'},
+      {item:'Bean sprouts',qty:'40',unit:'g',notes:'Blanched'},
+    ],
+    method:[
+      'Blanch noodles in boiling water 20–30 seconds. Shake dry vigorously.',
+      'In serving bowl, combine vinegar, soy sauces, lard — toss noodles immediately to coat.',
+      'Blanch minced pork and liver together in fresh boiling water 45 seconds (liver stays pink inside).',
+      'Blanch pork balls 2 min. Add bean sprouts 10 seconds.',
+      'Top noodles with pork, liver, pork balls, bean sprouts, dried sole fish, lard bits.',
+      'Serve with clear pork broth on side.',
+    ],
+    tips:[
+      'Vinegar ratio is your signature — adjust the black vinegar amount until you find your balance. Too little = flat; too much = sharp.',
+      'Pork liver must be fresh. Order daily from wet market. Day-old liver = grey colour and off taste.',
+      'Blanching sequence matters: never over-blanch liver or it turns grainy.',
+      'Lard bits (chu yao zha) are the textural hero. Render your own from pork fat.',
+      'Fresh mee pok from daily noodle supplier — avoid pre-packaged.',
+    ],
+    scaling:{50:'Prep minced pork, blanch batches. Blanch noodles per order.',100:'2-person station: one blanches, one assembles',200:'3-station assembly line for consistent output'},
+    commonMistakes:['Over-blanching liver (grainy texture)','Not shaking noodles dry (watery sauce)','Using day-old liver'],
+  },
+  {
+    id:'chicken-biryani',
+    name:'Chicken Biryani',
+    cuisine:'Indian',
+    category:'Rice',
+    difficulty:'Hard',
+    prepTime:'1.5 hr (marinate)',
+    cookTime:'1 hr',
+    costPer:2.80,
+    sellAt:7.50,
+    emoji:'🍗',
+    tags:['High Margin','Lunch','Office Crowd'],
+    servings:1,
+    ingredients:[
+      {item:'Basmati rice',qty:'1',unit:'kg',notes:'Soaked 30 min, parboiled 70%'},
+      {item:'Whole chicken, cut into 8',qty:'1.5',unit:'kg',notes:'Or chicken thighs'},
+      {item:'Full-fat yoghurt',qty:'200',unit:'g',notes:'Marinade base'},
+      {item:'Biryani masala',qty:'3',unit:'tbsp',notes:'Tong Lee Co blend recommended'},
+      {item:'Ghee',qty:'80',unit:'g',notes:''},
+      {item:'Fried onions (barista)',qty:'100',unit:'g',notes:'Pre-fried until deep brown'},
+      {item:'Saffron',qty:'1',unit:'pinch',notes:'Soaked in 3 tbsp warm milk'},
+      {item:'Tomatoes',qty:'3',unit:'whole',notes:'Chopped'},
+      {item:'Coriander + mint',qty:'1',unit:'bunch each',notes:'Fresh'},
+      {item:'Rose water',qty:'1',unit:'tbsp',notes:'Optional, adds fragrance'},
+    ],
+    method:[
+      'MARINADE: Mix chicken with yoghurt, biryani masala, salt, half the fried onions, half the coriander/mint. Marinate 2 hrs minimum (overnight best).',
+      'Parboil basmati rice with whole spices (cardamom, cinnamon, cloves, bay leaf) until 70% cooked. Drain immediately.',
+      'In heavy-bottomed pot, layer: chicken with marinade → parboiled rice → saffron milk → fried onions → ghee → fresh herbs.',
+      'Seal pot tightly with foil then lid. Cook on high 5 min, then very low 35 min (dum cooking).',
+      'Rest sealed 15 min. Open and gently fold from sides to mix layers.',
+      'Serve with raita (yoghurt-cucumber) and boiled egg.',
+    ],
+    tips:[
+      'Dum cooking (sealed pot) is the technique. Steam inside cooks rice and infuses flavours.',
+      'Heavy-bottomed pot or Dutch oven essential. Thin pots burn the bottom.',
+      'Parboiling rice to 70% is the critical step — fully cooked rice becomes mushy in dum.',
+      'Saffron is the luxury marker. A tiny amount makes a visual and flavour impact.',
+      'Office lunch pre-orders: biryani packs well for grab-and-go. Take pre-orders morning of.',
+    ],
+    scaling:{50:'5 pots of 10 portions each — manage dum timing staggered',100:'10-portion batches, staggered starts for consistent service',200:'Dedicated biryani station; central kitchen for prep strongly recommended'},
+    commonMistakes:['Rice fully cooked before dum (mushy)','Pot not sealed (steam escapes)','Insufficient marination time'],
+  },
+  {
+    id:'chai-tow-kway',
+    name:'Carrot Cake (Chai Tow Kway)',
+    cuisine:'Chinese',
+    category:'Snacks',
+    difficulty:'Medium',
+    prepTime:'1 hr (make cake)',
+    cookTime:'8 min per portion',
+    costPer:0.80,
+    sellAt:4.00,
+    emoji:'🥞',
+    tags:['Breakfast','Wok Hei','Two Versions'],
+    servings:1,
+    ingredients:[
+      {item:'White radish (daikon)',qty:'1',unit:'kg',notes:'Grated coarsely'},
+      {item:'Rice flour',qty:'500',unit:'g',notes:''},
+      {item:'Water',qty:'600',unit:'ml',notes:''},
+      {item:'Salt',qty:'1',unit:'tsp',notes:''},
+      {item:'Eggs',qty:'4',unit:'whole',notes:'Per portion: 1 egg'},
+      {item:'Bean sprouts',qty:'60',unit:'g',notes:''},
+      {item:'Spring onions',qty:'2',unit:'stalks',notes:'Chopped'},
+      {item:'Preserved radish (chye poh)',qty:'1',unit:'tbsp',notes:'Rinsed, squeezed dry'},
+      {item:'Dark soy sauce',qty:'2',unit:'tbsp',notes:'For black version'},
+      {item:'Lard',qty:'1',unit:'tbsp',notes:''},
+    ],
+    method:[
+      'CARROT CAKE BASE: Mix grated radish, rice flour, water, salt into smooth batter.',
+      'Steam in square tray 45 min until set and firm. Cool completely before cutting.',
+      'Cut into 2cm cubes. Store refrigerated — keeps 5 days.',
+      'PER ORDER (White): Heat wok with lard, fry radish cake cubes until crisp on edges.',
+      'Push aside, scramble egg into wok. Fold in cake, add chye poh, bean sprouts, spring onions.',
+      'Season with fish sauce and light soy. Toss, plate immediately.',
+      'PER ORDER (Black): Same as above but add generous dark soy, toss hard for caramelisation.',
+    ],
+    tips:[
+      'Black version commands higher price ($3.50–4.50) and uses more dark soy — higher margin product.',
+      'Radish cake base keeps 5 days refrigerated. Batch on rest day.',
+      'Chye poh must be rinsed and squeezed dry or it makes the dish too salty.',
+      'Crisp cake edges first before adding egg — sequence is key to texture.',
+    ],
+    scaling:{50:'5–6 trays of carrot cake base, cube ahead of service',100:'10 trays base; 2-person station at service',200:'Pre-cube all cake previous day; 3 wok stations'},
+    commonMistakes:['Steaming base insufficient time (collapses)','Adding egg too early (egg smothers cake)','Chye poh not rinsed (overly salty)'],
+  },
+  {
+    id:'mee-rebus',
+    name:'Mee Rebus',
+    cuisine:'Malay',
+    category:'Noodles',
+    difficulty:'Medium',
+    prepTime:'40 min',
+    cookTime:'30 min',
+    costPer:1.30,
+    sellAt:4.00,
+    emoji:'🍜',
+    tags:['Gravy','Malay Classic','Comfort Food'],
+    servings:1,
+    ingredients:[
+      {item:'Yellow noodles',qty:'150',unit:'g',notes:'Thick round type'},
+      {item:'Sweet potato',qty:'500',unit:'g',notes:'Boiled and mashed — thickens gravy'},
+      {item:'Beef or chicken stock',qty:'1',unit:'L',notes:'Base for gravy'},
+      {item:'Dried prawns',qty:'50',unit:'g',notes:'Blended into rempah'},
+      {item:'Lemongrass',qty:'3',unit:'stalks',notes:''},
+      {item:'Tauco (fermented soy paste)',qty:'2',unit:'tbsp',notes:'Key flavour ingredient'},
+      {item:'Bean sprouts',qty:'60',unit:'g',notes:'Blanched'},
+      {item:'Hard-boiled egg',qty:'1',unit:'whole',notes:'Halved'},
+      {item:'Green chilli',qty:'2',unit:'pcs',notes:'Sliced, garnish'},
+      {item:'Fried shallots',qty:'1',unit:'tbsp',notes:'Garnish'},
+      {item:'Calamansi',qty:'2',unit:'pcs',notes:'Served on side'},
+      {item:'Celery leaves',qty:'1',unit:'sprig',notes:'Garnish'},
+    ],
+    method:[
+      'REMPAH: Blend dried prawns, lemongrass, shallots, garlic, dried chillies. Fry in oil 15 min until fragrant.',
+      'Add stock, tauco, bring to boil. Add mashed sweet potato gradually, stirring to desired thickness.',
+      'Simmer 15 min. Season with salt and sugar. Gravy should coat the back of a spoon.',
+      'Blanch noodles, drain, place in bowl.',
+      'Ladle hot gravy over noodles generously.',
+      'Top with bean sprouts, egg, green chilli, fried shallots, celery. Calamansi on side.',
+    ],
+    tips:[
+      'Sweet potato ratio controls gravy thickness — key texture cue for authenticity.',
+      'Tauco is the defining flavour note. Source from Tong Lee Co or Geylang wet market.',
+      'Gravy batches well — make 10L at a time, portion for service.',
+      'Add-ons: cockles, chicken, tofu puff — each $0.50–1.00 extra.',
+    ],
+    scaling:{50:'10L gravy batch, portion noodles and toppings per order',100:'20L batch; 2 serving stations',200:'40L — needs large steam vat to keep warm during service'},
+    commonMistakes:['Gravy too thin (skimping on sweet potato)','Under-frying rempah','Noodles overcooked (turn mushy in gravy)'],
+  },
+  {
+    id:'wanton-mee',
+    name:'Wanton Mee',
+    cuisine:'Chinese',
+    category:'Noodles',
+    difficulty:'Easy',
+    prepTime:'30 min',
+    cookTime:'5 min per portion',
+    costPer:1.10,
+    sellAt:4.00,
+    emoji:'🥟',
+    tags:['Dry Noodles','Wanton','Quick Service'],
+    servings:1,
+    ingredients:[
+      {item:'Wanton mee (thin egg noodles)',qty:'100',unit:'g',notes:'Springy type — not flat mee pok'},
+      {item:'Wanton wrappers',qty:'6',unit:'pcs',notes:'Yellow, thin'},
+      {item:'Minced pork',qty:'60',unit:'g',notes:'Filling'},
+      {item:'Prawns, diced',qty:'30',unit:'g',notes:'Filling — adds sweetness'},
+      {item:'Char siu (BBQ pork)',qty:'50',unit:'g',notes:'Sliced; source from supplier or roast yourself'},
+      {item:'Lard',qty:'1',unit:'tsp',notes:'Toss into noodles'},
+      {item:'Dark soy sauce',qty:'1',unit:'tbsp',notes:''},
+      {item:'Light soy sauce',qty:'1',unit:'tsp',notes:''},
+      {item:'Oyster sauce',qty:'1',unit:'tsp',notes:''},
+      {item:'Chilli sauce (sambal)',qty:'1',unit:'tbsp',notes:'Served alongside'},
+      {item:'Choy sum',qty:'2',unit:'stalks',notes:'Blanched'},
+    ],
+    method:[
+      'WANTON FILLING: Mix minced pork, diced prawn, sesame oil, light soy, white pepper, corn starch. Wrap in wanton skin — fold into triangle, press edges firmly.',
+      'Boil wantons 3–4 min until they float. Drain.',
+      'Blanch noodles 20–30 seconds. Shake vigorously to remove water.',
+      'Toss hot noodles immediately with dark soy, light soy, oyster sauce, lard.',
+      'Plate noodles, top with wantons, char siu slices, blanched choy sum.',
+      'Serve with small bowl of clear pork bone broth with extra wantons.',
+    ],
+    tips:[
+      'Char siu can be sourced pre-made from roast meat suppliers — saves setup time and cost.',
+      'Noodle shake is critical: wet noodles dilute the sauce and ruin texture.',
+      'Batch wantons ahead — freeze in single layers, cook from frozen (add 1 min cook time).',
+      'Dry vs soup option: offer both. Soup version uses same broth and wantons, minimal extra cost.',
+    ],
+    scaling:{50:'Batch 300 wantons, freeze. Cook noodles per order.',100:'600 wantons in advance; 2-person station at peak',200:'Wanton production the night before essential'},
+    commonMistakes:['Wantons not sealed (burst in water)','Wet noodles (not shaken dry)','Char siu dried out from sitting too long'],
+  },
+  {
+    id:'orh-luak',
+    name:'Oyster Omelette (Orh Luak)',
+    cuisine:'Chinese',
+    category:'Snacks',
+    difficulty:'Medium',
+    prepTime:'15 min',
+    cookTime:'6 min per portion',
+    costPer:1.60,
+    sellAt:5.00,
+    emoji:'🦪',
+    tags:['Wok Hei','Seafood','Street Classic'],
+    servings:1,
+    ingredients:[
+      {item:'Fresh oysters',qty:'80',unit:'g',notes:'Small, briny type from wet market — not Japanese oysters'},
+      {item:'Eggs',qty:'2',unit:'whole',notes:''},
+      {item:'Sweet potato starch',qty:'3',unit:'tbsp',notes:'Mixed with 5 tbsp cold water — creates the gooey base'},
+      {item:'Bean sprouts',qty:'60',unit:'g',notes:''},
+      {item:'Spring onions',qty:'2',unit:'stalks',notes:'Chopped'},
+      {item:'Lard / cooking oil',qty:'2',unit:'tbsp',notes:'Lard preferred'},
+      {item:'Fish sauce',qty:'1',unit:'tsp',notes:''},
+      {item:'White pepper',qty:'1',unit:'pinch',notes:''},
+      {item:'Chilli sauce (house-made)',qty:'2',unit:'tbsp',notes:'Served alongside'},
+    ],
+    method:[
+      'Mix sweet potato starch with cold water into smooth slurry. Do not use hot water.',
+      'Heat wok with lard until very hot. Add oysters, fry 30 seconds until edges curl.',
+      'Pour starch slurry over oysters. Let set on wok base 30 seconds without touching.',
+      'Crack eggs over starch layer, scramble gently — fold starch up around eggs.',
+      'Add bean sprouts, spring onions. Toss gently once.',
+      'Flip entire omelette. Crisp the base 1 min, then fold onto plate.',
+      'Serve immediately with chilli sauce.',
+    ],
+    tips:[
+      'Gooey texture from starch is the hallmark. If it is fully set and crispy all through, starch ratio was too low.',
+      'Oysters must be fresh — smell before buying. Frozen oysters release too much water and kill the wok temperature.',
+      'Very hot wok essential. Dropping temperature = soggy starch that never crisps.',
+      'The flip is the skill move. Practise with egg-only omelette first.',
+    ],
+    scaling:{50:'50 individual wok tosses — cannot batch. Prepare mise en place per station.',100:'2 wok stations',200:'3 wok stations; ensure oyster supply chain reliable at volume'},
+    commonMistakes:['Cold wok (wet, starchy mess)','Frozen oysters (excess water)','Over-mixing starch slurry (lumps)'],
+  },
+  {
+    id:'satay',
+    name:'Satay',
+    cuisine:'Malay',
+    category:'Grilled',
+    difficulty:'Medium',
+    prepTime:'2 hr (marinate)',
+    cookTime:'8 min per skewer batch',
+    costPer:0.60,
+    sellAt:1.80,
+    emoji:'🍢',
+    tags:['Charcoal Grill','Skewer','Night Market'],
+    servings:1,
+    ingredients:[
+      {item:'Chicken thigh / beef',qty:'800',unit:'g',notes:'Cut into 2cm cubes'},
+      {item:'Lemongrass',qty:'3',unit:'stalks',notes:'White part only, blended'},
+      {item:'Galangal',qty:'20',unit:'g',notes:'Blended'},
+      {item:'Turmeric powder',qty:'2',unit:'tsp',notes:''},
+      {item:'Coriander powder',qty:'2',unit:'tsp',notes:''},
+      {item:'Cumin powder',qty:'1',unit:'tsp',notes:''},
+      {item:'Sugar',qty:'2',unit:'tbsp',notes:'Helps caramelise on grill'},
+      {item:'Salt',qty:'1.5',unit:'tsp',notes:''},
+      {item:'Bamboo skewers',qty:'20',unit:'pcs',notes:'Soaked in water 30 min before use'},
+      {item:'Peanut sauce ingredients',qty:'1',unit:'batch',notes:'See tips'},
+      {item:'Ketupat (compressed rice)',qty:'4',unit:'pcs',notes:'Served alongside'},
+      {item:'Cucumber + onion',qty:'1',unit:'each',notes:'Raw, cut into chunks'},
+    ],
+    method:[
+      'Blend lemongrass, galangal with turmeric, coriander, cumin, sugar, salt into marinade.',
+      'Coat cubed meat thoroughly. Marinate minimum 2 hours — overnight is better.',
+      'Thread 3–4 pieces per skewer. Do not pack too tightly.',
+      'Grill over charcoal or high-heat grill pan, turning frequently — 3–4 min per side.',
+      'Baste with coconut milk + sugar mixture in the last 2 minutes for gloss and char.',
+      'Serve immediately with peanut sauce, ketupat, cucumber, and raw onion.',
+    ],
+    tips:[
+      'PEANUT SAUCE: Fry rempah (blended dried chillies, lemongrass, shallots, belacan), add ground peanuts, coconut milk, tamarind juice, sugar. Cook low 20 min.',
+      'Charcoal grill is non-negotiable for the authentic smoky flavour. Gas gives inferior result.',
+      'Sugar in marinade = caramelisation on grill. Do not omit.',
+      'Ketupat sold frozen from suppliers. No need to make from scratch.',
+      'Sell in sets of 5 or 10 sticks. Never per-stick — too slow and awkward to transact.',
+    ],
+    scaling:{50:'~150 sticks — pre-skewer and refrigerate covered',100:'300 sticks — need second grill or wider grate',200:'500+ sticks — central kitchen for marinating; 2 full grill stations at service'},
+    commonMistakes:['Insufficient marination (bland meat)','Packing skewer too tight (uneven cooking)','No basting (dry, dull exterior)'],
+  },
+  {
+    id:'prawn-noodle',
+    name:'Prawn Noodle Soup (Hae Mee)',
+    cuisine:'Chinese',
+    category:'Noodles',
+    difficulty:'Hard',
+    prepTime:'2 hr (stock)',
+    cookTime:'5 min per portion',
+    costPer:2.00,
+    sellAt:6.00,
+    emoji:'🍤',
+    tags:['Broth','Prawn Stock','Soup'],
+    servings:1,
+    ingredients:[
+      {item:'Whole prawns',qty:'500',unit:'g',notes:'For stock — shells and heads'},
+      {item:'Pork ribs',qty:'400',unit:'g',notes:'For stock body'},
+      {item:'Dried shrimp',qty:'30',unit:'g',notes:'Adds depth to stock'},
+      {item:'Shallots',qty:'6',unit:'whole',notes:'Charred in dry pan'},
+      {item:'Yellow noodles',qty:'80',unit:'g',notes:'Per portion'},
+      {item:'Rice vermicelli',qty:'50',unit:'g',notes:'Per portion, soaked'},
+      {item:'Prawns (serving)',qty:'3',unit:'pcs',notes:'Per portion, whole, cooked in stock'},
+      {item:'Pork belly, sliced',qty:'40',unit:'g',notes:'Blanched'},
+      {item:'Bean sprouts',qty:'50',unit:'g',notes:'Blanched'},
+      {item:'Hard-boiled egg',qty:'1',unit:'whole',notes:'Halved'},
+      {item:'Fried shallots',qty:'1',unit:'tbsp',notes:''},
+      {item:'Sambal belachan',qty:'1',unit:'tsp',notes:'On side'},
+    ],
+    method:[
+      'STOCK: Dry-fry prawn shells and heads in wok until charred and fragrant.',
+      'Add 3L water, pork ribs, dried shrimp, charred shallots. Boil 20 min, then simmer 1.5 hr.',
+      'Strain. Season with fish sauce, salt, white pepper, small pinch of rock sugar.',
+      'Stock should be deep orange-red from prawn shells, intensely savory.',
+      'PER ORDER: Blanch noodles and vermicelli. Cook prawns in hot stock 2 min.',
+      'Bowl: noodles, pork belly slices, bean sprouts, prawns, egg. Ladle hot stock over.',
+      'Top with fried shallots and kang kong if desired. Sambal on side.',
+    ],
+    tips:[
+      'Charring the prawn shells is the key step — it creates the deep red colour and smoky umami.',
+      'Pork ribs give the stock body and sweetness that prawn alone cannot provide.',
+      'Stock is your competitive advantage. Make daily, never use yesterday\'s leftover stock.',
+      'Pre-cook prawns in boiling stock then chill — faster service at peak hour.',
+      'Dry version (soup on side) available: adds operational flexibility and menu variety.',
+    ],
+    scaling:{50:'15L stock batch, portion prawns and toppings',100:'30L stock — large commercial stock pot required',200:'Central kitchen for stock production; reheat at service point'},
+    commonMistakes:['Skipping prawn shell charring (pale, flat broth)','Boiling stock too vigorously (cloudy)','Over-cooked prawns at service (rubbery)'],
+  },
+  {
+    id:'curry-chicken',
+    name:'Curry Chicken',
+    cuisine:'Indian',
+    category:'Curry',
+    difficulty:'Medium',
+    prepTime:'30 min',
+    cookTime:'45 min',
+    costPer:2.40,
+    sellAt:6.50,
+    emoji:'🍛',
+    tags:['Curry','Coconut','Comfort Food'],
+    servings:1,
+    ingredients:[
+      {item:'Chicken, cut into pieces',qty:'1.5',unit:'kg',notes:'Bone-in for more flavour'},
+      {item:'Potatoes',qty:'400',unit:'g',notes:'Quartered — absorbs curry'},
+      {item:'Coconut milk',qty:'400',unit:'ml',notes:'Full fat'},
+      {item:'Curry powder (meat blend)',qty:'4',unit:'tbsp',notes:'Baba\'s or Tong Lee Co brand'},
+      {item:'Lemongrass',qty:'2',unit:'stalks',notes:'Bruised'},
+      {item:'Shallots',qty:'8',unit:'whole',notes:'Blended'},
+      {item:'Garlic',qty:'5',unit:'cloves',notes:'Blended'},
+      {item:'Ginger',qty:'30',unit:'g',notes:'Blended'},
+      {item:'Dried chillies',qty:'5',unit:'pcs',notes:'Rehydrated, blended'},
+      {item:'Curry leaves',qty:'1',unit:'sprig',notes:''},
+      {item:'Tomatoes',qty:'2',unit:'whole',notes:'Quartered'},
+    ],
+    method:[
+      'Blend shallots, garlic, ginger, dried chillies into rempah paste.',
+      'Mix curry powder with small amount of water into thick paste.',
+      'Fry rempah in oil until fragrant, 10 min. Add curry paste, fry further 5 min.',
+      'Add lemongrass, curry leaves. Add chicken pieces, coat well in paste.',
+      'Add 200ml water, tomatoes. Cover and cook 20 min, stirring occasionally.',
+      'Add potatoes, cook 10 min. Add coconut milk, simmer (no boiling) 10 min.',
+      'Adjust seasoning. Curry should be rich, thick, and coats the chicken.',
+    ],
+    tips:[
+      'Bone-in chicken gives superior flavour. Boneless is faster but less tasty.',
+      'Potatoes are the volume extender — they also absorb the curry oil which customers love.',
+      'Coconut milk added last and never boiled — prevents splitting.',
+      'Curry tastes better the next day as flavours deepen. Batch-cook and reheat for service.',
+      'Pair with bread (roti prata) or rice — simple up-sell that increases average spend.',
+    ],
+    scaling:{50:'2 large pots (25 portions each), reheat portions per order',100:'4 pots or 1 very large batch; portion into containers',200:'Central kitchen strongly recommended — 80L+ batch volume'},
+    commonMistakes:['Boiling after coconut milk added (splits)','Under-frying rempah (raw taste)','Not enough oil for frying (paste sticks and burns)'],
+  },
+  {
+    id:'fish-head-curry',
+    name:'Fish Head Curry',
+    cuisine:'Indian',
+    category:'Curry',
+    difficulty:'Hard',
+    prepTime:'40 min',
+    cookTime:'30 min',
+    costPer:8.00,
+    sellAt:22.00,
+    emoji:'🐟',
+    tags:['Premium','Sharing','Indian Classic'],
+    servings:4,
+    ingredients:[
+      {item:'Red snapper head (or sea bass)',qty:'1',unit:'whole (~1kg)',notes:'Cleaned, halved by fishmonger'},
+      {item:'Okra (lady\'s fingers)',qty:'8',unit:'pcs',notes:''},
+      {item:'Tomatoes',qty:'3',unit:'whole',notes:'Quartered'},
+      {item:'Brinjal (eggplant)',qty:'1',unit:'whole',notes:'Cut into wedges'},
+      {item:'Tamarind pulp',qty:'50',unit:'g',notes:'Dissolved in 200ml water, strained'},
+      {item:'Coconut milk',qty:'300',unit:'ml',notes:''},
+      {item:'Fish curry powder',qty:'5',unit:'tbsp',notes:'Baba\'s or Tong Lee Co'},
+      {item:'Fenugreek seeds',qty:'0.5',unit:'tsp',notes:''},
+      {item:'Curry leaves',qty:'2',unit:'sprigs',notes:''},
+      {item:'Shallots',qty:'10',unit:'whole',notes:'Blended'},
+      {item:'Dried chillies',qty:'8',unit:'pcs',notes:'Rehydrated'},
+      {item:'Mustard seeds',qty:'1',unit:'tsp',notes:''},
+    ],
+    method:[
+      'Blend shallots, dried chillies. Fry in oil with mustard seeds, fenugreek, curry leaves.',
+      'Add curry powder mixed to paste with water. Fry 10 min, stirring, until oil separates.',
+      'Add tamarind water, 400ml water, bring to boil. Add tomatoes and brinjal.',
+      'Add fish head. Cook on medium 15 min, spooning gravy over fish.',
+      'Add okra, cook 5 min.',
+      'Add coconut milk, simmer gently 5 min. Do not boil after this point.',
+      'Taste and adjust with salt and sugar. Serve in the pot for drama.',
+    ],
+    tips:[
+      'Sold as a sharing dish ($22–28 for 2–4 pax) — premium positioning, high margins.',
+      'Tamarind is the signature sourness of Singapore fish head curry. Do not skip or substitute with lemon.',
+      'Fresh fish head same day only. Never refrigerate overnight and serve — quality drops noticeably.',
+      'Serve with plain rice or bread separately (add-on revenue).',
+      'This dish is a destination draw — position it prominently on signage.',
+    ],
+    scaling:{50:'50 orders = 50 fish heads — build reliable fishmonger relationship at Jurong Fishery Port',100:'Requires dedicated morning fish head sourcing run',200:'Not recommended for high-volume hawker context — better suited for restaurant or catering'},
+    commonMistakes:['Day-old fish head (fishy smell)','Skipping tamarind (flat, no sour note)','Over-boiling coconut milk (split gravy)'],
+  },
+  {
+    id:'popiah',
+    name:'Popiah',
+    cuisine:'Peranakan',
+    category:'Snacks',
+    difficulty:'Medium',
+    prepTime:'1 hr',
+    cookTime:'20 min (filling)',
+    costPer:0.90,
+    sellAt:2.50,
+    emoji:'🌯',
+    tags:['Fresh Roll','Peranakan','Assembly'],
+    servings:1,
+    ingredients:[
+      {item:'Popiah skin (fresh)',qty:'3',unit:'pcs',notes:'Thin wheat crepe — order from popiah skin specialist'},
+      {item:'Jicama (bangkuang)',qty:'1',unit:'kg',notes:'Shredded fine — bulk of the filling'},
+      {item:'Carrots',qty:'200',unit:'g',notes:'Shredded fine'},
+      {item:'Prawns, small',qty:'100',unit:'g',notes:'Shelled, halved'},
+      {item:'Pork belly',qty:'150',unit:'g',notes:'Sliced thin'},
+      {item:'Firm tofu',qty:'2',unit:'blocks',notes:'Fried, sliced'},
+      {item:'Bean sprouts',qty:'100',unit:'g',notes:'Blanched'},
+      {item:'Garlic',qty:'4',unit:'cloves',notes:'Minced — fried in lard'},
+      {item:'Sweet sauce (tee cheo)',qty:'2',unit:'tbsp',notes:'Spread on skin'},
+      {item:'Chilli sauce',qty:'1',unit:'tbsp',notes:'Optional, on skin'},
+      {item:'Fried shallots',qty:'1',unit:'tbsp',notes:'Garnish'},
+      {item:'Lettuce leaf',qty:'1',unit:'leaf',notes:'Lining the skin'},
+    ],
+    method:[
+      'FILLING: Fry garlic in lard until golden. Add pork belly and prawns, cook 3 min.',
+      'Add shredded jicama and carrot. Stir-fry on medium heat 15–20 min until jicama softens and liquid reduces.',
+      'Season with soy sauce, white pepper, pinch of sugar. Filling should be moist but not wet.',
+      'ASSEMBLY: Lay popiah skin flat. Spread sweet sauce, then chilli if desired.',
+      'Place lettuce leaf. Spoon filling down the centre.',
+      'Top with fried tofu, bean sprouts, fried shallots.',
+      'Roll tightly from bottom, fold in sides, continue rolling. Slice diagonally.',
+    ],
+    tips:[
+      'Jicama water content is key — if too wet, skin tears. Fry long enough to drive off moisture.',
+      'Fresh popiah skin from specialist supplier daily — they go stiff within hours.',
+      'Assembly at the stall is part of the theatre — customers enjoy watching it made fresh.',
+      'Sell 2-for-$5 bundles. A single roll at $2.50 feels expensive; 2 for $5 feels like value.',
+      'Vegetarian option: omit pork and prawn, add more tofu — opens another customer segment.',
+    ],
+    scaling:{50:'Prepare 2kg jicama filling, assemble to order',100:'4kg filling; 2-person assembly station',200:'Pre-shred and cook filling in central kitchen; assemble at service point'},
+    commonMistakes:['Wet filling (skin tears)','Stale popiah skin (cracks when rolling)','Under-seasoned filling (flat taste)'],
+  },
+  {
+    id:'chwee-kueh',
+    name:'Chwee Kueh',
+    cuisine:'Chinese',
+    category:'Snacks',
+    difficulty:'Easy',
+    prepTime:'20 min',
+    cookTime:'20 min (steam)',
+    costPer:0.30,
+    sellAt:1.20,
+    emoji:'🫙',
+    tags:['Breakfast','Steamed','Low Cost'],
+    servings:1,
+    ingredients:[
+      {item:'Rice flour',qty:'200',unit:'g',notes:''},
+      {item:'Water chestnut flour',qty:'30',unit:'g',notes:'Adds slight translucency'},
+      {item:'Water',qty:'600',unit:'ml',notes:''},
+      {item:'Salt',qty:'0.5',unit:'tsp',notes:''},
+      {item:'Cooking oil',qty:'1',unit:'tbsp',notes:'Prevents sticking'},
+      {item:'Chai poh (preserved radish)',qty:'150',unit:'g',notes:'Rinsed and drained well'},
+      {item:'Shallots',qty:'4',unit:'whole',notes:'Sliced fine'},
+      {item:'Dark soy sauce',qty:'1',unit:'tbsp',notes:'Into chai poh'},
+      {item:'Sugar',qty:'1',unit:'tsp',notes:''},
+      {item:'Sesame oil',qty:'0.5',unit:'tsp',notes:''},
+      {item:'Sambal chilli',qty:'1',unit:'tsp',notes:'On side'},
+    ],
+    method:[
+      'Mix rice flour, water chestnut flour, salt with water into smooth thin batter.',
+      'Oil the metal chwee kueh moulds (small round cups). Pour batter 80% full.',
+      'Steam in wok or steamer 15–18 min until set and slightly translucent.',
+      'Cool slightly before unmoulding.',
+      'CHAI POH: Fry shallots in oil until golden. Add rinsed chai poh, dark soy, sugar. Fry 8 min until dry and fragrant.',
+      'Serve chwee kueh at room temp or slightly warm, topped with heaped chai poh and sambal chilli on side.',
+    ],
+    tips:[
+      'Low cost, high volume breakfast item. Sells best before 9am.',
+      'Chai poh must be rinsed well then squeezed — excess salt = overpowering flavour.',
+      'Moulds can be sourced from Sing Lian or Koon Seng Hardware.',
+      'Steam in large batches (60–80 pieces per run). Made morning, sold by noon.',
+      'Pair with kopi/teh at $0.80 — bundle deal drives foot traffic.',
+    ],
+    scaling:{50:'2 steamer runs of 25 pcs, 300g chai poh topping',100:'4 runs or larger commercial steamer rack',200:'Industrial steamer essential — 8+ trays capacity'},
+    commonMistakes:['Over-filled moulds (overflow in steamer)','Chai poh not dried enough (wet topping)','Removing from mould too early (breaks)'],
+  },
+  {
+    id:'nasi-goreng',
+    name:'Nasi Goreng',
+    cuisine:'Malay',
+    category:'Rice',
+    difficulty:'Medium',
+    prepTime:'15 min',
+    cookTime:'6 min per portion',
+    costPer:1.20,
+    sellAt:4.50,
+    emoji:'🍳',
+    tags:['Fried Rice','Wok Hei','All Day'],
+    servings:1,
+    ingredients:[
+      {item:'Day-old cooked rice',qty:'200',unit:'g',notes:'MUST be cold, day-old — fresh rice too wet'},
+      {item:'Eggs',qty:'2',unit:'whole',notes:'1 fried on top, 1 in rice'},
+      {item:'Prawns or chicken',qty:'60',unit:'g',notes:'Diced'},
+      {item:'Sambal belacan',qty:'1.5',unit:'tbsp',notes:'Key flavour — adjust for heat level'},
+      {item:'Kecap manis (sweet soy)',qty:'1.5',unit:'tbsp',notes:'Gives dark colour and sweetness'},
+      {item:'Light soy sauce',qty:'1',unit:'tsp',notes:''},
+      {item:'Shallots',qty:'3',unit:'whole',notes:'Sliced thin, fried until crisp for garnish'},
+      {item:'Cucumber',qty:'3',unit:'slices',notes:'Garnish'},
+      {item:'Tomato',qty:'2',unit:'slices',notes:'Garnish'},
+      {item:'Spring onions',qty:'1',unit:'stalk',notes:'Chopped, garnish'},
+      {item:'Fried emping crackers',qty:'5',unit:'pcs',notes:'Texture garnish'},
+    ],
+    method:[
+      'Heat wok to very hot. Add oil, fry prawns or chicken 1 min. Set aside.',
+      'Add sambal belacan to wok, fry 30 seconds until fragrant.',
+      'Add cold rice. Spread flat on wok — do not stir for 30 seconds (char base).',
+      'Crack one egg into rice, scramble and fold through.',
+      'Add kecap manis, light soy. Toss hard 2 min. Rice should be dark and slightly charred.',
+      'Return protein, toss to combine. Plate.',
+      'Fry second egg sunny-side-up or over-easy separately. Place on top of rice.',
+      'Garnish: cucumber, tomato, fried shallots, spring onions, emping crackers.',
+    ],
+    tips:[
+      'Day-old rice is non-negotiable. Freshly cooked rice has too much moisture and clumps.',
+      'Kecap manis (sweet Indonesian soy) gives the signature dark colour. Not replaceable with regular dark soy.',
+      'Sambal belacan is the heat and flavour core — each stall has its own ratio. Test yours.',
+      'Offer chicken/prawn/combination options — simple menu expansion at low cost.',
+      'Add cheese or otah as premium variant at $5.50–6.00.',
+    ],
+    scaling:{50:'50 individual wok tosses. Pre-portion all ingredients in mise en place trays.',100:'2 wok stations running parallel',200:'3 wok stations; consider central rice pre-cooking'},
+    commonMistakes:['Fresh rice (wet, clumping)','Wok not hot enough (steamed, not fried)','Skipping kecap manis (wrong colour and flavour profile)'],
+  },
+  {
+    id:'chendol',
+    name:'Chendol',
+    cuisine:'Malay',
+    category:'Dessert',
+    difficulty:'Easy',
+    prepTime:'30 min',
+    cookTime:'15 min',
+    costPer:0.70,
+    sellAt:3.00,
+    emoji:'🍧',
+    tags:['Dessert','Cold','High Margin'],
+    servings:1,
+    ingredients:[
+      {item:'Shaved ice',qty:'300',unit:'g',notes:'Freshly shaved — ice shaver machine essential'},
+      {item:'Pandan chendol strands',qty:'60',unit:'g',notes:'Made from rice flour + pandan juice, or bought fresh'},
+      {item:'Red kidney beans (kacang merah)',qty:'3',unit:'tbsp',notes:'Cooked until soft'},
+      {item:'Gula melaka (palm sugar syrup)',qty:'3',unit:'tbsp',notes:'CRITICAL flavour component'},
+      {item:'Coconut milk',qty:'80',unit:'ml',notes:'Full fat, slightly salted'},
+      {item:'Coconut cream',qty:'2',unit:'tbsp',notes:'Rich drizzle on top'},
+      {item:'Sweet corn kernels',qty:'2',unit:'tbsp',notes:'Optional classic add-on'},
+      {item:'Attap chee (palm seeds)',qty:'4',unit:'pcs',notes:'Optional'},
+    ],
+    method:[
+      'GULA MELAKA SYRUP: Melt palm sugar in 100ml water with 2 pandan leaves. Simmer until slightly thick. Cool.',
+      'COCONUT MILK: Warm coconut milk with pinch of salt and 1 pandan leaf. Do not boil. Cool completely.',
+      'CHENDOL STRANDS: Mix rice flour, pandan juice, pinch of salt into batter. Press through a colander or mould into boiling water. Scoop up when they float. Cool in cold water.',
+      'ASSEMBLY: Place chendol strands in bowl or cup.',
+      'Add cooked red beans, corn, attap chee.',
+      'Shave ice directly over the bowl — mound generously.',
+      'Drizzle gula melaka syrup, then salted coconut milk, then coconut cream over ice.',
+    ],
+    tips:[
+      'Gula melaka quality determines everything — use real palm sugar, not imitation or dark brown sugar.',
+      'Salted coconut milk is the contrast that makes chendol work. A tiny pinch of salt is key.',
+      'Ice shaver machine is a capital investment (~$800–1,500) but enables consistent texture.',
+      'Pre-make all components; assemble in under 60 seconds at service.',
+      'Premium version: add durian ($5.00–6.00) — huge margin boost if you have reliable durian supply.',
+    ],
+    scaling:{50:'Pre-batch strands, syrup, coconut milk. Shave ice to order.',100:'2 serving stations; ensure ice shaver handles throughput',200:'2 ice shavers required; strict mise en place'},
+    commonMistakes:['Watery coconut milk (skimping on fat content)','Pre-made ice melts before service','Imitation palm sugar (flat, one-dimensional sweetness)'],
+  },
+  {
+    id:'ice-kachang',
+    name:'Ice Kachang',
+    cuisine:'Chinese',
+    category:'Dessert',
+    difficulty:'Easy',
+    prepTime:'20 min',
+    cookTime:'30 min (prep toppings)',
+    costPer:0.80,
+    sellAt:3.50,
+    emoji:'🌈',
+    tags:['Dessert','Cold','Colourful'],
+    servings:1,
+    ingredients:[
+      {item:'Shaved ice',qty:'350',unit:'g',notes:'Finely shaved — texture key'},
+      {item:'Red beans (kacang merah)',qty:'3',unit:'tbsp',notes:'Cooked soft in sugar syrup'},
+      {item:'Grass jelly (cincau)',qty:'3',unit:'tbsp',notes:'Cubed'},
+      {item:'Attap chee (palm seeds)',qty:'4',unit:'pcs',notes:''},
+      {item:'Corn kernels',qty:'2',unit:'tbsp',notes:''},
+      {item:'Kidney beans',qty:'2',unit:'tbsp',notes:''},
+      {item:'Rose syrup (bandung)',qty:'2',unit:'tbsp',notes:'Pink colour, rose flavour'},
+      {item:'Sarsi syrup',qty:'1',unit:'tbsp',notes:'Brown, root beer-like'},
+      {item:'Pandan syrup',qty:'1',unit:'tbsp',notes:'Green'},
+      {item:'Evaporated milk',qty:'2',unit:'tbsp',notes:'Drizzled over top'},
+      {item:'Coconut milk',qty:'2',unit:'tbsp',notes:'Optional premium'},
+    ],
+    method:[
+      'Prepare all toppings in separate containers: cooked red beans, cubed grass jelly, attap chee, corn, kidney beans.',
+      'In a serving bowl or cup, layer toppings at the base.',
+      'Shave ice generously over toppings, building a dome shape.',
+      'Drizzle rose syrup, sarsi syrup, pandan syrup over ice in sections — the multicolour is part of the visual appeal.',
+      'Pour evaporated milk and coconut milk over the top.',
+      'Serve immediately before ice melts.',
+    ],
+    tips:[
+      'Visual presentation sells this dish — the coloured syrups must be visible and vibrant.',
+      'Speed of assembly is critical — shaved ice melts fast. Practice the sequence.',
+      'Upsell attap chee and grass jelly as paid add-ons at $0.50 each.',
+      'Ice shaver machine is shared asset with chendol station — buy one machine, run both products.',
+      'Durian ice kachang: premium version at $6–7. Very popular when durian in season.',
+    ],
+    scaling:{50:'All toppings pre-portioned. Shave and assemble per order.',100:'2 assembly stations; identical mise en place layout',200:'Consistent training on syrup pouring — visual consistency matters for Instagram'},
+    commonMistakes:['Ice too coarse (poor texture)','Toppings not pre-portioned (slow service)','Syrups running into each other before service (pour last minute)'],
+  },
+  {
+    id:'kaya-toast',
+    name:'Kaya Toast Set',
+    cuisine:'Chinese',
+    category:'Breakfast',
+    difficulty:'Easy',
+    prepTime:'30 min (make kaya)',
+    cookTime:'5 min',
+    costPer:0.80,
+    sellAt:3.50,
+    emoji:'🍞',
+    tags:['Breakfast','Kopi Tiam','Classic'],
+    servings:1,
+    ingredients:[
+      {item:'White bread (Gardenia or Hi-Fibre)',qty:'2',unit:'slices',notes:'Thin-cut preferred for traditional style'},
+      {item:'Kaya (coconut jam)',qty:'2',unit:'tbsp',notes:'House-made or Kara brand'},
+      {item:'Salted butter',qty:'10',unit:'g',notes:'Cold slices, thick'},
+      {item:'Soft-boiled eggs',qty:'2',unit:'whole',notes:'63°C for 1 hr or 6.5 min in boiling water'},
+      {item:'Dark soy sauce',qty:'1',unit:'tsp',notes:'For eggs'},
+      {item:'White pepper',qty:'1',unit:'pinch',notes:'For eggs'},
+      {item:'Kopi / Teh',qty:'1',unit:'cup',notes:'The set driver'},
+    ],
+    method:[
+      'KAYA (large batch): Blend coconut milk, eggs, pandan juice, sugar. Cook in double boiler, stirring constantly 45–60 min until thick and jammy. Cool before jarring.',
+      'Toast bread in charcoal or pop-up toaster until golden and crisp.',
+      'Spread generous kaya on one slice, lay thick cold butter slices on other. Sandwich together.',
+      'SOFT-BOILED EGGS: Boil water, add eggs, 6.5 min exactly. Transfer to cold water 30 sec. Crack into small bowl.',
+      'Customer dips: season eggs with dark soy and white pepper.',
+      'Serve toast, eggs, and kopi together as a set.',
+    ],
+    tips:[
+      'House-made kaya is your differentiator. Kara brand is acceptable but generic.',
+      'Cold butter slices, not spread — the cold-warm contrast is intentional and traditional.',
+      'Eggs must be precisely soft-boiled: whites just set, yolk still runny. Practice the timing.',
+      'Kopi (coffee with condensed milk, traditional roast) is a separate skill set — or source from a kopi vendor sharing the space.',
+      'Set pricing ($3.50 toast + eggs + kopi) drives higher average spend vs items sold separately.',
+    ],
+    scaling:{50:'Batch 2kg kaya weekly. Toast and boil eggs per order.',100:'Multiple toasters running. Pre-boil eggs in batches.',200:'Large kaya batches (10kg) twice weekly; assembly-line toasting'},
+    commonMistakes:['Over-cooked eggs (wrong texture — should be runny)','Kaya too thin (runny, slides off toast)','Butter melted before serving (heat from toast)'],
+  },
+  {
+    id:'tau-huay',
+    name:'Tau Huay (Soya Beancurd)',
+    cuisine:'Chinese',
+    category:'Dessert',
+    difficulty:'Medium',
+    prepTime:'45 min',
+    cookTime:'10 min',
+    costPer:0.40,
+    sellAt:2.00,
+    emoji:'🥛',
+    tags:['Dessert','Hot or Cold','Vegan-Friendly'],
+    servings:1,
+    ingredients:[
+      {item:'Dried soybeans',qty:'500',unit:'g',notes:'Soaked overnight in cold water'},
+      {item:'Water',qty:'2.5',unit:'L',notes:'For blending and cooking'},
+      {item:'Gypsum powder (calcium sulfate)',qty:'8',unit:'g',notes:'Food-grade — sets the beancurd'},
+      {item:'Sugar syrup',qty:'3',unit:'tbsp',notes:'Light clear sugar with pandan'},
+      {item:'Pandan leaves',qty:'3',unit:'leaves',notes:'For syrup'},
+      {item:'Ginger syrup',qty:'2',unit:'tbsp',notes:'Optional hot version'},
+    ],
+    method:[
+      'Drain soaked soybeans. Blend in batches with water until smooth.',
+      'Strain through muslin cloth — press out all soy milk. Discard pulp (or sell as okara).',
+      'Bring soy milk to boil, stirring constantly. Reduce heat, simmer 5 min.',
+      'Mix gypsum powder with 3 tbsp cold water into slurry.',
+      'Remove soy milk from heat. Stir once vigorously, then immediately pour gypsum slurry in centre.',
+      'Do NOT stir after adding gypsum. Cover and rest 15–20 min until set.',
+      'Scoop gently with flat ladle into bowls. Add sugar syrup or ginger syrup.',
+    ],
+    tips:[
+      'Temperature at gypsum addition is critical — 85–90°C. Too hot or too cold = failed set.',
+      'Do NOT stir after gypsum. Any disturbance breaks the set.',
+      'Hot version with ginger syrup and cold version with sugar syrup — offer both.',
+      'Made fresh daily, sold within 4–5 hours. Texture deteriorates after half day.',
+      'Low ingredient cost, high perceived value. One of the best margin products in hawker food.',
+    ],
+    scaling:{50:'10L soy milk per batch yields ~40 portions. Time carefully.',100:'2 batches of 10L each; stagger timing 1 hr apart for freshness',200:'Commercial soy milk maker machine ($2,000–4,000) eliminates manual straining at volume'},
+    commonMistakes:['Stirring after gypsum added (breaks set)','Wrong temperature at gypsum addition','Soy milk not strained well (grainy texture)'],
+  },
+];
+
+// ─── RECIPE BOOK MODULE ───────────────────────────────────────────────────────
+function RecipeBook() {
+  const [search, setSearch] = useState('');
+  const [filterCuisine, setFilterCuisine] = useState('All');
+  const [filterCat, setFilterCat] = useState('All');
+  const [sel, setSel] = useState(null);
+  const [portions, setPortions] = useState(1);
+
+  const cuisines = ['All','Chinese','Malay','Indian','Peranakan'];
+  const categories = ['All','Rice','Noodles','Bread','Snacks','Grilled','Curry','Dessert','Breakfast'];
+
+  const filtered = RECIPE_BOOK.filter(r => {
+    const matchSearch = r.name.toLowerCase().includes(search.toLowerCase()) ||
+      r.tags.some(t => t.toLowerCase().includes(search.toLowerCase()));
+    const matchCuisine = filterCuisine === 'All' || r.cuisine === filterCuisine;
+    const matchCat = filterCat === 'All' || r.category === filterCat;
+    return matchSearch && matchCuisine && matchCat;
+  });
+
+  const cusCols = {Chinese:'ember',Malay:'teal',Indian:'gold',Peranakan:'blue'};
+  const diffCol = {Easy:'green',Medium:'gold',Hard:'ember'};
+  const margin = r => (((r.sellAt - r.costPer) / r.sellAt) * 100).toFixed(0);
+
+  if (sel) {
+    return (
+      <div style={{fontFamily:'DM Sans,sans-serif'}}>
+        {/* Header */}
+        <div style={{padding:'12px 16px',borderBottom:'1px solid #e5e7eb',display:'flex',alignItems:'center',gap:10,background:'#fff',position:'sticky',top:0,zIndex:10}}>
+          <button onClick={()=>{setSel(null);setPortions(1);}} style={{width:32,height:32,borderRadius:'50%',background:'#f3f4f6',border:'none',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',fontSize:14,flexShrink:0}}>←</button>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:14,fontWeight:700,color:'#111',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{sel.emoji} {sel.name}</div>
+            <div style={{fontSize:11,color:'#888'}}>{sel.cuisine} · {sel.category}</div>
+          </div>
+          <LBadge col={diffCol[sel.difficulty]||'gray'}>{sel.difficulty}</LBadge>
+        </div>
+
+        <div className="p-4 space-y-4">
+          {/* Stats row */}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:6}}>
+            {[
+              {label:'Cost',val:`$${sel.costPer.toFixed(2)}`,col:'#ea580c'},
+              {label:'Sell',val:`$${sel.sellAt.toFixed(2)}`,col:'#111'},
+              {label:'Margin',val:`${margin(sel)}%`,col:'#0d9488'},
+              {label:'Difficulty',val:sel.difficulty,col:'#92400e'},
+            ].map(s=>(
+              <div key={s.label} style={{background:'#f9fafb',borderRadius:10,padding:'8px 4px',textAlign:'center'}}>
+                <div style={{fontSize:10,color:'#9ca3af',marginBottom:2}}>{s.label}</div>
+                <div style={{fontSize:12,fontWeight:700,color:s.col}}>{s.val}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Time + tags */}
+          <div style={{display:'flex',gap:6,flexWrap:'wrap',alignItems:'center'}}>
+            <span style={{fontSize:11,color:'#6b7280',background:'#f3f4f6',borderRadius:6,padding:'3px 8px'}}>⏱ Prep {sel.prepTime}</span>
+            <span style={{fontSize:11,color:'#6b7280',background:'#f3f4f6',borderRadius:6,padding:'3px 8px'}}>🔥 Cook {sel.cookTime}</span>
+            {sel.tags.map(t=><span key={t} style={{fontSize:10,color:'#4b5563',background:'#e5e7eb',borderRadius:6,padding:'3px 7px'}}>{t}</span>)}
+          </div>
+
+          {/* Portion scaler */}
+          <div style={{background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:10,padding:'10px 12px'}}>
+            <div style={{fontSize:11,fontWeight:700,color:'#15803d',marginBottom:8}}>PORTION SCALER</div>
+            <div style={{display:'flex',gap:8}}>
+              {[1,10,50,100,200].map(p=>(
+                <button key={p} onClick={()=>setPortions(p)} style={{flex:1,padding:'6px 0',borderRadius:8,border:`1.5px solid ${portions===p?'#16a34a':'#d1fae5'}`,background:portions===p?'#16a34a':'#fff',color:portions===p?'#fff':'#374151',fontSize:11,fontWeight:600,cursor:'pointer'}}>
+                  {p===1?'×1':p+'×'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Ingredients */}
+          <div style={{background:'#fff',border:'1px solid #e5e7eb',borderRadius:12,overflow:'hidden'}}>
+            <div style={{padding:'10px 14px',background:'#fafafa',borderBottom:'1px solid #e5e7eb',fontSize:11,fontWeight:700,color:'#374151',letterSpacing:'0.06em'}}>INGREDIENTS {portions > 1 ? `(× ${portions})` : ''}</div>
+            {sel.ingredients.map((ing,i)=>(
+              <div key={i} style={{padding:'8px 14px',borderBottom:i<sel.ingredients.length-1?'1px solid #f3f4f6':'none',display:'flex',alignItems:'baseline',gap:8}}>
+                <div style={{fontSize:12,fontWeight:700,color:'#111',minWidth:60,flexShrink:0}}>
+                  {(parseFloat(ing.qty) * portions % 1 === 0)
+                    ? (parseFloat(ing.qty) * portions)
+                    : (parseFloat(ing.qty) * portions).toFixed(1)} {ing.unit}
+                </div>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:12,color:'#374151'}}>{ing.item}</div>
+                  {ing.notes && <div style={{fontSize:10,color:'#9ca3af',marginTop:1}}>{ing.notes}</div>}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Method */}
+          <div style={{background:'#fff',border:'1px solid #e5e7eb',borderRadius:12,overflow:'hidden'}}>
+            <div style={{padding:'10px 14px',background:'#fafafa',borderBottom:'1px solid #e5e7eb',fontSize:11,fontWeight:700,color:'#374151',letterSpacing:'0.06em'}}>METHOD</div>
+            {sel.method.map((step,i)=>(
+              <div key={i} style={{padding:'10px 14px',borderBottom:i<sel.method.length-1?'1px solid #f3f4f6':'none',display:'flex',gap:10}}>
+                <div style={{width:22,height:22,borderRadius:'50%',background:'#111',color:'#fff',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>{i+1}</div>
+                <div style={{fontSize:12,color:'#374151',lineHeight:1.6}}>{step}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Chef tips */}
+          <div style={{background:'#fffbeb',border:'1px solid #fde68a',borderRadius:12,overflow:'hidden'}}>
+            <div style={{padding:'10px 14px',borderBottom:'1px solid #fde68a',fontSize:11,fontWeight:700,color:'#92400e',letterSpacing:'0.06em'}}>CHEF TIPS</div>
+            {sel.tips.map((tip,i)=>(
+              <div key={i} style={{padding:'8px 14px',borderBottom:i<sel.tips.length-1?'1px solid #fef3c7':'none',fontSize:12,color:'#78350f',lineHeight:1.6,display:'flex',gap:8}}>
+                <span style={{flexShrink:0}}>★</span><span>{tip}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Scale guide */}
+          <div style={{background:'#eff6ff',border:'1px solid #bfdbfe',borderRadius:12,overflow:'hidden'}}>
+            <div style={{padding:'10px 14px',borderBottom:'1px solid #bfdbfe',fontSize:11,fontWeight:700,color:'#1e40af',letterSpacing:'0.06em'}}>HAWKER SCALE GUIDE</div>
+            {Object.entries(sel.scaling).map(([k,v])=>(
+              <div key={k} style={{padding:'8px 14px',borderBottom:'1px solid #dbeafe',display:'flex',gap:10,alignItems:'baseline'}}>
+                <span style={{fontSize:11,fontWeight:700,color:'#1d4ed8',minWidth:36}}>{k}×</span>
+                <span style={{fontSize:12,color:'#374151'}}>{v}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Common mistakes */}
+          <div style={{background:'#fff1f2',border:'1px solid #fecdd3',borderRadius:12,overflow:'hidden'}}>
+            <div style={{padding:'10px 14px',borderBottom:'1px solid #fecdd3',fontSize:11,fontWeight:700,color:'#9f1239',letterSpacing:'0.06em'}}>COMMON MISTAKES</div>
+            {sel.commonMistakes.map((m,i)=>(
+              <div key={i} style={{padding:'8px 14px',borderBottom:i<sel.commonMistakes.length-1?'1px solid #ffe4e6':'none',fontSize:12,color:'#881337',display:'flex',gap:8}}>
+                <span style={{flexShrink:0}}>✗</span><span>{m}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{fontFamily:'DM Sans,sans-serif'}}>
+      <div className="p-4 space-y-3">
+        {/* Search */}
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search dishes or tags..." className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none bg-white"/>
+
+        {/* Cuisine filter */}
+        <div style={{display:'flex',gap:6,overflowX:'auto',paddingBottom:2}}>
+          {cuisines.map(c=>(
+            <button key={c} onClick={()=>setFilterCuisine(c)} style={{flexShrink:0,padding:'5px 12px',borderRadius:20,border:`1.5px solid ${filterCuisine===c?'#111':'#e5e7eb'}`,background:filterCuisine===c?'#111':'#fff',color:filterCuisine===c?'#fff':'#374151',fontSize:11,fontWeight:600,cursor:'pointer'}}>
+              {c}
+            </button>
+          ))}
+        </div>
+
+        {/* Category filter */}
+        <div style={{display:'flex',gap:6,overflowX:'auto',paddingBottom:2}}>
+          {categories.map(c=>(
+            <button key={c} onClick={()=>setFilterCat(c)} style={{flexShrink:0,padding:'4px 10px',borderRadius:20,border:`1.5px solid ${filterCat===c?'#6366f1':'#e5e7eb'}`,background:filterCat===c?'#6366f1':'#fff',color:filterCat===c?'#fff':'#374151',fontSize:10,fontWeight:600,cursor:'pointer'}}>
+              {c}
+            </button>
+          ))}
+        </div>
+
+        {/* Recipe cards */}
+        <div className="space-y-3">
+          {filtered.length === 0 && <div style={{textAlign:'center',color:'#9ca3af',fontSize:13,padding:'20px 0'}}>No recipes found</div>}
+          {filtered.map(r=>(
+            <div key={r.id} onClick={()=>setSel(r)} style={{background:'#fff',borderRadius:16,boxShadow:'0 1px 3px rgba(0,0,0,0.07)',padding:'14px',cursor:'pointer',border:'1px solid #f3f4f6'}}>
+              <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
+                <div style={{fontSize:26,lineHeight:1,flexShrink:0}}>{r.emoji}</div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:13,fontWeight:700,color:'#111',marginBottom:2}}>{r.name}</div>
+                  <div style={{display:'flex',gap:5,alignItems:'center'}}>
+                    <LBadge col={cusCols[r.cuisine]||'gray'}>{r.cuisine}</LBadge>
+                    <span style={{fontSize:10,color:'#9ca3af'}}>{r.prepTime} prep · {r.cookTime} cook</span>
+                  </div>
+                </div>
+                <div style={{textAlign:'right',flexShrink:0}}>
+                  <div style={{fontSize:11,color:'#9ca3af'}}>margin</div>
+                  <div style={{fontSize:16,fontWeight:800,color:'#0d9488'}}>{margin(r)}%</div>
+                </div>
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:6}}>
+                <div style={{background:'#fafafa',borderRadius:8,padding:'6px',textAlign:'center'}}>
+                  <div style={{fontSize:9,color:'#9ca3af'}}>COST</div>
+                  <div style={{fontSize:12,fontWeight:700,color:'#ea580c'}}>${r.costPer.toFixed(2)}</div>
+                </div>
+                <div style={{background:'#fafafa',borderRadius:8,padding:'6px',textAlign:'center'}}>
+                  <div style={{fontSize:9,color:'#9ca3af'}}>SELL</div>
+                  <div style={{fontSize:12,fontWeight:700,color:'#111'}}>${r.sellAt.toFixed(2)}</div>
+                </div>
+                <div style={{background:'#fafafa',borderRadius:8,padding:'6px',textAlign:'center'}}>
+                  <div style={{fontSize:9,color:'#9ca3af'}}>DIFF</div>
+                  <div style={{fontSize:11,fontWeight:700,color:diffCol[r.difficulty]==='ember'?'#ea580c':diffCol[r.difficulty]==='gold'?'#b45309':'#15803d'}}>{r.difficulty}</div>
+                </div>
+              </div>
+              <div style={{marginTop:8,display:'flex',gap:4,flexWrap:'wrap'}}>
+                {r.tags.map(t=><span key={t} style={{fontSize:9,color:'#6b7280',background:'#f3f4f6',borderRadius:4,padding:'2px 6px'}}>{t}</span>)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── TOOL DEFINITIONS ────────────────────────────────────────────────────────
 const TOOLS = [
   { id:'cost',     label:'Cost Engine',        icon:<IconCoins size={24} color="var(--gold)"/>,     desc:'Monthly costs + 6yr projection', Component: CostEngine },
@@ -1101,6 +2309,7 @@ const TOOLS = [
   { id:'ops',      label:'Operations',         icon:<IconGear size={24} color="var(--cyan)"/>,       desc:'Daily ops, SFA, equipment',     Component: OperationsModule },
   { id:'tips',     label:'Insider Tips',       icon:<IconLightbulb size={24} color="var(--gold)"/>,  desc:'Real intel from hawkers',       Component: InsiderModule },
   { id:'biz',      label:'Business Builder',   icon:<IconChart size={24} color="var(--green)"/>,     desc:'Grants, scaling & growth',      Component: BusinessModule },
+  { id:'recipes',  label:'Recipe Book',        icon:<IconChefHat size={24} color="var(--cyan)"/>,    desc:'Local dishes, methods & scaling', Component: RecipeBook },
 ];
 
 // ─── SCREENS ──────────────────────────────────────────────────────────────────
@@ -1220,16 +2429,7 @@ function PathwayScreen({ state, dispatch }) {
       milestones:['NEA Tender Submitted','Stall Licence Obtained','First Month Revenue','Alumni Network Join'] },
   ];
 
-  function simulateComplete(stageNum) {
-    const before = [...state.unlockedTools];
-    dispatch({ type:'COMPLETE_STAGE', stage:stageNum });
-    setTimeout(() => {
-      setCelebStage(stageNum);
-      setPrevTools(before);
-    }, 50);
-  }
-
-  const getNewTools = () => {
+const getNewTools = () => {
     if (!celebStage) return [];
     const after = state.unlockedTools;
     const toolNames = { cost:'Cost Engine', stalls:'Stall Finder', tender:'Tender Intelligence', ops:'Operations', tips:'Insider Tips', biz:'Business Builder' };
@@ -1270,11 +2470,6 @@ function PathwayScreen({ state, dispatch }) {
                     </div>
                     <PbarTrack pct={prog} color={isDone?'var(--green)':sd.color}/>
                   </div>
-                )}
-                {isActive && prog < 1.0 && (
-                  <button onClick={()=>simulateComplete(sd.num)} style={{width:'100%',padding:'8px',background:'rgba(0,245,255,0.1)',border:'1px solid rgba(0,245,255,0.25)',borderRadius:9,fontSize:10,fontWeight:700,color:'var(--cyan)',cursor:'pointer',letterSpacing:'0.05em',marginTop:4}}>
-                    Simulate Stage Complete (Demo)
-                  </button>
                 )}
                 {isLocked && (
                   <div style={{fontSize:11,color:'var(--grey)',opacity:0.5,display:'flex',alignItems:'center',gap:5}}><IconLock size={13} color="var(--grey)"/> Complete {stageData[sd.num-2]?.label} first</div>
