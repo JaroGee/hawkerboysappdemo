@@ -660,6 +660,42 @@ The `wrangler.jsonc` file configures the Cloudflare Workers deployment. The work
 
 ---
 
+## For Developers
+
+A human developer is working alongside Claude (AI) and the product owner on this project. The roles are:
+
+- **Product Owner (JaroGee):** Defines requirements, priorities, and programme knowledge
+- **Claude (AI):** Builds UI components, data structures, content layers, and iterates quickly on the demo via conversation
+- **Lead Developer (you):** Owns the backend, architecture, auth, database, and anything requiring persistent infrastructure or native device access
+
+The current demo is a single-file prototype (`index.html`, 2,784 lines). It has no backend, no auth, and no database. All state lives in `localStorage`. It is intentionally simple to allow rapid iteration — not a model for production architecture.
+
+**Full technical documentation, database schema, infrastructure decisions, and a component map are in [`DEVELOPER.md`](./DEVELOPER.md).** Read that first.
+
+### What Claude Builds vs What You Build
+
+| Claude | You |
+|--------|-----|
+| React components and UI | Backend routes and APIs |
+| Data structures and seed content | Database schema and migrations |
+| Tool modules (Cost Engine, Recipe Book, etc.) | Auth system (Supabase recommended) |
+| AI prompts and persona config | Cloudflare Worker `/api/chat` endpoint |
+| Screen layouts and navigation | Payment integration (Stripe / PayNow) |
+| Copy, labels, empty states | Push notifications |
+| Quiz questions, recipe data, tips content | File storage (MC document uploads) |
+| Admin dashboard UI (given a spec) | Mobile app shell (PWA or Capacitor) |
+
+### How to Collaborate
+
+The product owner uses Claude Code (CLI) in conversation sessions. Claude writes code directly into `index.html`. You should:
+
+1. Pull from `main` before starting each session — Claude pushes directly to main from the product owner's machine
+2. For production work, branch from `main` and open PRs
+3. If you restructure the codebase (e.g. migrate to a Vite project), communicate this clearly so Claude's outputs can be adapted to the new file structure
+4. Leave `// TODO:` comments or open GitHub Issues for gaps you spot — Claude can pick these up in future sessions
+
+---
+
 ## About Hawker Boys
 
 Hawker Boys is a social enterprise dedicated to preserving Singapore's hawker culture while creating meaningful second chances for individuals who need them. The programme has helped graduates build self-sustaining businesses, with alumni averaging $12,000/month in revenue. The app is the infrastructure that makes the programme scalable, accountable, and evidenced — so that every stakeholder, from a trainee eating breakfast before their shift to a Yellow Ribbon officer preparing a supervision report, has what they need, when they need it.
